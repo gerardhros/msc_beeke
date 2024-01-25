@@ -26,8 +26,7 @@ d1 <- d1[,.(response_variable, moderators, group, response, SE, n)]
 
 > setDT(m1.main)
 
-> m1.main[,wm.mean := sum((ES / SE^2)) / sum(1 / SE^2) , by = ind_code]
-> m1.main[,wm.mean := sum((ES / SE^2)) / sum(1 / SE^2) , by = ind_code]
+> m1.main[,.(wm.mean = sum((ES / SE^2)) / sum(1 / SE^2)) , by = ind_code]
 
 > m1.main <- m1.main[-(17:22), ]    #remove row 17:22 (paper Mel22)
 
@@ -50,7 +49,8 @@ ind_code        ES        SE   n     wm.sd   wm.mean
 15:    base saturation  49.61832 4.7385366  37 4.7385366 49.618321
 16:       bulk density -10.00000 0.9631404  27 0.3396137 -9.649734
 
-# Covariates
+
+# Example sheets "Covariates"
 
 > m1.covar <- m1.covar[,.(ind_code, `moderator 1`, `group 1`, `moderator 2`, `group 2`, ES, SE, n)]
 
