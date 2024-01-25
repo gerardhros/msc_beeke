@@ -104,7 +104,7 @@
     So, you start with the results of the main factor analysis, and look how the model performance will become better by adding interactions.
     This might also include adding squared or squared-root transformations to test for non-linear behaviour.
  
-    *meeting 16.01 1:04-1:17 + see notes*
+    *meeting 16.01 see notes*
       Is the model improving? If yes, leave that single parameter in. Next step: add an interaction
       a + b = two main effects
       a * b = a + b + a * b = main effects + the interaction between both
