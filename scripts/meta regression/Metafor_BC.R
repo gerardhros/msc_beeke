@@ -82,8 +82,47 @@ SBD
   library(xlsx)
   write.xlsx(d2, file = "data/d2.xlsx")
   ```
+_______________________________________________________________________________
+  
+## Estimate meta-analytical response measure (ROM Method)
+  
+  
+  ```{r Calculate effect size_ROM}
+  
+  # calculate effect size 
+  # output Excel
 
+Y
+  es21y <- escalc(measure = "MD", data = d2, 
+                 m1i = yr_mean, sd1i = yr_sd, n1i = yr_n,
+                 m2i = yc_mean, sd2i = yc_sd, n2i = yc_n)
+  write.xlsx(es21,file = "data/es21y.xlsx")
+  
+NUE
+  es21nue <- escalc(measure = "MD", data = d2, 
+                 m1i = nuer_mean, sd1i = nuer_sd, n1i = nuer_n,
+                 m2i = nuec_mean, sd2i = nuec_sd, n2i = nuec_n )
+  write.xlsx(es21,file = "data/es21nue.xlsx")
+  
+SOC
+  es21soc <- escalc(measure = "MD", data = d2, 
+                 m1i = socr_mean, sd1i = socr_sd, n1i = socr_n,
+                 m2i = socc_mean, sd2i = socc_sd, n2i = socc_n)
+  write.xlsx(es21,file = "data/es21soc.xlsx")
+  
+pH
+  es21ph <- escalc(measure = "MD", data = d2, 
+                 m1i = phr_mean, sd1i = phr_sd, n1i = phr_n,
+                 m2i = phc_mean, sd2i = phc_sd, n2i = phc_n)
+  write.xlsx(es21,file = "data/es21ph.xlsx")
+  
+SBD
+  es21sbd2 <- escalc(measure = "MD", data = d2, 
+                 m1i = sbdr_mean, sd1i = sbdr_sd, n1i = sbdr_n,
+                 m2i = sbdc_mean, sd2i = sbdc_sd, n2i = sbdc_n)
+  write.xlsx(es21,file = "data/es21sbd.xlsx")
 
+  ```
   
   
   
