@@ -77,7 +77,27 @@ SBD
   d2 <- as.data.table(d2)
   setnames(d2,gsub('\\/','_',gsub(' |\\(|\\)','',colnames(d2))))
   setnames(d2,tolower(colnames(d2)))
-    
+  
+  # change column names
+  colnames(d2)[colnames(d2) == "Soil_texture"] <- "stexture"
+  colnames(d2)[colnames(d2) == "rainfall (mm)"] <- "rain"
+  colnames(d2)[colnames(d2) == "irrigation_amount (mm)"] <- "irr"
+  colnames(d2)[colnames(d2) == "N_fertilizer (kg/ha)"] <- "n_fer"
+  colnames(d2)[colnames(d2) == "P_fertilizer (kg/ha)"] <- "p_fer"
+  colnames(d2)[colnames(d2) == "K_fertilizer (kg/ha)"] <- "k_fer"
+  colnames(d2)[colnames(d2) == "Bulk_density (g/cm3)"] <- "sbd"
+  colnames(d2)[colnames(d2) == "S_pH(water)"] <- "sph"
+  colnames(d2)[colnames(d2) == "S_SOC(g/kg)"] <- "soc"
+  colnames(d2)[colnames(d2) == "S_TN(g/kg)"] <- "stn"
+  colnames(d2)[colnames(d2) == "S_C:N"] <- "scn"
+  colnames(d2)[colnames(d2) == "B_pH(water)"] <- "bph"
+  colnames(d2)[colnames(d2) == "B_TotalC (g/kg)"] <- "btc"
+  colnames(d2)[colnames(d2) == "B_TotalN  (g/kg)"] <- "btn"
+  colnames(d2)[colnames(d2) == "B_C:N"] <- "bcn"
+  colnames(d2)[colnames(d2) == "biochar_rate (t/ha)"] <- "brate"
+  
+  
+  
   #output Excel
   library(xlsx)
   write.xlsx(d2, file = "data/d2.xlsx")
@@ -91,69 +111,88 @@ _______________________________________________________________________________
   
   # calculate effect size 
   # output Excel
+library(metafor)
 
 Y
   es21y <- escalc(measure = "MD", data = d2, 
                  m1i = yr_mean, sd1i = yr_sd, n1i = yr_n,
                  m2i = yc_mean, sd2i = yc_sd, n2i = yc_n)
-  write.xlsx(es21,file = "data/es21y.xlsx")
+  write.xlsx(es21y,file = "data/es21y.xlsx")
   
 NUE
   es21nue <- escalc(measure = "MD", data = d2, 
                  m1i = nuer_mean, sd1i = nuer_sd, n1i = nuer_n,
                  m2i = nuec_mean, sd2i = nuec_sd, n2i = nuec_n )
-  write.xlsx(es21,file = "data/es21nue.xlsx")
+  write.xlsx(es21nue,file = "data/es21nue.xlsx")
   
 SOC
   es21soc <- escalc(measure = "MD", data = d2, 
                  m1i = socr_mean, sd1i = socr_sd, n1i = socr_n,
                  m2i = socc_mean, sd2i = socc_sd, n2i = socc_n)
-  write.xlsx(es21,file = "data/es21soc.xlsx")
+  write.xlsx(es21soc,file = "data/es21soc.xlsx")
   
 pH
   es21ph <- escalc(measure = "MD", data = d2, 
                  m1i = phr_mean, sd1i = phr_sd, n1i = phr_n,
                  m2i = phc_mean, sd2i = phc_sd, n2i = phc_n)
-  write.xlsx(es21,file = "data/es21ph.xlsx")
+  write.xlsx(es21ph,file = "data/es21ph.xlsx")
   
 SBD
-  es21sbd2 <- escalc(measure = "MD", data = d2, 
+  es21sbd <- escalc(measure = "MD", data = d2, 
                  m1i = sbdr_mean, sd1i = sbdr_sd, n1i = sbdr_n,
                  m2i = sbdc_mean, sd2i = sbdc_sd, n2i = sbdc_n)
-  write.xlsx(es21,file = "data/es21sbd.xlsx")
+  write.xlsx(es21sbd,file = "data/es21sbd.xlsx")
 
   ```
 _______________________________________________________________________________
   
 ##scaling of the variables to unit variance
 
-read
-d3 <- copy(d2)
-
+  d3 <- d2
+  
   #numeric values
+  d3[, rainfall := as.numeric(rain)]
+  d3[, irrigation_amountmm := as.numeric(irr)]
+  d3[, n_fertilizerkg_ha := as.numeric(n_fer)]
+  d3[, p_fertilizerkg_ha := as.numeric(p_fer)]
+  d3[, k_fertilizerkg_ha := as.numeric(k_fer)]
+  d3[, bulk_densityg_cm3 := as.numeric(sbd)]
+  d3[, s_phwater := as.numeric(sph)]
+  d3[, s_socg_kg := as.numeric(soc)]
+  d3[, s_tng_kg := as.numeric(stn)]
+  d3[, soc := as.numeric(soc)]
+  d3[, s_c_n := as.numeric(scn)]
+  d3[, b_phwater := as.numeric(bph)]
+  d3[, b_totalcg_kg := as.numeric(btc)]
+  d3[, b_totalng_kg := as.numeric(btn)]
+  d3[, b_c_n := as.numeric(bcn)]
+  d3[, biochar_ratet_ha := as.numeric(brate)]
   
-  d3[, rainfallmm_scaled := scale(rainfallmm)]
-  d3[, irrigation_amountmm_scaled := scale(irrigation_amountmm)]
-  d3[, n_fertilizerkg_ha_scaled := scale(n_fertilizerkg_ha)]
-  d3[, p_fertilizerkg_ha_scaled := scale(p_fertilizerkg_ha)]
-  d3[, k_fertilizerkg_ha_scaled := scale(k_fertilizerkg_ha)]
-  d3[, bulk_densityg_cm3_scaled := scale(bulk_densityg_cm3)]
-  d3[, s_phwater_scaled := scale(s_phwater)]
-  d3[, s_socg_kg_scaled := scale(s_socg_kg)]
-  d3[,s_tng_kg_scaled := scale(s_tng_kg)]
-  d3[,soc_scaled := scale(soc)]
-  d3[,s_c:n_scaled := scale(s_c:n)]
-  d3[,b_phwater_scaled := scale(b_phwater)]
-  d3[,b_totalcg_kg_scaled := scale(b_totalcg_kg)]
-  d3[,b_totalng_kg_scaled := scale(b_totalng_kg)]
-  d3[,b_c:n_scaled := scale(b_c:n)]
-  d3[,biochar_ratet_ha_scaled := scale(biochar_ratet_ha)]
+  #scaling
   
-  #non numeric values
+  d3[, rainfallmm_scaled := scale(rain)]
+  d3[, irrigation_amountmm_scaled := scale(irr)]
+  d3[, n_fertilizerkg_ha_scaled := scale(n_fer)]
+  d3[, p_fertilizerkg_ha_scaled := scale(p_fer)]
+  d3[, k_fertilizerkg_ha_scaled := scale(k_fer)]
+  d3[, bulk_densityg_cm3_scaled := scale(sbd)]
+  d3[, s_phwater_scaled := scale(sph)]
+  d3[, s_socg_kg_scaled := scale(soc)]
+  d3[, s_tng_kg_scaled := scale(stn)]
+  d3[, soc_scaled := scale(soc)]
+  d3[, s_c_n_scaled := scale(scn)]
+  d3[, b_phwater_scaled := scale(bph)]
+  d3[, b_totalcg_kg_scaled := scale(btc)]
+  d3[, b_totalng_kg_scaled := scale(btn)]
+  d3[, b_c_n_scaled := scale(bcn)]
+  d3[, biochar_ratet_ha_scaled := scale(brate)]
   
+  # Non-numeric values 
+  
+  d3[, experiment_type_scaled := scale(experiment_type)]
   d3[, crop_scaled := scale(crop)]
   d3[, crop_type_scaled := scale(crop_type)]
-  d3[, water_magement_scaled := scale(water_magement)]
-  d3[, soil_texture_scaled := scale(soil_texture)]
+  d3[, water_management_scaled := scale(water_magement)]
+  d3[, soil_texture_scaled := scale(stexture)]
   
   

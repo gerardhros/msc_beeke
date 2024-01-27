@@ -4,6 +4,8 @@
   example luncheng 
   d3[is.na(nuet_sd), nuet_sd := mean(d3$nuet_sd/d3$nuet_mean,na.rm=T) * 1.25 * nuet_mean]
   d3[is.na(nuec_sd), nuec_sd := mean(d3$nuec_sd/d3$nuec_mean,na.rm=T) * 1.25 * nuec_mean]
+  
+  
 #calculate the effect size
   escalc is used as a function from the metafor package
   example luncheng
@@ -14,6 +16,8 @@
   m1i = treatment 
   m2i = control
   the original table will be expanded with "yi" and "vi" which is the log response ratio and the variance (SD squared)
+  
+  
 #scaling of the variables to unit variance
   scaling helps to interpret the model parameters
   it changes the value but not the relative differences
@@ -25,6 +29,8 @@
   if one coefficient is higher the parameter is more important (if there are factors of 30 and 20000 you can not interpret the coefficience anymore)
   in the description lateron you have to keep in mind: if e.x. "pH is increasing with 1 SD than NUE in decreasing with ... SD of NUE" Interpretation is within a scaled units
   to make it logic again (for the discussion) you need to unscale the values -> plots of original pH
+  
+  
 #main factor analysis
   in this case: SOC, rainfall, irrigation, crop type, ...
   ##create an (empty) list to store the coefficients
@@ -59,7 +65,7 @@
     retrieve p-value, make p-value numeric and round with 4 decimals( otherwise file becomes too big)
     make a label so you can lateron see what happend -> what was the treatment and I paste with the number of observations
   ##convert list to vector
-    combine the list to one table -> *that table can alredy be part of the report or in form of a table (n, mean, SE, value)*
+    combine the list to one table -> *that table can already be part of the report or in form of a table (n, mean, SE, value)*
     out2 <- rbindlist(out2)
     __________________________
     in my case:
