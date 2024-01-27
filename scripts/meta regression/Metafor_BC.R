@@ -150,26 +150,43 @@ _______________________________________________________________________________
 
   d3 <- d2
   
-  #numeric values
+#numeric values
   
-  d3[, rainfallmm_scaled := scale(rain)]
-  d3[, irrigation_amountmm_scaled := scale(irr)]
-  d3[, n_fertilizerkg_ha_scaled := scale(n_fer)]
-  d3[, p_fertilizerkg_ha_scaled := scale(p_fer)]
-  d3[, k_fertilizerkg_ha_scaled := scale(k_fer)]
-  d3[, bulk_densityg_cm3_scaled := scale(sbd)]
-  d3[, s_phwater_scaled := scale(sph)]
-  d3[, s_socg_kg_scaled := scale(soc)]
-  d3[, s_tng_kg_scaled := scale(stn)]
+  # Convert columns to numeric
+  d3$rain <- as.numeric(d3$rain)
+  d3$irr <- as.numeric(d3$irr)
+  d3$n_fer <- as.numeric(d3$n_fer)
+  d3$p_fer <- as.numeric(d3$p_fer)
+  d3$k_fer <- as.numeric(d3$k_fer)
+  d3$sbd <- as.numeric(d3$sbd)
+  d3$sph <- as.numeric(d3$sph)
+  d3$soc <- as.numeric(d3$soc)
+  d3$stn <- as.numeric(d3$stn)
+  d3$scn <- as.numeric(d3$scn)
+  d3$bph <- as.numeric(d3$bph)
+  d3$btc <- as.numeric(d3$btc)
+  d3$btn <- as.numeric(d3$btn)
+  d3$bcn <- as.numeric(d3$bcn)
+  d3$brate <- as.numeric(d3$brate)
+  
+  # scale function
+  d3[, rain_scaled := scale(rain)]
+  d3[, irr_scaled := scale(irr)]
+  d3[, n_fer_scaled := scale(n_fer)]
+  d3[, p_fer_scaled := scale(p_fer)]
+  d3[, k_fer_scaled := scale(k_fer)]
+  d3[, sbd_scaled := scale(sbd)]
+  d3[, sph_scaled := scale(sph)]
   d3[, soc_scaled := scale(soc)]
-  d3[, s_c_n_scaled := scale(scn)]
-  d3[, b_phwater_scaled := scale(bph)]
-  d3[, b_totalcg_kg_scaled := scale(btc)]
-  d3[, b_totalng_kg_scaled := scale(btn)]
-  d3[, b_c_n_scaled := scale(bcn)]
-  d3[, biochar_ratet_ha_scaled := scale(brate)]
+  d3[, stn_scaled := scale(stn)]
+  d3[, scn_scaled := scale(scn)]
+  d3[, bph_scaled := scale(bph)]
+  d3[, btc_scaled := scale(btc)]
+  d3[, btn_scaled := scale(btn)]
+  d3[, bcn_scaled := scale(bcn)]
+  d3[, brate_scaled := scale(brate)]
   
-  # Non-numeric values 
+# Non-numeric values 
   
   d3[, experiment_type_scaled := scale(experiment_type)]
   d3[, crop_scaled := scale(crop)]
@@ -177,7 +194,7 @@ _______________________________________________________________________________
   d3[, water_management_scaled := scale(water_magement)]
   d3[, soil_texture_scaled := scale(stexture)]
   
-  
+_______________________________________________________________________________  
   
   
   
@@ -223,19 +240,5 @@ _______________________________________________________________________________
   d2 <- subset(d2, select = -c(b_c_n_scaled))
   d2 <- subset(d2, select = -c(biochar_ratet_ha_scaled))
 
-  d3[, rain_scaled := scale(rain)]
-  d3[, irr_scaled := scale(irr)]
-  d3[, n_fer_scaled := scale(n_fer)]
-  d3[, p_fer_scaled := scale(p_fer)]
-  d3[, k_fer_scaled := scale(k_fer)]
-  d3[, sbd_scaled := scale(sbd)]
-  d3[, sph_scaled := scale(sph)]
-  d3[, soc_scaled := scale(soc)]
-  d3[, stn_scaled := scale(stn)]
-  d3[, scn_scaled := scale(scn)]
-  d3[, bph_scaled := scale(bph)]
-  d3[, btc_scaled := scale(btc)]
-  d3[, btn_scaled := scale(btn)]
-  d3[, bcn_scaled := scale(bcn)]
-  d3[, brate_scaled := scale(brate)]
+  
 
