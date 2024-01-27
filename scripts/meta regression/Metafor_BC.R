@@ -151,24 +151,6 @@ _______________________________________________________________________________
   d3 <- d2
   
   #numeric values
-  d3[, rainfall := as.numeric(rain)]
-  d3[, irrigation_amountmm := as.numeric(irr)]
-  d3[, n_fertilizerkg_ha := as.numeric(n_fer)]
-  d3[, p_fertilizerkg_ha := as.numeric(p_fer)]
-  d3[, k_fertilizerkg_ha := as.numeric(k_fer)]
-  d3[, bulk_densityg_cm3 := as.numeric(sbd)]
-  d3[, s_phwater := as.numeric(sph)]
-  d3[, s_socg_kg := as.numeric(soc)]
-  d3[, s_tng_kg := as.numeric(stn)]
-  d3[, soc := as.numeric(soc)]
-  d3[, s_c_n := as.numeric(scn)]
-  d3[, b_phwater := as.numeric(bph)]
-  d3[, b_totalcg_kg := as.numeric(btc)]
-  d3[, b_totalng_kg := as.numeric(btn)]
-  d3[, b_c_n := as.numeric(bcn)]
-  d3[, biochar_ratet_ha := as.numeric(brate)]
-  
-  #scaling
   
   d3[, rainfallmm_scaled := scale(rain)]
   d3[, irrigation_amountmm_scaled := scale(irr)]
@@ -196,3 +178,64 @@ _______________________________________________________________________________
   d3[, soil_texture_scaled := scale(stexture)]
   
   
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  d2 <- subset(d2, select = -c(irrigation_amountmm))
+  d2 <- subset(d2, select = -c(n_fertilizerkg_ha))
+  d2 <- subset(d2, select = -c(p_fertilizerkg_ha))
+  d2 <- subset(d2, select = -c(k_fertilizerkg_ha))
+  d2 <- subset(d2, select = -c(bulk_densityg_cm3))
+  d2 <- subset(d2, select = -c(s_phwater))
+  d2 <- subset(d2, select = -c(s_socg_kg))
+  d2 <- subset(d2, select = -c(s_tng_kg))
+  d2 <- subset(d2, select = -c(s_c_n))
+  d2 <- subset(d2, select = -c(b_phwater))
+  d2 <- subset(d2, select = -c(b_totalcg_kg))
+  d2 <- subset(d2, select = -c(b_totalng_kg))
+  d2 <- subset(d2, select = -c(b_c_n))
+  d2 <- subset(d2, select = -c(biochar_ratet_ha))
+  
+  
+  d2 <- subset(d2, select = -c(p_fertilizer_kg_ha_scaled))
+  d2 <- subset(d2, select = -c(irrigation_amountmm_scaled))
+  d2 <- subset(d2, select = -c(p_fertilizerkg_ha_scaled))
+  d2 <- subset(d2, select = -c(k_fertilizerkg_ha_scaled))
+  d2 <- subset(d2, select = -c(bulk_densityg_cm3_scaled))
+  d2 <- subset(d2, select = -c(s_socg_kg_scaled))
+  d2 <- subset(d2, select = -c(s_tng_kg_scaled))
+  d2 <- subset(d2, select = -c(soc_scaled))
+  d2 <- subset(d2, select = -c(s_c_n_scaled))
+  d2 <- subset(d2, select = -c(b_phwater_scaled))
+  d2 <- subset(d2, select = -c(b_totalcg_kg_scaled))
+  d2 <- subset(d2, select = -c(b_totalng_kg_scaled))
+  d2 <- subset(d2, select = -c(b_c_n_scaled))
+  d2 <- subset(d2, select = -c(biochar_ratet_ha_scaled))
+
+  d3[, rain_scaled := scale(rain)]
+  d3[, irr_scaled := scale(irr)]
+  d3[, n_fer_scaled := scale(n_fer)]
+  d3[, p_fer_scaled := scale(p_fer)]
+  d3[, k_fer_scaled := scale(k_fer)]
+  d3[, sbd_scaled := scale(sbd)]
+  d3[, sph_scaled := scale(sph)]
+  d3[, soc_scaled := scale(soc)]
+  d3[, stn_scaled := scale(stn)]
+  d3[, scn_scaled := scale(scn)]
+  d3[, bph_scaled := scale(bph)]
+  d3[, btc_scaled := scale(btc)]
+  d3[, btn_scaled := scale(btn)]
+  d3[, bcn_scaled := scale(bcn)]
+  d3[, brate_scaled := scale(brate)]
+
