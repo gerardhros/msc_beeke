@@ -27,7 +27,7 @@ This is an R Markdown document. Markdown is a simple formatting syntax for autho
   
   ```{r Supplement the standard deviation missing value_Common Method}
   
-  d2<-d1
+d2 <- d1
 
 NUE
 
@@ -123,6 +123,37 @@ SBD
   write.xlsx(es21,file = "data/es21sbd.xlsx")
 
   ```
+_______________________________________________________________________________
   
+##scaling of the variables to unit variance
+
+read
+d3 <- copy(d2)
+
+  #numeric values
+  
+  d3[, rainfallmm_scaled := scale(rainfallmm)]
+  d3[, irrigation_amountmm_scaled := scale(irrigation_amountmm)]
+  d3[, n_fertilizerkg_ha_scaled := scale(n_fertilizerkg_ha)]
+  d3[, p_fertilizerkg_ha_scaled := scale(p_fertilizerkg_ha)]
+  d3[, k_fertilizerkg_ha_scaled := scale(k_fertilizerkg_ha)]
+  d3[, bulk_densityg_cm3_scaled := scale(bulk_densityg_cm3)]
+  d3[, s_phwater_scaled := scale(s_phwater)]
+  d3[, s_socg_kg_scaled := scale(s_socg_kg)]
+  d3[,s_tng_kg_scaled := scale(s_tng_kg)]
+  d3[,soc_scaled := scale(soc)]
+  d3[,s_c:n_scaled := scale(s_c:n)]
+  d3[,b_phwater_scaled := scale(b_phwater)]
+  d3[,b_totalcg_kg_scaled := scale(b_totalcg_kg)]
+  d3[,b_totalng_kg_scaled := scale(b_totalng_kg)]
+  d3[,b_c:n_scaled := scale(b_c:n)]
+  d3[,biochar_ratet_ha_scaled := scale(biochar_ratet_ha)]
+  
+  #non numeric values
+  
+  d3[, crop_scaled := scale(crop)]
+  d3[, crop_type_scaled := scale(crop_type)]
+  d3[, water_magement_scaled := scale(water_magement)]
+  d3[, soil_texture_scaled := scale(soil_texture)]
   
   
