@@ -196,49 +196,117 @@ _______________________________________________________________________________
   
 _______________________________________________________________________________  
   
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  d2 <- subset(d2, select = -c(irrigation_amountmm))
-  d2 <- subset(d2, select = -c(n_fertilizerkg_ha))
-  d2 <- subset(d2, select = -c(p_fertilizerkg_ha))
-  d2 <- subset(d2, select = -c(k_fertilizerkg_ha))
-  d2 <- subset(d2, select = -c(bulk_densityg_cm3))
-  d2 <- subset(d2, select = -c(s_phwater))
-  d2 <- subset(d2, select = -c(s_socg_kg))
-  d2 <- subset(d2, select = -c(s_tng_kg))
-  d2 <- subset(d2, select = -c(s_c_n))
-  d2 <- subset(d2, select = -c(b_phwater))
-  d2 <- subset(d2, select = -c(b_totalcg_kg))
-  d2 <- subset(d2, select = -c(b_totalng_kg))
-  d2 <- subset(d2, select = -c(b_c_n))
-  d2 <- subset(d2, select = -c(biochar_ratet_ha))
-  
-  
-  d2 <- subset(d2, select = -c(p_fertilizer_kg_ha_scaled))
-  d2 <- subset(d2, select = -c(irrigation_amountmm_scaled))
-  d2 <- subset(d2, select = -c(p_fertilizerkg_ha_scaled))
-  d2 <- subset(d2, select = -c(k_fertilizerkg_ha_scaled))
-  d2 <- subset(d2, select = -c(bulk_densityg_cm3_scaled))
-  d2 <- subset(d2, select = -c(s_socg_kg_scaled))
-  d2 <- subset(d2, select = -c(s_tng_kg_scaled))
-  d2 <- subset(d2, select = -c(soc_scaled))
-  d2 <- subset(d2, select = -c(s_c_n_scaled))
-  d2 <- subset(d2, select = -c(b_phwater_scaled))
-  d2 <- subset(d2, select = -c(b_totalcg_kg_scaled))
-  d2 <- subset(d2, select = -c(b_totalng_kg_scaled))
-  d2 <- subset(d2, select = -c(b_c_n_scaled))
-  d2 <- subset(d2, select = -c(biochar_ratet_ha_scaled))
+# make forest plots per group treatments
 
+  ```{
+    r forest plot per site_factor_ROM,warning=FALSE
+  }
+
+library(metafor)
+  
+  
+Yield (y)
+
+# convert to data.tables
+  d4y <- as.data.table(es21y)
+
+# what are the site specific parameters to be assessed
+  d4y <- data.table(site_factors =  c('ALL',unique(d02$tillage)))
+
+# what are labels
+  
+  # Create a data frame for forest plot
+  d_forest <- data.table(
+    stexture = d2$stexture,
+    experiment_type = d2$experiment_type,
+    crop = d2$crop,
+    crop_type = d2$crop_type,
+    water_management = d2$water_management,
+    rain = d2$rain,
+    irr = d2$irr,
+    n_fer = d2$n_fer,
+    p_fer = d2$p_fer,
+    k_fer = d2$k_fer,
+    sbd = d2$sbd,
+    sph = d2$sph,
+    soc = d2$soc,
+    stn = d2$stn,
+    scn = d2$scn,
+    bph = d2$bph,
+    btc = d2$btc,
+    btn = d2$btn,
+    bcn = d2$bcn,
+    brate = d2$brate,
+  )
+  
+  # Run Forest Plot for Yield
+  forest(
+    yi = d_forest$yc_mean,   # Assuming yc_mean is the yield mean column
+    vi = d_forest$yc_sd,     # Assuming yc_sd is the yield standard deviation column
+    slab = d_forest$stexture,
+    psize = 0.9,
+    cex = 1,
+    xlab = "Change in Yield",
+    header = "Site-Specific Factors",
+    col = "#CC0000",
+    lwd = 2
+  )
+  
+  
+  
+  
+  
+  
+  d02.treat[treatment=='ALL',desc := 'All']
+  d02.treat[treatment=='EE',desc := 'Enhanced Efficiency']
+  d02.treat[treatment=='CF',desc := 'Combined fertilizer']
+  d02.treat[treatment=='RES',desc := 'Residue retention']
+  d02.treat[treatment=='RFP',desc := 'Fertilizer placement']
+  d02.treat[treatment=='RFR',desc := 'Fertilizer rate']
+  d02.treat[treatment=='ROT',desc := 'Crop rotation']
+  d02.treat[treatment=='RFT',desc := 'Fertilizer timing']
+  d02.treat[treatment=='OF',desc := 'Organic fertilizer']
+  d02.treat[treatment=='RT',desc := 'Reduced tillage']
+  d02.treat[treatment=='NT',desc := 'No tillage']
+  d02.treat[treatment=='CC',desc := 'Crop cover']
+  d02.treat[treatment=='BC',desc := 'Biochar']
+
+# a list to store the coefficients
+  out2 = out3 = list()
+
+# make a for loop to do a main analysis per treatment
+  for(i in d02.treat$treatment){
+  
+  if(i=='ALL'){
+    
+    # run without selection to estimate overall mean
+    r_nue <- rma.mv(yi,vi, data=d02,random= list(~ 1|studyid), method="REML",sparse = TRUE)
+    
+  } else {
+    
+    # run for selected treatment
+    r_nue <- rma.mv(yi,vi, data=d02[tillage==i,],random= list(~ 1|studyid), method="REML",sparse = TRUE)
+    
+  }
+  
+  # save output in a list
+  out2[[i]] <- data.table(mean = as.numeric(r_nue$b),
+                          se = as.numeric(r_nue$se),
+                          label =  paste0(d02.treat[treatment==i,desc],' (n=',r_nue$k,')')
+  )
+  }
+
+# convert lists to vector
+  out2 <- rbindlist(out2)
+
+# plot for NUE
+  forest(out2$mean, out2$se, slab=out2$label, psize=0.9, cex=1, xlab="Change in NUE (%)", header="Treatment", col="#CC0000", lwd=2)
+  
+  
+  ```
+_______________________________________________________________________________
+
+
+  
   
 
