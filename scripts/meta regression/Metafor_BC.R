@@ -15,56 +15,11 @@
   d1 <- read_excel("data/meta_regression/meta_regression_copy2.xlsx", sheet = 1)
   d1 <- as.data.table(d1)
   
+#_______________________________________________________________________________
 
-## Supplement the SD when missing
+##organize original data
+  d2 <- copy(d1)  
   
-d2 <- copy(d1)
-
-
-#NUE
-
-  # Identify missing SD values (both NA and empty string) for NUEC_SD
-    missing_sd_nuer <- is.na(d2$NUER_SD) | d2$NUER_SD == ""
-    missing_sd_nuec <- is.na(d2$NUEC_SD) | d2$NUEC_SD == ""
-  
-  # Calculate mean CV for non-missing values for NUEC_SD
-    CV_NUEr <- mean(d2$NUER_SD[!missing_sd_nuer] / d2$NUER_mean[!missing_sd_nuer], na.rm = TRUE)
-    CV_NUEc <- mean(d2$NUEC_SD[!missing_sd_nuec] / d2$NUEC_mean[!missing_sd_nuec], na.rm = TRUE)
-  
-  # Impute missing SD values based on the mean CV for NUEC_SD
-    d2$NUER_SD[missing_sd_nuer] <- d2$NUER_mean[missing_sd_nuer] * 1.25 * CV_NUEr
-    d2$NUEC_SD[missing_sd_nuec] <- d2$NUEC_mean[missing_sd_nuec] * 1.25 * CV_NUEc
-    
-#SOC   
-
-    missing_sd_socc <- is.na(d2$SOCC_SD) | d2$SOCC_SD == ""
-    CV_socc <- mean(d2$SOCC_SD[!missing_sd_socc] / d2$SOCC_mean[!missing_sd_socc], na.rm = TRUE)
-    d2$SOCC_SD[missing_sd_socc] <- d2$SOCC_mean[missing_sd_socc] * 1.25 * CV_socc
-     
-    missing_sd_socr <- is.na(d2$SOCR_SD) | d2$SOCR_SD == ""
-    CV_socr <- mean(d2$SOCR_SD[!missing_sd_socr] / d2$SOCR_mean[!missing_sd_socr], na.rm = TRUE)
-    d2$SOCR_SD[missing_sd_socr] <- d2$SOCR_mean[missing_sd_socr] * 1.25 * CV_socr
-
-#pH
-
-    missing_sd_phc <- is.na(d2$pHC_SD) | d2$pHC_SD == ""
-    CV_phc <- mean(d2$pHC_SD[!missing_sd_phc] / d2$pHC_mean[!missing_sd_phc], na.rm = TRUE)
-    d2$pHC_SD[missing_sd_phc] <- d2$pHC_mean[missing_sd_phc] * 1.25 * CV_phc
-    
-    missing_sd_phr <- is.na(d2$pHR_SD) | d2$pHR_SD == ""
-    CV_phr <- mean(d2$pHR_SD[!missing_sd_phr] / d2$pHR_mean[!missing_sd_phr], na.rm = TRUE)
-    d2$pHR_SD[missing_sd_phr] <- d2$pHR_mean[missing_sd_phr] * 1.25 * CV_phr
-
-#SBD
-
-    missing_sd_sbdc <- is.na(d2$SBDC_SD) | d2$SBDC_SD == ""
-    CV_sbdc <- mean(d2$SBDC_SD[!missing_sd_sbdc] / d2$SBDC_mean[!missing_sd_sbdc], na.rm = TRUE)
-    d2$SBDC_SD[missing_sd_sbdc] <- d2$SBDC_mean[missing_sd_sbdc] * 1.25 * CV_sbdc
-    
-    missing_sd_sbdr <- is.na(d2$SBDR_SD) | d2$SBDR_SD == ""
-    CV_sbdr <- mean(d2$SBDR_SD[!missing_sd_sbdr] / d2$SBDR_mean[!missing_sd_sbdr], na.rm = TRUE)
-    d2$SBDR_SD[missing_sd_sbdr] <- d2$SBDR_mean[missing_sd_sbdr] * 1.25 * CV_sbdr
-
   # clean up column names
   d2 <- as.data.table(d2)
   setnames(d2,gsub('\\/','_',gsub(' |\\(|\\)','',colnames(d2))))
@@ -72,22 +27,19 @@ d2 <- copy(d1)
   
   # change column names
   setnames(d2,
-           old = c("irrigation_amount (mm)", "N_fertilizer (kg/ha)", "P_fertilizer (kg/ha)",
-                   "K_fertilizer (kg/ha)", "Bulk_density (g/cm3)", "S_pH(water)", "S_SOC(g/kg)",
-                   "S_TN(g/kg)", "S_C:N", "B_pH(water)", "B_TotalC (g/kg)", "B_TotalN  (g/kg)",
-                   "B_C:N", "biochar_rate (t/ha)"),
-           new = c("irr", "n_fer", "p_fer", "k_fer", "sbd", "sph", "soc", "stn", "scn",
+           old = c("rainfallmm", "irrigation_amountmm", "n_fertilizerkg_ha", "p_fertilizerkg_ha",
+                   "k_fertilizerkg_ha", "bulk_densityg_cm3", "s_phwater", "s_socg_kg",
+                   "s_tng_kg", "s_c:n", "b_phwater", "b_totalcg_kg", "b_totalng_kg",
+                   "b_c:n", "biochar_ratet_ha"),
+           new = c("rain", "irr", "n_fer", "p_fer", "k_fer", "sbd", "sph", "soc", "stn", "scn",
                    "bph", "btc", "btn", "bcn", "brate"),
            skip_absent = TRUE)
   
-  
-  #output Excel
-  library(xlsx)
-  fwrite(d2, file = "data/d2.csv")
+  # update the missing values site parameters
+  d2[is.na(rain), rain := median(d2$rain,na.rm=TRUE)]
+  d2[is.na(irr), irr := median(d2$irr,na.rm=TRUE)]
 
-#_______________________________________________________________________________
-
-#modify the unit for field studies and grain to kg/ha:
+  #modify the unit for field studies and grain to kg/ha:
   
   d2[crop_type == "grain" & yc_mean <= 100 & experiment_type == "field", yc_sd := yc_sd * 1000]
   d2[crop_type == "grain" & yc_mean <= 100 & experiment_type == "field", yc_mean := yc_mean * 1000]
@@ -103,6 +55,60 @@ d2 <- copy(d1)
   d2[crop_type == "vegetable" & yc_mean <= 300 & experiment_type == "field", yc_mean := yc_mean * 100]
   d2[crop_type == "vegetable" & yr_mean <= 300 & experiment_type == "field", yr_sd := yr_sd * 100]
   d2[crop_type == "vegetable" & yr_mean <= 300 & experiment_type == "field", yr_mean := yr_mean * 100]
+  
+  
+  #output Excel
+  library(xlsx)
+  fwrite(d2, file = "data/d2.csv")
+#_______________________________________________________________________________
+
+## Supplement the SD when missing
+  
+  # NUE
+  
+  # Identify missing SD values (both NA and empty string) for NUEC_SD
+  missing_sd_nuer <- is.na(d2$nuer_sd) | d2$nuer_sd == ""
+  missing_sd_nuec <- is.na(d2$nuec_sd) | d2$nuec_sd == ""
+  
+  # Calculate mean CV for non-missing values for NUEC_SD
+  CV_NUEr <- mean(d2$nuer_sd[!missing_sd_nuer] / d2$nuer_mean[!missing_sd_nuer], na.rm = TRUE)
+  CV_NUEc <- mean(d2$nuec_sd[!missing_sd_nuec] / d2$nuec_mean[!missing_sd_nuec], na.rm = TRUE)
+  
+  # Impute missing SD values based on the mean CV for NUEC_SD
+  d2$nuer_sd[missing_sd_nuer] <- d2$nuer_mean[missing_sd_nuer] * 1.25 * CV_NUEr
+  d2$nuec_sd[missing_sd_nuec] <- d2$nuec_mean[missing_sd_nuec] * 1.25 * CV_NUEc
+  
+  # SOC
+  
+  missing_sd_socc <- is.na(d2$socc_sd) | d2$socc_sd == ""
+  CV_socc <- mean(d2$socc_sd[!missing_sd_socc] / d2$socc_mean[!missing_sd_socc], na.rm = TRUE)
+  d2$socc_sd[missing_sd_socc] <- d2$socc_mean[missing_sd_socc] * 1.25 * CV_socc
+  
+  missing_sd_socr <- is.na(d2$socr_sd) | d2$socr_sd == ""
+  CV_socr <- mean(d2$socr_sd[!missing_sd_socr] / d2$socr_mean[!missing_sd_socr], na.rm = TRUE)
+  d2$socr_sd[missing_sd_socr] <- d2$socr_mean[missing_sd_socr] * 1.25 * CV_socr
+  
+  # pH
+  
+  missing_sd_phc <- is.na(d2$phc_sd) | d2$phc_sd == ""
+  CV_phc <- mean(d2$phc_sd[!missing_sd_phc] / d2$phc_mean[!missing_sd_phc], na.rm = TRUE)
+  d2$phc_sd[missing_sd_phc] <- d2$phc_mean[missing_sd_phc] * 1.25 * CV_phc
+  
+  missing_sd_phr <- is.na(d2$phr_sd) | d2$phr_sd == ""
+  CV_phr <- mean(d2$phr_sd[!missing_sd_phr] / d2$phr_mean[!missing_sd_phr], na.rm = TRUE)
+  d2$phr_sd[missing_sd_phr] <- d2$phr_mean[missing_sd_phr] * 1.25 * CV_phr
+  
+  # SBD
+  
+  missing_sd_sbdc <- is.na(d2$sbdc_sd) | d2$sbdc_sd == ""
+  CV_sbdc <- mean(d2$sbdc_sd[!missing_sd_sbdc] / d2$sbdc_mean[!missing_sd_sbdc], na.rm = TRUE)
+  d2$sbdc_sd[missing_sd_sbdc] <- d2$sbdc_mean[missing_sd_sbdc] * 1.25 * CV_sbdc
+  
+  missing_sd_sbdr <- is.na(d2$sbdr_sd) | d2$sbdr_sd == ""
+  CV_sbdr <- mean(d2$sbdr_sd[!missing_sd_sbdr] / d2$sbdr_mean[!missing_sd_sbdr], na.rm = TRUE)
+  d2$sbdr_sd[missing_sd_sbdr] <- d2$sbdr_mean[missing_sd_sbdr] * 1.25 * CV_sbdr
+  
+#_______________________________________________________________________________
   
 ## Estimate meta-analytical response measure (MD Method)
   
@@ -212,8 +218,8 @@ hist_fruit <- hist(d2$yr_mean[d2$experiment_type == "field" & d2$crop_type == "f
 hist_industrial <- hist(d2$yc_mean[d2$experiment_type == "field" & d2$crop_type == "industrial"])
 hist_industrial <- hist(d2$yr_mean[d2$experiment_type == "field" & d2$crop_type == "industrial"])  
 
-hist_legumes <- hist(d2$yc_mean[d2$experiment_type == "field" & d2$crop_type == "legumes"] & d2$crop != "cowpea")
-hist_legumes <- hist(d2$yr_mean[d2$experiment_type == "field" & d2$crop_type == "legumes"] & d2$crop != "cowpea")  
+hist_legumes <- hist(d2$yc_mean[d2$experiment_type == "field" & d2$crop_type == "legumes"])
+hist_legumes <- hist(d2$yr_mean[d2$experiment_type == "field" & d2$crop_type == "legumes"])  
 
 hist_peanut <- hist(d2$yc_mean[d2$experiment_type == "field" & d2$crop == "peanut"])
 hist_peanut <- hist(d2$yr_mean[d2$experiment_type == "field" & d2$crop == "peanut"])
@@ -227,56 +233,38 @@ hist_vegetable <- hist(d2$yr_mean[d2$experiment_type == "field" & d2$crop_type =
 hist_others <- hist(d2$yc_mean[d2$experiment_type == "field" & d2$crop_type == "others"])
 hist_others <- hist(d2$yr_mean[d2$experiment_type == "field" & d2$crop_type == "others"])
 
+#_______________________________________________________________________________
+
+##ggplot for field studies and crop_type == "grain"
+
+es21y = as.data.table(es21y)
+#filter the data set and only select the data where yi is missing
+es21y_grain = es21y[!is.na(yi) & experiment_type == "field" & crop_type == "grain"]
+setorder(es21y_grain,-yi)
+es21y_grain[,id:=.I]
+es21y_grain[,yi_cor := (exp(yi)-1)*100]
+es21y_grain[,vi_cor := (exp(vi)-1)*100]
+library(ggplot2)
+ggplot(data=es21y_grain,aes(x=id,y=yi)) + geom_line() + geom_errorbar( aes(x=id, ymin=yi-sqrt(vi), ymax=yi+sqrt(vi)), width=0.4, colour="orange", alpha=0.9, linewidth=1.3) + theme_bw() + ggtitle('crop yield response to biochar addition on grain crop') + xlab("study-id") + ylab("log response ratio")  
+
+##forest plot
 
 res <- rma(yi, vi, data=es21y)
 forest(res)
-es21y = as.data.table(es21y)
-#filter the data set and only select the data where yi is missing
-es21y = es21y[!is.na(yi) & experiment_type == "field" & crop_type == "grain"]
-setorder(es21y,-yi)
-es21y[,id:=.I]
-es21y[,yi_cor := (exp(yi)-1)*100]
-es21y[,vi_cor := (exp(vi)-1)*100]
-library(ggplot2)
-ggplot(data=es21y,aes(x=id,y=yi)) + geom_line() + geom_errorbar( aes(x=id, ymin=yi-sqrt(vi), ymax=yi+sqrt(vi)), width=0.4, colour="orange", alpha=0.9, linewidth=1.3)
-  
 
-es21y = es21y[!is.na(yi) & experiment_type == "field" & crop_type == "grain"]
+#_______________________________________________________________________________
 
+##main factor analysis for log response ratio for yield
 
-#creating a histogram per crop
-hist(d2$yc_mean)
-hist(d2$yc_mean, n=500)
-hist(d2$yc_mean, n=500, xlim=c(0,10000))
+dy_grain <- copy(es21y_grain)
 
-#just for the crop "maize"
-hist(da$YC_mean[da$crop == "maize"])
-
-#convert yield unit to kg/ha
-
-d2[yc_mean<=100,yc_sd:=yc_sd*1000]
-d2[yc_mean<=100,yc_mean:=yc_mean*1000]
-d2[yr_mean<=100,yr_sd:=yr_sd*1000]
-d2[yr_mean<=100,yr_mean:=yr_mean*1000]
-
-# convert one specific crop (barley)
-library(data.table)
-setDT(da)
-da[da$crop == "barley" & da$YC_mean <= 100, c("YC_mean", "YC_SD") := .(YC_mean * 1000, YC_SD * 1000)]
-da[da$crop == "barley" & da$YR_mean <= 100, c("YR_mean", "YR_SD") := .(YR_mean * 1000, YR_SD * 1000)]
-View(da[crop == "barley"])
+# update the missing values site parameters
+dy_grain[is.na(irr), irr := median(dy_grain$irr,na.rm=TRUE)]
 
 
 
 
 
-_______________________________________________________________________________
-
-## Estimate meta-analytical response measure (MD Method)
-
-# calculate effect size 
-
-library(metafor)
 
 
 
