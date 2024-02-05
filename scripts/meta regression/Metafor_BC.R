@@ -28,16 +28,30 @@
   # change column names
   setnames(d2,
            old = c("rainfallmm", "irrigation_amountmm", "n_fertilizerkg_ha", "p_fertilizerkg_ha",
-                   "k_fertilizerkg_ha", "bulk_densityg_cm3", "s_phwater", "s_socg_kg",
+                   "k_fertilizerkg_ha", "soil_texture", "bulk_densityg_cm3", "s_phwater", "s_socg_kg",
                    "s_tng_kg", "s_c:n", "b_phwater", "b_totalcg_kg", "b_totalng_kg",
                    "b_c:n", "biochar_ratet_ha"),
-           new = c("rain", "irr", "n_fer", "p_fer", "k_fer", "sbd", "sph", "soc", "stn", "scn",
+           new = c("rain", "irr", "n_fer", "p_fer", "k_fer", "texture", "sbd", "sph", "soc", "stn", "scn",
                    "bph", "btc", "btn", "bcn", "brate"),
            skip_absent = TRUE)
   
   # update the missing values site parameters
   d2[is.na(rain), rain := median(d2$rain,na.rm=TRUE)]
   d2[is.na(irr), irr := median(d2$irr,na.rm=TRUE)]
+  d2[is.na(n_fer), n_fer := median(d2$n_fer,na.rm=TRUE)]
+  d2[is.na(p_fer), p_fer := median(d2$p_fer,na.rm=TRUE)]
+  d2[is.na(k_fer), k_fer := median(d2$k_fer,na.rm=TRUE)]
+  d2[is.na(sbd), sbd := median(d2$sbd,na.rm=TRUE)]
+  d2[is.na(sph), sph := median(d2$sph,na.rm=TRUE)]
+  d2[is.na(soc), soc := median(d2$soc,na.rm=TRUE)]
+  d2[is.na(stn), stn := median(d2$stn,na.rm=TRUE)]
+  d2[is.na(scn), scn := median(d2$scn,na.rm=TRUE)]
+  d2[is.na(bph), bph := median(d2$bph,na.rm=TRUE)]
+  d2[is.na(btc), btc := median(d2$btc,na.rm=TRUE)]
+  d2[is.na(btn), btn := median(d2$btn,na.rm=TRUE)]
+  d2[is.na(bcn), bcn := median(d2$bcn,na.rm=TRUE)]
+  d2[is.na(brate), brate := median(d2$brate,na.rm=TRUE)]
+  
 
   #modify the unit for field studies and grain to kg/ha:
   
@@ -56,10 +70,6 @@
   d2[crop_type == "vegetable" & yr_mean <= 300 & experiment_type == "field", yr_sd := yr_sd * 100]
   d2[crop_type == "vegetable" & yr_mean <= 300 & experiment_type == "field", yr_mean := yr_mean * 100]
   
-  
-  #output Excel
-  library(xlsx)
-  fwrite(d2, file = "data/d2.csv")
 #_______________________________________________________________________________
 
 ## Supplement the SD when missing
@@ -108,6 +118,9 @@
   CV_sbdr <- mean(d2$sbdr_sd[!missing_sd_sbdr] / d2$sbdr_mean[!missing_sd_sbdr], na.rm = TRUE)
   d2$sbdr_sd[missing_sd_sbdr] <- d2$sbdr_mean[missing_sd_sbdr] * 1.25 * CV_sbdr
   
+  #output Excel
+  library(xlsx)
+  fwrite(d2, file = "data/d2.csv")
 #_______________________________________________________________________________
   
 ## Estimate meta-analytical response measure (MD Method)
@@ -120,31 +133,31 @@ library(metafor)
   es21y <- escalc(measure = "MD", data = d2, 
                  m1i = yr_mean, sd1i = yr_sd, n1i = yr_n,
                  m2i = yc_mean, sd2i = yc_sd, n2i = yc_n)
-  #write.xlsx(es21y,file = "data/es21y.xlsx")
+  fwrite(es21y, file = "data/es21y.csv")
   
   #NUE
   es21nue <- escalc(measure = "MD", data = d2, 
                     m1i = nuer_mean, sd1i = nuer_sd, n1i = nuer_n,
                     m2i = nuec_mean, sd2i = nuec_sd, n2i = nuec_n )
-  #write.xlsx(es21nue,file = "data/es21nue.xlsx")
+  fwrite(es21nue, file = "data/es21nue.csv")
   
   #SOC
   es21soc <- escalc(measure = "MD", data = d2, 
                     m1i = socr_mean, sd1i = socr_sd, n1i = socr_n,
                     m2i = socc_mean, sd2i = socc_sd, n2i = socc_n)
-  #write.xlsx(es21soc,file = "data/es21soc.xlsx")
+  fwrite(es21soc, file = "data/es21soc.csv")
   
   #pH
   es21ph <- escalc(measure = "MD", data = d2, 
                    m1i = phr_mean, sd1i = phr_sd, n1i = phr_n,
                    m2i = phc_mean, sd2i = phc_sd, n2i = phc_n)
-  #write.xlsx(es21ph,file = "data/es21ph.xlsx")
+  fwrite(es21ph, file = "data/es21ph.csv")
   
   #SBD
   es21sbd <- escalc(measure = "MD", data = d2, 
                     m1i = sbdr_mean, sd1i = sbdr_sd, n1i = sbdr_n,
                     m2i = sbdc_mean, sd2i = sbdc_sd, n2i = sbdc_n)
-  #write.xlsx(es21sbd,file = "data/es21sbd.xlsx")    
+  fwrite(es21sbd, file = "data/es21sbd.csv")  
 #_______________________________________________________________________________
   
 ##scaling of the variables to unit variance
@@ -237,20 +250,69 @@ hist_others <- hist(d2$yr_mean[d2$experiment_type == "field" & d2$crop_type == "
 
 ##ggplot for field studies and crop_type == "grain"
 
-es21y = as.data.table(es21y)
-#filter the data set and only select the data where yi is missing
-es21y_grain = es21y[!is.na(yi) & experiment_type == "field" & crop_type == "grain"]
-setorder(es21y_grain,-yi)
-es21y_grain[,id:=.I]
-es21y_grain[,yi_cor := (exp(yi)-1)*100]
-es21y_grain[,vi_cor := (exp(vi)-1)*100]
-library(ggplot2)
-ggplot(data=es21y_grain,aes(x=id,y=yi)) + geom_line() + geom_errorbar( aes(x=id, ymin=yi-sqrt(vi), ymax=yi+sqrt(vi)), width=0.4, colour="orange", alpha=0.9, linewidth=1.3) + theme_bw() + ggtitle('crop yield response to biochar addition on grain crop') + xlab("study-id") + ylab("log response ratio")  
+  es21y = as.data.table(es21y)
+  #filter the data set and only select the data where yi is missing
+  es21y_grain = es21y[!is.na(yi) & experiment_type == "field" & crop_type == "grain"]
+  setorder(es21y_grain,-yi)
+  es21y_grain[,id:=.I]
+  es21y_grain[,yi_cor := (exp(yi)-1)*100]
+  es21y_grain[,vi_cor := (exp(vi)-1)*100]
+  library(ggplot2)
+  ggplot(data = es21y_grain, aes(x = id, y = yi)) + 
+    geom_line() + 
+    geom_errorbar(aes(x = id, ymin = yi - sqrt(vi), ymax = yi + sqrt(vi)),
+                  width = 0.4, colour = "orange", alpha = 0.9, linewidth = 1.3) + 
+    theme_bw() + 
+    ggtitle('crop yield response to biochar addition on grain') + 
+    xlab("study-id") + 
+    ylab("log response ratio")
+  #forest plot
+  res <- rma(yi, vi, data=es21y)
+  forest(res)
 
-##forest plot
 
-res <- rma(yi, vi, data=es21y)
-forest(res)
+##ggplot for field studies and crop_type == "fruit"
+
+  es21y = as.data.table(es21y)
+  #filter the data set and only select the data where yi is missing
+  es21y_fruit = es21y[!is.na(yi) & experiment_type == "field" & crop_type == "fruit"]
+  setorder(es21y_fruit,-yi)
+  es21y_fruit[,id:=.I]
+  es21y_fruit[,yi_cor := (exp(yi)-1)*100]
+  es21y_fruit[,vi_cor := (exp(vi)-1)*100]
+  library(ggplot2)
+  ggplot(data = es21y_fruit, aes(x = id, y = yi)) + 
+    geom_line() + 
+    geom_errorbar(aes(x = id, ymin = yi - sqrt(vi), ymax = yi + sqrt(vi)),
+                  width = 0.4, colour = "orange", alpha = 0.9, linewidth = 1.3) + 
+    theme_bw() + 
+    ggtitle('crop yield response to biochar addition on fruit') + 
+    xlab("study-id") + 
+    ylab("log response ratio")
+  #forest plot
+  res <- rma(yi, vi, data=es21y)
+  forest(res)
+
+# ggplot for field studies and crop_type == "veg"
+
+  es21y = as.data.table(es21y)
+  # filter the data set and only select the data where yi is missing
+  es21y_veg = es21y[!is.na(yi) & experiment_type == "field" & crop_type == "vegetable"]
+  setorder(es21y_veg, -yi)
+  es21y_veg[, id := .I]
+  es21y_veg[, yi_cor := (exp(yi) - 1) * 100]
+  es21y_veg[, vi_cor := (exp(vi) - 1) * 100]
+  library(ggplot2)
+  ggplot(data = es21y_veg, aes(x = id, y = yi)) + 
+    geom_line() + 
+    geom_errorbar(aes(x = id, ymin = yi - sqrt(vi), ymax = yi + sqrt(vi)),
+                  width = 0.4, colour = "orange", alpha = 0.9, linewidth = 1.3) + 
+    theme_bw() + 
+    ggtitle('crop yield response to biochar addition on vegetables') + 
+    xlab("study-id") + 
+    ylab("log response ratio")
+
+
 
 #_______________________________________________________________________________
 
@@ -258,10 +320,10 @@ forest(res)
 
 dy_grain <- copy(es21y_grain)
 
-# update the missing values site parameters
-dy_grain[is.na(irr), irr := median(dy_grain$irr,na.rm=TRUE)]
-
-
+# what are the factors to be evaluated
+var.site <- c('evaporation','g_evaporation','mat','map','elevation','g_elevation','bulk_density','g_bulk_density','clay','cec','total_nitrogen','g_total_nitrogen','soc','g_soc','ph','g_ph')
+var.crop <- c('g_crop_type','n_dose','g_n_dose','p_dose','g_p_dose','k_dose','g_k_dose')
+var.trea <- c('tillage')
 
 
 
