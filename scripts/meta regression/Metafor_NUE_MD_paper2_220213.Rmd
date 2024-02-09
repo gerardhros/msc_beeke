@@ -152,7 +152,7 @@ easiest solution is to replace them with the median value.
 
 # do a first main factor analysis for log response ratio for NUE
   
-  # update the missing values for n_dose and p2o5_dose (as example)
+  # update the missing values for n_dose and p_dose (as example)
   d02[is.na(n_dose), n_dose := median(d02$n_dose,na.rm=TRUE)]
   d02[is.na(p_dose), p_dose := median(d02$p_dose,na.rm=TRUE)]
   d02[is.na(k_dose), k_dose := median(d02$k_dose,na.rm=TRUE)]
@@ -171,7 +171,7 @@ easiest solution is to replace them with the median value.
   var.sel <- c(var.trea,var.crop,var.site)
 
   # run without a main factor selection to estimate overall mean
-  r_nue_0 <- rma.mv(yi,vi, data = d02,random= list(~ 1|studyid), method="REML",sparse = TRUE)
+  Fr_nue_0 <- rma.mv(yi,vi, data = d02,random= list(~ 1|studyid), method="REML",sparse = TRUE)
    
   # objects to store the effects per factor as wel summary stats of the meta-analytical models
   out1.est = out1.sum = list()
