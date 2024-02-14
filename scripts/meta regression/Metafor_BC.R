@@ -12,7 +12,7 @@
   
   # read data
   library(readxl)
-  d1 <- read_excel("data/meta_regression/meta_regression_copy2.xlsx", sheet = 2)
+  d1 <- read_excel("data/meta_regression/meta_regression_copy2.xlsx", sheet = 3)
   d1 <- as.data.table(d1)
   
 #_______________________________________________________________________________
@@ -34,6 +34,29 @@
            new = c("rain", "irr", "n_fer", "p_fer", "k_fer", "texture", "sbd", "sph", "soc", "stn", "scn",
                    "bph", "btc", "btn", "bcn", "brate"),
            skip_absent = TRUE)
+  
+  d2$rain <- as.numeric(d2$rain)
+  d2$irr <- as.numeric(d2$irr)
+  d2$n_fer <- as.numeric(d2$n_fer)
+  d2$p_fer <- as.numeric(d2$p_fer)
+  d2$k_fer <- as.numeric(d2$k_fer)
+  d2$sbd <- as.numeric(d2$sbd)
+  d2$sph <- as.numeric(d2$sph)
+  d2$soc <- as.numeric(d2$soc)
+  d2$stn <- as.numeric(d2$stn)
+  d2$scn <- as.numeric(d2$scn)
+  d2$bph <- as.numeric(d2$bph)
+  d2$btc <- as.numeric(d2$btc)
+  d2$btn <- as.numeric(d2$btn)
+  d2$bcn <- as.numeric(d2$bcn)
+  d2$brate <- as.numeric(d2$brate)
+  
+ # modify the unit for site properties:
+  # bc total carbon from % to g/kg
+  d2[btc <= 100, btc := btc * 10]
+  # bc total nitrogen from % to g/kg
+  d2[btn <= 2, btc := btc * 10]
+  
   
  # modify the unit for field studies and grain to kg/ha:
   
@@ -417,6 +440,7 @@ var.sel <- c(var.site,var.crop,var.bc)
 # run without a main factor selection to estimate overall mean
 ry_0 <- rma.mv(yi, vi, data = d4y, random = list(~ 1|studyid), method = "REML", sparse = TRUE)
 
+
 # objects to store the effects per factor as well summary stats of the meta-analytical models
 out1.est = out1.sum = list()
 
@@ -460,7 +484,6 @@ for(i in var.sel){
 }
 
 # merge output into a data.table
-
 out1.sum <- rbindlist(out1.sum)
 out1.est <- rbindlist(out1.est)
 print(out1.sum)
