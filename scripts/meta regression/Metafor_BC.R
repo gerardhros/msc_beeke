@@ -162,7 +162,7 @@
 library(metafor)
 
   #Y
-  es21y <- escalc(measure = "MD", data = d2, 
+  es21y <- escalc(measure = "SMD", data = d2, 
                  m1i = yr_mean, sd1i = yr_sd, n1i = yr_n,
                  m2i = yc_mean, sd2i = yc_sd, n2i = yc_n)
   fwrite(es21y, file = "data/es21y.csv")
@@ -200,23 +200,6 @@ library(metafor)
   
   #check classes
   #str(d3) 
-  
-  # Convert columns to numeric
-  d3$rain <- as.numeric(d3$rain)
-  d3$irr <- as.numeric(d3$irr)
-  d3$n_fer <- as.numeric(d3$n_fer)
-  d3$p_fer <- as.numeric(d3$p_fer)
-  d3$k_fer <- as.numeric(d3$k_fer)
-  d3$sbd <- as.numeric(d3$sbd)
-  d3$sph <- as.numeric(d3$sph)
-  d3$soc <- as.numeric(d3$soc)
-  d3$stn <- as.numeric(d3$stn)
-  d3$scn <- as.numeric(d3$scn)
-  d3$bph <- as.numeric(d3$bph)
-  d3$btc <- as.numeric(d3$btc)
-  d3$btn <- as.numeric(d3$btn)
-  d3$bcn <- as.numeric(d3$bcn)
-  d3$brate <- as.numeric(d3$brate)
   
   # scale function
   d3[, rain_scaled := scale(rain)]
@@ -305,7 +288,7 @@ hist_others <- hist(d2$yr_mean[d2$experiment_type == "field" & d2$crop_type == "
   es21y_fruit[,yi_cor := (exp(yi)-1)*100]
   es21y_fruit[,vi_cor := (exp(vi)-1)*100]
   library(ggplot2)
-  ggplot(data = es21y_fruit, aes(x = id, y = yi)) + 
+p1 <-  ggplot(data = es21y_fruit, aes(x = id, y = yi)) + 
     geom_line() + 
     geom_errorbar(aes(x = id, ymin = yi - sqrt(vi), ymax = yi + sqrt(vi)),
                   width = 0.4, colour = "orange", alpha = 0.9, linewidth = 1.3) + 
@@ -313,7 +296,9 @@ hist_others <- hist(d2$yr_mean[d2$experiment_type == "field" & d2$crop_type == "
     ggtitle('crop yield response to biochar addition on fruit') + 
     xlab("study-id") + 
     ylab("log response ratio")
-  #forest plot
+  
+ggsave(plot=p1, filename = 'pzjg.jpg',width = 10,height = 7,unit='cm')
+#forest plot
   res <- rma(yi, vi, data=es21y)
   forest(res)
 
@@ -448,18 +433,18 @@ out1.est = out1.sum = list()
 for(i in var.sel){
   
   # check whether the column is a numeric or categorical variable
-  vartype = is.character(d4y[, rain])
+  vartype = is.character(d4y[, get(i)])
   
   # run with the main factor treatment
   if (vartype) {
     # run a meta-regression model for main categorical variable
     ry_1 <- rma.mv(yi, vi, mods = ~factor(varsel) - 1, 
-                  data = d4y[, .(yi, vi, studyid, varsel = rain)], 
+                  data = d4y[, .(yi, vi, studyid, varsel = get(i))], 
                   random = list(~ 1 | studyid), method = "REML", sparse = TRUE)
   } else {
     # run a meta-regression model for main numerical variable
     ry_1 <- rma.mv(yi, vi, mods = ~varsel, 
-                  data = d4y[, .(yi, vi, studyid, varsel = rain)], 
+                  data = d4y[, .(yi, vi, studyid, varsel = get(i))], 
                   random = list(~ 1 | studyid), method = "REML", sparse = TRUE)
   }
   
@@ -489,6 +474,10 @@ out1.est <- rbindlist(out1.est)
 print(out1.sum)
 print(out1.est)  
 
+pdb1 <- out1.est[var=="texture"]
+pdb1 <- out1.est[var %in% c('bph','btn','btc') & varname != 'intrcpt']
+ggplot(data=pdb1)+geom_bar(aes(y=mean,x = var),stat='identity') 
+
 #_______________________________________________________________________________
 #Meta-regression for main factors with interactions
 
@@ -508,9 +497,13 @@ ry_0 <- rma.mv(yi,vi, data = d4y,random= list(~ 1|studyid), method="REML",sparse
 
 # 1. make a simple meta-regression model without interaction but with more than one explanatory variable
 
+# from first check i see that some soil textures behave similarly, so i combine them
+d4y[,text2 :=texture]
+d4y[texture %in% c('clay loam', 'loam', 'sandy clay loam'), text2 := 'clay loam']
+
 # here just "rain"
 ry_1 <- rma.mv(yi,vi, 
-                  mods = ~rain - 1, 
+                  mods = ~rain * btc + text2 + crop_type-1, 
                   data = d4y,
                   random = list(~ 1|studyid), method="REML",sparse = TRUE)
 

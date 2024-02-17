@@ -55,8 +55,8 @@ m2.covar <- unique(m1.covar[,.('ind_code', `moderator 1`, `group 1`, `moderator 
 
 # safe as an excel
 library(openxlsx)
-write.xlsx(m1.main, "data/m1.main.xlsx", rowNames = FALSE)
-write.xlsx(m1.covar, "data/m1.covar.xlsx", rowNames = FALSE)
+write.xlsx(m1.main, "C:/Users/beeke/OneDrive/Wageningen/Master thesis/R Studio/msc_beeke/data/meta_model/m1.main.xlsx", rowNames = FALSE)
+write.xlsx(m1.covar, "C:/Users/beeke/OneDrive/Wageningen/Master thesis/R Studio/msc_beeke/data/meta_model/m1.covar.xlsx", rowNames = FALSE)
 
 
 
