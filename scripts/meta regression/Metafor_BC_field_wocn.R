@@ -186,7 +186,7 @@ fwrite(d2, file = "data/d2.csv")
 library(metafor)
 
 #Y
-es21y <- escalc(measure = "MD", data = d2, 
+es21y <- escalc(measure = "SMD", data = d2, 
                 m1i = yr_mean, sd1i = yr_sd, n1i = yr_n,
                 m2i = yc_mean, sd2i = yc_sd, n2i = yc_n)
 fwrite(es21y, file = "data/es21y.csv")
@@ -266,7 +266,9 @@ pgrain <- ggplot(data = es21y_grain, aes(x = id, y = yi)) +
   ylab("log response ratio")
 #show and save plot
 pgrain
-ggsave(plot=pgrain, filename = 'pgrain.jpg',width = 20,height = 7,unit='cm')
+ggsave(plot=pgrain, 
+       filename = 'C:/Users/beeke/OneDrive/Wageningen/Master thesis/R Studio/msc_beeke/figures/pgrain.jpg', 
+       width = 20, height = 7,unit='cm')
 
 
 ##ggplot for field studies and crop_type == "fruit"
@@ -289,10 +291,10 @@ pfruit <-  ggplot(data = es21y_fruit, aes(x = id, y = yi)) +
   ylab("log response ratio")
 #show and save plot
 pfruit
-ggsave(plot=pfruit, filename = 'pfruit.jpg',width = 15,height = 7,unit='cm')
+ggsave(plot=pfruit, 
+       filename = 'C:/Users/beeke/OneDrive/Wageningen/Master thesis/R Studio/msc_beeke/figures/pfruit.jpg',
+       width = 15, height = 7,unit='cm')
 
-
-#ggsave(plot=pfruit, filename = 'pzjg.jpg',width = 10,height = 7,unit='cm')
 
 # ggplot for field studies and crop_type == "veg"
 
@@ -313,7 +315,9 @@ pveg <- ggplot(data = es21y_veg, aes(x = id, y = yi)) +
   xlab("study-id") + 
   ylab("log response ratio")
 pveg
-ggsave(plot=pveg, filename = 'pveg.jpg',width = 15,height = 7,unit='cm')
+ggsave(plot=pveg, 
+       filename = 'C:/Users/beeke/OneDrive/Wageningen/Master thesis/R Studio/msc_beeke/figures/pveg.jpg',
+       width = 15, height = 7,unit='cm')
 
 # ggplot for field studies and crop_type == "legumes"
 
@@ -334,7 +338,9 @@ pleg <- ggplot(data = es21y_leg, aes(x = id, y = yi)) +
   xlab("study-id") + 
   ylab("log response ratio")
 pleg
-ggsave(plot=pleg, filename = 'pleg.jpg',width = 15,height = 7,unit='cm')
+ggsave(plot=pleg, 
+       filename = 'C:/Users/beeke/OneDrive/Wageningen/Master thesis/R Studio/msc_beeke/figures/pleg.jpg',
+       width = 15, height = 7,unit='cm')
 
 # ggplot for field studies and crop_type == "tubers"
 
@@ -355,7 +361,9 @@ ptub <- ggplot(data = es21y_tubers, aes(x = id, y = yi)) +
   xlab("study-id") + 
   ylab("log response ratio")
 ptub
-ggsave(plot=ptub, filename = 'ptub.jpg',width = 15,height = 7,unit='cm')
+ggsave(plot=ptub, 
+       filename = 'C:/Users/beeke/OneDrive/Wageningen/Master thesis/R Studio/msc_beeke/figures/ptub.jpg',
+       width = 15, height = 7,unit='cm')
 
 # ggplot for field studies and crop_type == "others"
 
@@ -376,7 +384,9 @@ pother <- ggplot(data = es21y_others, aes(x = id, y = yi)) +
   xlab("study-id") + 
   ylab("log response ratio")
 pother
-ggsave(plot=pother, filename = 'pother.jpg',width = 15,height = 7,unit='cm')
+ggsave(plot=pother, 
+       filename = 'C:/Users/beeke/OneDrive/Wageningen/Master thesis/R Studio/msc_beeke/figures/pother.jpg',
+       width = 15, height = 7,unit='cm')
 
 # ggplot for field studies and all crop_types
 es21y = as.data.table(es21y)
@@ -473,7 +483,7 @@ print(out1.sum)
 print(out1.est)
 # save out.sum for supporting information
 library(data.table)
-data.table(out1.sum, caption = 'Summary Statistics')
+data.table(out1.sum, caption = 'Summary Statistics - SMD')
 
 #_______________________________________________________________________________
 
@@ -487,6 +497,7 @@ earthtone_colors <- c(
   "darksalmon"
 )
 
+library(ggplot2)
 
 #crop type______
 crop_type_data <- out1.est[var == "crop_type"]
@@ -499,7 +510,9 @@ bar_crop_type <- ggplot(crop_type_data, aes(x = varname, y = mean, fill = varnam
   theme(axis.text.x = element_text(angle = 45, hjust = 1),
         panel.background = element_rect(fill = "white", colour = "white"))
 bar_crop_type
-ggsave("bar_crop_type.jpg", plot = bar_crop_type, width = 15, height = 8, units = "cm")
+ggsave(filename = "C:/Users/beeke/OneDrive/Wageningen/Master thesis/R Studio/msc_beeke/figures/SMD_bar_crop_type.jpg", 
+       plot = bar_crop_type, 
+       width = 15, height = 8, units = "cm")
 
 
 #crop______
@@ -514,8 +527,9 @@ bar_crop <- ggplot(crop_data, aes(x = varname, y = mean, fill = varname)) +
         legend.position = "none",
         panel.background = element_rect(fill = "white", colour = "white"))
 bar_crop
-ggsave("bar_crop.jpg", plot = bar_crop, width = 15, height = 8, units = "cm")
-
+ggsave(filename = "C:/Users/beeke/OneDrive/Wageningen/Master thesis/R Studio/msc_beeke/figures/SMD_bar_crop.jpg", 
+       plot = bar_crop, 
+       width = 15, height = 8, units = "cm")
 
 #soil texture______
 
@@ -529,7 +543,9 @@ bar_texture <- ggplot(texture_data, aes(x = varname, y = mean, fill = varname)) 
   theme(axis.text.x = element_text(angle = 45, hjust = 1),
         panel.background = element_rect(fill = "white", colour = "white"))
 bar_texture
-ggsave("bar_texture.jpg", plot = bar_texture, width = 15, height = 8, units = "cm")
+ggsave(filename = "C:/Users/beeke/OneDrive/Wageningen/Master thesis/R Studio/msc_beeke/figures/SMD_bar_texture.jpg", 
+       plot = bar_texture, 
+       width = 15, height = 8, units = "cm")
 
 #water_management______
 
@@ -543,7 +559,9 @@ bar_water_management <- ggplot(water_management_data, aes(x = varname, y = mean,
   theme(axis.text.x = element_text(angle = 45, hjust = 1),
         panel.background = element_rect(fill = "white", colour = "white"))
 bar_water_management
-ggsave("bar_water_management.jpg", plot = bar_water_management, width = 15, height = 8, units = "cm")
+ggsave(filename = "C:/Users/beeke/OneDrive/Wageningen/Master thesis/R Studio/msc_beeke/figures/SMD_bar_water_management.jpg", 
+       plot = bar_water_management, 
+       width = 15, height = 8, units = "cm")
 
 
 #______
@@ -562,7 +580,41 @@ bar_num <- ggplot(num, aes(x = var, y = mean, fill = var)) +
         legend.position = "none",  
         panel.background = element_rect(fill = "white", colour = "white"))
 bar_num
-ggsave("bar_num.jpg", plot = bar_num, width = 15, height = 8, units = "cm")
+ggsave(filename = "C:/Users/beeke/OneDrive/Wageningen/Master thesis/R Studio/msc_beeke/figures/SMD_bar_num.jpg", 
+       plot = bar_num, 
+       width = 15, height = 8, units = "cm")
+#_____
+
+sph <- out1.est[var == 'sph' & varname != 'intrcpt']
+bar_sph <- ggplot(sph, aes(x = var, y = mean, fill = var)) +
+  geom_bar(stat = "identity") +
+  geom_errorbar(aes(ymin = ci.lb, ymax = ci.ub), width = 0.2) +
+  scale_fill_manual(values = earthtone_colors) +
+  labs(x = "Variable", y = "Mean", title = "Effect of Soil pH") +
+  theme_minimal() +
+  theme(axis.text.x = element_text(angle = 45, hjust = 1),
+        legend.position = "none",  
+        panel.background = element_rect(fill = "white", colour = "white"))
+bar_sph
+ggsave(filename = "C:/Users/beeke/OneDrive/Wageningen/Master thesis/R Studio/msc_beeke/figures/SMD_bar_sph.jpg", 
+       plot = bar_sph, 
+       width = 15, height = 8, units = "cm")
+
+#_____
+climate <- out1.est[var %in% c('rain', 'irr', 'n_fer', 'p_fer', 'k_fer') & varname != 'intrcpt']
+bar_climate <- ggplot(climate, aes(x = var, y = mean, fill = var)) +
+  geom_bar(stat = "identity") +
+  geom_errorbar(aes(ymin = ci.lb, ymax = ci.ub), width = 0.2) +
+  scale_fill_manual(values = earthtone_colors) +
+  labs(x = "Variable", y = "Mean", title = "Climate & fertilizer parameters") +
+  theme_minimal() +
+  theme(axis.text.x = element_text(angle = 45, hjust = 1),
+        legend.position = "none",  
+        panel.background = element_rect(fill = "white", colour = "white"))
+bar_climate
+ggsave(filename = "C:/Users/beeke/OneDrive/Wageningen/Master thesis/R Studio/msc_beeke/figures/SMD_bar_climate&fertilizer.jpg", 
+       plot = bar_climate, 
+       width = 15, height = 8, units = "cm")
 
 
 #_______________________________________________________________________________
