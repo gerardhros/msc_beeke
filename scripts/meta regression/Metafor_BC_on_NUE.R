@@ -12,7 +12,7 @@ library(metagear)
 
 # read data
 library(readxl)
-d1 <- read_excel("data/meta_regression/meta_regression_copy2.xlsx", sheet = "yield")
+d1 <- read_excel("data/meta_regression/meta_regression_copy2.xlsx", sheet = "NUE")
 d1 <- as.data.table(d1)
 
 #_______________________________________________________________________________
@@ -57,20 +57,20 @@ d2[btn <= 2, btc := btc * 10]
 
 # modify the unit for field studies and grain to kg/ha:
 
-d2[crop_type == "grain" & yc_mean <= 100, yc_sd := yc_sd * 1000]
-d2[crop_type == "grain" & yc_mean <= 100, yc_mean := yc_mean * 1000]
-d2[crop_type == "grain" & yr_mean <= 100, yr_sd := yr_sd * 1000]
-d2[crop_type == "grain" & yr_mean <= 100, yr_mean := yr_mean * 1000]
+#d2[crop_type == "grain" & yc_mean <= 100, yc_sd := yc_sd * 1000]
+#d2[crop_type == "grain" & yc_mean <= 100, yc_mean := yc_mean * 1000]
+#d2[crop_type == "grain" & yr_mean <= 100, yr_sd := yr_sd * 1000]
+#d2[crop_type == "grain" & yr_mean <= 100, yr_mean := yr_mean * 1000]
 
-d2[crop_type == "vegetable" & yc_mean <= 100, yc_sd := yc_sd * 1000]
-d2[crop_type == "vegetable" & yc_mean <= 100, yc_mean := yc_mean * 1000]
-d2[crop_type == "vegetable" & yr_mean <= 100, yr_sd := yr_sd * 1000]
-d2[crop_type == "vegetable" & yr_mean <= 100, yr_mean := yr_mean * 1000]
+#d2[crop_type == "vegetable" & yc_mean <= 100, yc_sd := yc_sd * 1000]
+#d2[crop_type == "vegetable" & yc_mean <= 100, yc_mean := yc_mean * 1000]
+#d2[crop_type == "vegetable" & yr_mean <= 100, yr_sd := yr_sd * 1000]
+#d2[crop_type == "vegetable" & yr_mean <= 100, yr_mean := yr_mean * 1000]
 
-d2[crop_type == "vegetable" & yc_mean <= 300, yc_sd := yc_sd * 100]
-d2[crop_type == "vegetable" & yc_mean <= 300, yc_mean := yc_mean * 100]
-d2[crop_type == "vegetable" & yr_mean <= 300, yr_sd := yr_sd * 100]
-d2[crop_type == "vegetable" & yr_mean <= 300, yr_mean := yr_mean * 100]
+#d2[crop_type == "vegetable" & yc_mean <= 300, yc_sd := yc_sd * 100]
+#d2[crop_type == "vegetable" & yc_mean <= 300, yc_mean := yc_mean * 100]
+#d2[crop_type == "vegetable" & yr_mean <= 300, yr_sd := yr_sd * 100]
+#d2[crop_type == "vegetable" & yr_mean <= 300, yr_mean := yr_mean * 100]
 
 # update the missing values site parameters
 d2[is.na(rain), rain := median(d2$rain,na.rm=TRUE)]
@@ -114,7 +114,7 @@ d3[, btn_scaled := scale(btn)]
 d3[, brate_scaled := scale(brate)]
 
 
-fwrite(d3, file = "data/d3.csv")
+fwrite(d3, file = "data/meta_regression/NUE/d3.csv")
 
 #_______________________________________________________________________________
 
@@ -123,59 +123,19 @@ fwrite(d3, file = "data/d3.csv")
 # NUE
 
 # Identify missing SD values (both NA and empty string) for NUEC_SD
-#missing_sd_nuer <- is.na(d2$nuer_sd) | d2$nuer_sd == ""
-#missing_sd_nuec <- is.na(d2$nuec_sd) | d2$nuec_sd == ""
+missing_sd_nuer <- is.na(d2$nuer_sd) | d2$nuer_sd == ""
+missing_sd_nuec <- is.na(d2$nuec_sd) | d2$nuec_sd == ""
 
 # Calculate mean CV for non-missing values for NUEC_SD
-#CV_nuer <- mean(d2$nuer_sd[!missing_sd_nuer] / d2$nuer_mean[!missing_sd_nuer], na.rm = TRUE)
-#CV_nuec <- mean(d2$nuec_sd[!missing_sd_nuec] / d2$nuec_mean[!missing_sd_nuec], na.rm = TRUE)
+CV_nuer <- mean(d2$nuer_sd[!missing_sd_nuer] / d2$nuer_mean[!missing_sd_nuer], na.rm = TRUE)
+CV_nuec <- mean(d2$nuec_sd[!missing_sd_nuec] / d2$nuec_mean[!missing_sd_nuec], na.rm = TRUE)
 
 # Impute missing SD values based on the mean CV for NUEC_SD
-#d2$nuer_sd[missing_sd_nuer] <- d2$nuer_mean[missing_sd_nuer] * 1.25 * CV_NUEr
-#d2$nuec_sd[missing_sd_nuec] <- d2$nuec_mean[missing_sd_nuec] * 1.25 * CV_NUEc
-
-# Yield
-missing_sd_yc <- is.na(d2$yc_sd) | d2$yc_sd == ""
-CV_yc <- mean(d2$yc_sd[!missing_sd_yc] / d2$yc_mean[!missing_sd_yc], na.rm = TRUE)
-d2$yc_sd[missing_sd_yc] <- d2$yc_mean[missing_sd_yc] * 1.25 * CV_yc
-
-missing_sd_yr <- is.na(d2$yr_sd) | d2$yr_sd == ""
-CV_yr <- mean(d2$yr_sd[!missing_sd_yr] / d2$yr_mean[!missing_sd_yr], na.rm = TRUE)
-d2$yr_sd[missing_sd_yr] <- d2$yr_mean[missing_sd_yr] * 1.25 * CV_yr
-
-
-#SOC
-
-#missing_sd_socc <- is.na(d2$socc_sd) | d2$socc_sd == ""
-#CV_socc <- mean(d2$socc_sd[!missing_sd_socc] / d2$socc_mean[!missing_sd_socc], na.rm = TRUE)
-#d2$socc_sd[missing_sd_socc] <- d2$socc_mean[missing_sd_socc] * 1.25 * CV_socc
-
-#missing_sd_socr <- is.na(d2$socr_sd) | d2$socr_sd == ""
-#CV_socr <- mean(d2$socr_sd[!missing_sd_socr] / d2$socr_mean[!missing_sd_socr], na.rm = TRUE)
-#d2$socr_sd[missing_sd_socr] <- d2$socr_mean[missing_sd_socr] * 1.25 * CV_socr
-
-# pH
-
-#missing_sd_phc <- is.na(d2$phc_sd) | d2$phc_sd == ""
-#CV_phc <- mean(d2$phc_sd[!missing_sd_phc] / d2$phc_mean[!missing_sd_phc], na.rm = TRUE)
-#d2$phc_sd[missing_sd_phc] <- d2$phc_mean[missing_sd_phc] * 1.25 * CV_phc
-
-#missing_sd_phr <- is.na(d2$phr_sd) | d2$phr_sd == ""
-#CV_phr <- mean(d2$phr_sd[!missing_sd_phr] / d2$phr_mean[!missing_sd_phr], na.rm = TRUE)
-#d2$phr_sd[missing_sd_phr] <- d2$phr_mean[missing_sd_phr] * 1.25 * CV_phr
-
-# SBD
-
-#missing_sd_sbdc <- is.na(d2$sbdc_sd) | d2$sbdc_sd == ""
-#CV_sbdc <- mean(d2$sbdc_sd[!missing_sd_sbdc] / d2$sbdc_mean[!missing_sd_sbdc], na.rm = TRUE)
-#d2$sbdc_sd[missing_sd_sbdc] <- d2$sbdc_mean[missing_sd_sbdc] * 1.25 * CV_sbdc
-
-#missing_sd_sbdr <- is.na(d2$sbdr_sd) | d2$sbdr_sd == ""
-#CV_sbdr <- mean(d2$sbdr_sd[!missing_sd_sbdr] / d2$sbdr_mean[!missing_sd_sbdr], na.rm = TRUE)
-#d2$sbdr_sd[missing_sd_sbdr] <- d2$sbdr_mean[missing_sd_sbdr] * 1.25 * CV_sbdr
+d2$nuer_sd[missing_sd_nuer] <- d2$nuer_mean[missing_sd_nuer] * 1.25 * CV_NUEr
+d2$nuec_sd[missing_sd_nuec] <- d2$nuec_mean[missing_sd_nuec] * 1.25 * CV_NUEc
 
 #output 
-fwrite(d2, file = "data/d2.csv")
+fwrite(d2, file = "data/meta_regression/NUE/d2.csv")
 
 #_______________________________________________________________________________
 
@@ -185,83 +145,56 @@ fwrite(d2, file = "data/d2.csv")
 
 library(metafor)
 
-#Y
-es21y <- escalc(measure = "SMD", data = d2, 
-                m1i = yr_mean, sd1i = yr_sd, n1i = yr_n,
-                m2i = yc_mean, sd2i = yc_sd, n2i = yc_n)
-fwrite(es21y, file = "data/es21y.csv")
-
-#NUE
-#es21nue <- escalc(measure = "SMD", data = d2, 
-                  #m1i = nuer_mean, sd1i = nuer_sd, n1i = nuer_n,
-                  #m2i = nuec_mean, sd2i = nuec_sd, n2i = nuec_n )
-#fwrite(es21nue, file = "data/es21nue.csv")
-
-#SOC
-#es21soc <- escalc(measure = "SMD", data = d2, 
-                  #m1i = socr_mean, sd1i = socr_sd, n1i = socr_n,
-                  #m2i = socc_mean, sd2i = socc_sd, n2i = socc_n)
-#fwrite(es21soc, file = "data/es21soc.csv")
-
-#pH
-#es21ph <- escalc(measure = "SMD", data = d2, 
-                 #m1i = phr_mean, sd1i = phr_sd, n1i = phr_n,
-                 #m2i = phc_mean, sd2i = phc_sd, n2i = phc_n)
-#fwrite(es21ph, file = "data/es21ph.csv")
-
-#SBD
-#es21sbd <- escalc(measure = "MD", data = d2, 
-                  #m1i = sbdr_mean, sd1i = sbdr_sd, n1i = sbdr_n,
-                  #m2i = sbdc_mean, sd2i = sbdc_sd, n2i = sbdc_n)
-#fwrite(es21sbd, file = "data/es21sbd.csv")  
+esnue <- escalc(measure = "SMD", data = d2, 
+                  m1i = nuer_mean, sd1i = nuer_sd, n1i = nuer_n,
+                  m2i = nuec_mean, sd2i = nuec_sd, n2i = nuec_n )
+fwrite(esnue, file = "data/meta_regression/NUE/esnue.csv")
 
 #_______________________________________________________________________________  
 
 # make forest plots per group treatments
 
-#for yield:
-
 ##histogram pro crop type:
 
-hist_grain <- hist(d2$yc_mean[d2$crop_type == "grain"])
-hist_grain <- hist(d2$yr_mean[d2$crop_type == "grain"])
+hist_grain <- hist(d2$nuec_mean[d2$crop_type == "grain"])
+hist_grain <- hist(d2$nuer_mean[d2$crop_type == "grain"])
 
-hist_fruit <- hist(d2$yc_mean[d2$crop_type == "fruit"])
-hist_fruit <- hist(d2$yr_mean[d2$crop_type == "fruit"])
+hist_fruit <- hist(d2$nuec_mean[d2$crop_type == "fruit"])
+hist_fruit <- hist(d2$nuer_mean[d2$crop_type == "fruit"])
 
-hist_industrial <- hist(d2$yc_mean[d2$crop_type == "industrial"])
-hist_industrial <- hist(d2$yr_mean[d2$crop_type == "industrial"])  
+hist_industrial <- hist(d2$nuec_mean[d2$crop_type == "industrial"])
+hist_industrial <- hist(d2$nuer_mean[d2$crop_type == "industrial"])  
 
-hist_legumes <- hist(d2$yc_mean[d2$crop_type == "legumes"])
-hist_legumes <- hist(d2$yr_mean[d2$crop_type == "legumes"])  
+hist_legumes <- hist(d2$nuec_mean[d2$crop_type == "legumes"])
+hist_legumes <- hist(d2$nuer_mean[d2$crop_type == "legumes"])  
 
-hist_tubers <- hist(d2$yc_mean[d2$crop_type == "tubers"])
-hist_tubers <- hist(d2$yr_mean[d2$crop_type == "tubers"])
+hist_tubers <- hist(d2$nuec_mean[d2$crop_type == "tubers"])
+hist_tubers <- hist(d2$nuer_mean[d2$crop_type == "tubers"])
 
-hist_vegetable <- hist(d2$yc_mean[d2$crop_type == "vegetable"])
-hist_vegetable <- hist(d2$yr_mean[d2$crop_type == "vegetable"])
+hist_vegetable <- hist(d2$nuec_mean[d2$crop_type == "vegetable"])
+hist_vegetable <- hist(d2$nuer_mean[d2$crop_type == "vegetable"])
 
-hist_others <- hist(d2$yc_mean[d2$crop_type == "others"])
-hist_others <- hist(d2$yr_mean[d2$crop_type == "others"])
+hist_others <- hist(d2$nuec_mean[d2$crop_type == "others"])
+hist_others <- hist(d2$nuer_mean[d2$crop_type == "others"])
 
 #_______________________________________________________________________________
 
 ##ggplot for field studies and crop_type == "grain"
 
-es21y = as.data.table(es21y)
+esnue = as.data.table(es21y)
 #filter the data set and only select the data where yi is missing
-es21y_grain = es21y[!is.na(yi) & crop_type == "grain"]
-setorder(es21y_grain,-yi)
-es21y_grain[,id:=.I]
-es21y_grain[,yi_cor := (exp(yi)-1)*100]
-es21y_grain[,vi_cor := (exp(vi)-1)*100]
+esnue_grain = esnue[!is.na(yi) & crop_type == "grain"]
+setorder(esnue_grain,-yi)
+esnue_grain[,id:=.I]
+esnue_grain[,yi_cor := (exp(yi)-1)*100]
+esnue_grain[,vi_cor := (exp(vi)-1)*100]
 library(ggplot2)
-pgrain <- ggplot(data = es21y_grain, aes(x = id, y = yi)) + 
+pgrain <- ggplot(data = esnue_grain, aes(x = id, y = yi)) + 
   geom_line() + 
   geom_errorbar(aes(x = id, ymin = yi - sqrt(vi), ymax = yi + sqrt(vi)),
                 width = 0.4, colour = "orange", alpha = 0.9, linewidth = 0.9) + 
   theme_bw() + 
-  ggtitle('crop yield response to biochar addition on grain') + 
+  ggtitle('NUE response to biochar addition on grain') + 
   xlab("study-id") + 
   ylab("log response ratio")
 #show and save plot
@@ -273,68 +206,66 @@ ggsave(plot=pgrain,
 
 ##ggplot for field studies and crop_type == "fruit"
 
-es21y = as.data.table(es21y)
-#filter the data set and only select the data where yi is missing
-es21y_fruit = es21y[!is.na(yi) & crop_type == "fruit"]
-setorder(es21y_fruit,-yi)
-es21y_fruit[,id:=.I]
-es21y_fruit[,yi_cor := (exp(yi)-1)*100]
-es21y_fruit[,vi_cor := (exp(vi)-1)*100]
+esnue = as.data.table(esnue)
+esnue_fruit = esnue[!is.na(yi) & crop_type == "fruit"]
+setorder(esnue_fruit, -yi)
+esnue_fruit[, id := .I]
+esnue_fruit[, yi_cor := (exp(yi) - 1) * 100]
+esnue_fruit[, vi_cor := (exp(vi) - 1) * 100]
 library(ggplot2)
-pfruit <-  ggplot(data = es21y_fruit, aes(x = id, y = yi)) + 
+pfruit <- ggplot(data = esnue_fruit, aes(x = id, y = yi)) + 
   geom_line() + 
   geom_errorbar(aes(x = id, ymin = yi - sqrt(vi), ymax = yi + sqrt(vi)),
                 width = 0.4, colour = "orange", alpha = 0.9, linewidth = 1.3) + 
   theme_bw() + 
-  ggtitle('crop yield response to biochar addition on fruit') + 
-  xlab("study-id") + 
-  ylab("log response ratio")
-#show and save plot
+  ggtitle('NUE response to biochar addition on fruit') + 
+  xlab("Study-ID") + 
+  ylab("Log Response Ratio")
 pfruit
-ggsave(plot=pfruit, 
+ggsave(plot = pfruit, 
        filename = 'C:/Users/beeke/OneDrive/Wageningen/Master thesis/R Studio/msc_beeke/figures/pfruit.jpg',
-       width = 15, height = 7,unit='cm')
+       width = 15, height = 7, unit = 'cm')
 
 
 # ggplot for field studies and crop_type == "veg"
 
-es21y = as.data.table(es21y)
-# filter the data set and only select the data where yi is missing
-es21y_veg = es21y[!is.na(yi) & crop_type == "vegetable"]
-setorder(es21y_veg, -yi)
-es21y_veg[, id := .I]
-es21y_veg[, yi_cor := (exp(yi) - 1) * 100]
-es21y_veg[, vi_cor := (exp(vi) - 1) * 100]
+esnue = as.data.table(esnue)
+esnue_veg = esnue[!is.na(yi) & crop_type == "vegetable"]
+setorder(esnue_veg, -yi)
+esnue_veg[, id := .I]
+esnue_veg[, yi_cor := (exp(yi) - 1) * 100]
+esnue_veg[, vi_cor := (exp(vi) - 1) * 100]
 library(ggplot2)
-pveg <- ggplot(data = es21y_veg, aes(x = id, y = yi)) + 
+pveg <- ggplot(data = esnue_veg, aes(x = id, y = yi)) + 
   geom_line() + 
   geom_errorbar(aes(x = id, ymin = yi - sqrt(vi), ymax = yi + sqrt(vi)),
                 width = 0.4, colour = "orange", alpha = 0.9, linewidth = 1.3) + 
   theme_bw() + 
-  ggtitle('crop yield response to biochar addition on vegetables') + 
-  xlab("study-id") + 
-  ylab("log response ratio")
+  ggtitle('NUE response to biochar addition on vegetables') + 
+  xlab("Study-ID") + 
+  ylab("Log Response Ratio")
 pveg
-ggsave(plot=pveg, 
+ggsave(plot = pveg, 
        filename = 'C:/Users/beeke/OneDrive/Wageningen/Master thesis/R Studio/msc_beeke/figures/pveg.jpg',
-       width = 15, height = 7,unit='cm')
+       width = 15, height = 7, unit = 'cm')
+
 
 # ggplot for field studies and crop_type == "legumes"
 
-es21y = as.data.table(es21y)
+esnue = as.data.table(esnue)
 # filter the data set and only select the data where yi is missing
-es21y_leg = es21y[!is.na(yi) & crop_type == "legumes"]
-setorder(es21y_leg, -yi)
-es21y_leg[, id := .I]
-es21y_leg[, yi_cor := (exp(yi) - 1) * 100]
-es21y_leg[, vi_cor := (exp(vi) - 1) * 100]
+esnue_leg = esnue[!is.na(yi) & crop_type == "legumes"]
+setorder(esnue_leg, -yi)
+esnue_leg[, id := .I]
+esnue_leg[, yi_cor := (exp(yi) - 1) * 100]
+esnue_leg[, vi_cor := (exp(vi) - 1) * 100]
 library(ggplot2)
-pleg <- ggplot(data = es21y_leg, aes(x = id, y = yi)) + 
+pleg <- ggplot(data = esnue_leg, aes(x = id, y = yi)) + 
   geom_line() + 
   geom_errorbar(aes(x = id, ymin = yi - sqrt(vi), ymax = yi + sqrt(vi)),
                 width = 0.4, colour = "orange", alpha = 0.9, linewidth = 1.3) + 
   theme_bw() + 
-  ggtitle('crop yield response to biochar addition on legumes') + 
+  ggtitle('NUE response to biochar addition on legumes') + 
   xlab("study-id") + 
   ylab("log response ratio")
 pleg
@@ -344,68 +275,52 @@ ggsave(plot=pleg,
 
 # ggplot for field studies and crop_type == "tubers"
 
-es21y = as.data.table(es21y)
-# filter the data set and only select the data where yi is missing
-es21y_tubers = es21y[!is.na(yi) & crop_type == "tubers"]
-setorder(es21y_tubers, -yi)
-es21y_tubers[, id := .I]
-es21y_tubers[, yi_cor := (exp(yi) - 1) * 100]
-es21y_tubers[, vi_cor := (exp(vi) - 1) * 100]
+esnue = as.data.table(esnue)
+esnue_tubers = esnue[!is.na(yi) & crop_type == "tubers"]
+setorder(esnue_tubers, -yi)
+esnue_tubers[, id := .I]
+esnue_tubers[, yi_cor := (exp(yi) - 1) * 100]
+esnue_tubers[, vi_cor := (exp(vi) - 1) * 100]
 library(ggplot2)
-ptub <- ggplot(data = es21y_tubers, aes(x = id, y = yi)) + 
+ptub <- ggplot(data = esnue_tubers, aes(x = id, y = yi)) + 
   geom_line() + 
   geom_errorbar(aes(x = id, ymin = yi - sqrt(vi), ymax = yi + sqrt(vi)),
                 width = 0.4, colour = "orange", alpha = 0.9, linewidth = 1.3) + 
   theme_bw() + 
-  ggtitle('crop yield response to biochar addition on tubers') + 
-  xlab("study-id") + 
-  ylab("log response ratio")
+  ggtitle('NUE response to biochar addition on tubers') + 
+  xlab("Study-ID") + 
+  ylab("Log Response Ratio")
 ptub
-ggsave(plot=ptub, 
+ggsave(plot = ptub, 
        filename = 'C:/Users/beeke/OneDrive/Wageningen/Master thesis/R Studio/msc_beeke/figures/ptub.jpg',
-       width = 15, height = 7,unit='cm')
+       width = 15, height = 7, unit = 'cm')
+
 
 # ggplot for field studies and crop_type == "others"
 
-es21y = as.data.table(es21y)
-# filter the data set and only select the data where yi is missing
-es21y_others = es21y[!is.na(yi) & crop_type == "others"]
-setorder(es21y_others, -yi)
-es21y_others[, id := .I]
-es21y_others[, yi_cor := (exp(yi) - 1) * 100]
-es21y_others[, vi_cor := (exp(vi) - 1) * 100]
+esnue = as.data.table(esnue)
+esnue_others = esnue[!is.na(yi) & crop_type == "others"]
+setorder(esnue_others, -yi)
+esnue_others[, id := .I]
+esnue_others[, yi_cor := (exp(yi) - 1) * 100]
+esnue_others[, vi_cor := (exp(vi) - 1) * 100]
 library(ggplot2)
-pother <- ggplot(data = es21y_others, aes(x = id, y = yi)) + 
+pother <- ggplot(data = esnue_others, aes(x = id, y = yi)) + 
   geom_line() + 
   geom_errorbar(aes(x = id, ymin = yi - sqrt(vi), ymax = yi + sqrt(vi)),
                 width = 0.4, colour = "orange", alpha = 0.9, linewidth = 1.3) + 
   theme_bw() + 
-  ggtitle('crop yield response to biochar addition on others (tea, tobacco, zizyphus, tall fescue, cocoyam, and pasture)') + 
-  xlab("study-id") + 
-  ylab("log response ratio")
+  ggtitle('NUE response to biochar addition on others 
+          (Tea, Tobacco, Zizyphus, Tall Fescue, Cocoyam, and Pasture)') + 
+  xlab("Study-ID") + 
+  ylab("Log Response Ratio")
 pother
-ggsave(plot=pother, 
+ggsave(plot = pother, 
        filename = 'C:/Users/beeke/OneDrive/Wageningen/Master thesis/R Studio/msc_beeke/figures/pother.jpg',
-       width = 15, height = 7,unit='cm')
+       width = 15, height = 7, unit = 'cm')
 
-# ggplot for field studies and all crop_types
-es21y = as.data.table(es21y)
-# filter the data set and only select the data where yi is missing
-es21y_all = es21y[!is.na(yi)]
-setorder(es21y_all, -yi)
-es21y_all[, id := .I]
-es21y_all[, yi_cor := (exp(yi) - 1) * 100]
-es21y_all[, vi_cor := (exp(vi) - 1) * 100]
-library(ggplot2)
-pall <- ggplot(data = es21y_all, aes(x = id, y = yi)) + 
-  geom_line() + 
-  geom_errorbar(aes(x = id, ymin = yi - sqrt(vi), ymax = yi + sqrt(vi)),
-                width = 0.4, colour = "orange", alpha = 0.9, linewidth = 1.3) + 
-  theme_bw() + 
-  ggtitle('crop yield response to biochar addition on all crop types)') + 
-  xlab("study-id") + 
-  ylab("log response ratio")
-pall
+
+
 
 #_______________________________________________________________________________
 
@@ -414,11 +329,11 @@ pall
 
 # Load the data.table package
 
-d4y <- copy(es21y)
+d4 <- copy(esnue)
 
 # Convert data frame to data.table
 library(data.table)
-d4y <- as.data.table(d4y)
+d4 <- as.data.table(d4)
 
 # what are the factors to be evaluated
 var.site <- c("rain", "irr", "texture", "water_management", "sbd", "sph", "soc", "stn")
@@ -431,7 +346,7 @@ var.bc <- c("bph", "btc", "btn", "brate")
 var.sel <- c(var.site,var.crop,var.bc)
 
 # run without a main factor selection to estimate overall mean
-ry_0 <- rma.mv(yi, vi, data = d4y, random = list(~ 1|studyid), method = "REML", sparse = TRUE)
+rnue_0 <- rma.mv(yi, vi, data = d4, random = list(~ 1|studyid), method = "REML", sparse = TRUE)
 
 
 # objects to store the effects per factor as well summary stats of the meta-analytical models
@@ -441,37 +356,37 @@ out1.est = out1.sum = list()
 for(i in var.sel){
   
   # check whether the column is a numeric or categorical variable
-  vartype = is.character(d4y[, get(i)])
+  vartype = is.character(d4[, get(i)])
   
   # run with the main factor treatment
   if (vartype) {
     # run a meta-regression model for main categorical variable
-    ry_1 <- rma.mv(yi, vi, mods = ~factor(varsel) - 1, 
-                   data = d4y[, .(yi, vi, studyid, varsel = get(i))], 
+    rnue_1 <- rma.mv(yi, vi, mods = ~factor(varsel) - 1, 
+                   data = d4[, .(yi, vi, studyid, varsel = get(i))], 
                    random = list(~ 1 | studyid), method = "REML", sparse = TRUE)
   } else {
     # run a meta-regression model for main numerical variable
-    ry_1 <- rma.mv(yi, vi, mods = ~varsel, 
-                   data = d4y[, .(yi, vi, studyid, varsel = get(i))], 
+    rnue_1 <- rma.mv(yi, vi, mods = ~varsel, 
+                   data = d4[, .(yi, vi, studyid, varsel = get(i))], 
                    random = list(~ 1 | studyid), method = "REML", sparse = TRUE)
   }
   
   # save output in a list: the estimated impact of the explanatory variable
   out1.est[[i]] <- data.table(var = i,
-                              varname = gsub('factor\\(varsel\\)', '', rownames(ry_1$b)),
-                              mean = round(as.numeric(ry_1$b), 3),
-                              se = round(as.numeric(ry_1$se), 3),
-                              ci.lb = round(as.numeric(ry_1$ci.lb), 3),
-                              ci.ub = round(as.numeric(ry_1$ci.ub), 3),
-                              pval = round(as.numeric(ry_1$pval), 3))
+                              varname = gsub('factor\\(varsel\\)', '', rownames(rnue_1$b)),
+                              mean = round(as.numeric(rnue_1$b), 3),
+                              se = round(as.numeric(rnue_1$se), 3),
+                              ci.lb = round(as.numeric(rnue_1$ci.lb), 3),
+                              ci.ub = round(as.numeric(rnue_1$ci.ub), 3),
+                              pval = round(as.numeric(rnue_1$pval), 3))
   
   # save output in a list: the summary stats collected
   out1.sum[[i]] <- data.table(var = i,
-                              AIC = ry_1$fit.stats[4, 2],
-                              ll = ry_1$fit.stats[1, 2],
-                              ll_impr = round(100 * (1 - ry_1$fit.stats[1, 2] / ry_0$fit.stats[1, 2]), 2),
-                              r2_impr = round(100 * max(0, (sum(ry_0$sigma2) - sum(ry_1$sigma2)) / sum(ry_0$sigma2)), 2),
-                              pval = round(anova(ry_1, ry_0)$pval, 3)
+                              AIC = rnue_1$fit.stats[4, 2],
+                              ll = rnue_1$fit.stats[1, 2],
+                              ll_impr = round(100 * (1 - rnue_1$fit.stats[1, 2] / rnue_0$fit.stats[1, 2]), 2),
+                              r2_impr = round(100 * max(0, (sum(rnue_0$sigma2) - sum(rnue_1$sigma2)) / sum(rnue_0$sigma2)), 2),
+                              pval = round(anova(rnue_1, rnue_0)$pval, 3)
   )
   
 }
@@ -481,9 +396,8 @@ out1.sum <- rbindlist(out1.sum)
 out1.est <- rbindlist(out1.est)
 print(out1.sum)
 print(out1.est)
-# save out.sum for supporting information
-library(data.table)
-data.table(out1.sum, caption = 'Summary Statistics - SMD')
+
+#write.xlsx(out1.est, file = "C:/Users/beeke/OneDrive/Wageningen/Master thesis/R Studio/msc_beeke/data/meta_regression/NUE/out1_est.xlsx")
 
 #_______________________________________________________________________________
 
@@ -564,12 +478,14 @@ ggsave(filename = "C:/Users/beeke/OneDrive/Wageningen/Master thesis/R Studio/msc
        width = 15, height = 8, units = "cm")
 
 
-#______
-#numeric coefficients: make a subset -> x = varname (stn, btn, ...) , y = coefficients
+#______________________________________________
+
+#numeric coefficients (x=varname, y=value of the coefficients)
 
 num <- out1.est[var %in% c('rain', 'irr', 'sbd', 'sph', 'soc', 'stn',
                            'n_fer', 'p_fer', 'k_fer', 'bph','btc','btn', 
                            'brate') & varname != 'intrcpt']
+num
 bar_num <- ggplot(num, aes(x = var, y = mean, fill = var)) +
   geom_bar(stat = "identity") +
   geom_errorbar(aes(ymin = ci.lb, ymax = ci.ub), width = 0.2) +
@@ -585,23 +501,25 @@ ggsave(filename = "C:/Users/beeke/OneDrive/Wageningen/Master thesis/R Studio/msc
        width = 15, height = 8, units = "cm")
 #_____
 
-sph <- out1.est[var == 'sph' & varname != 'intrcpt']
-bar_sph <- ggplot(sph, aes(x = var, y = mean, fill = var)) +
+bcprop <- out1.est[var %in%  c('bph','btc','btn','brate') & varname != 'intrcpt']
+bcprop
+bar_bcprop <- ggplot(bcprop, aes(x = var, y = mean, fill = var)) +
   geom_bar(stat = "identity") +
   geom_errorbar(aes(ymin = ci.lb, ymax = ci.ub), width = 0.2) +
   scale_fill_manual(values = earthtone_colors) +
-  labs(x = "Variable", y = "Mean", title = "Effect of Soil pH") +
+  labs(x = "Variable", y = "Mean", title = "Effect of biochar properties") +
   theme_minimal() +
   theme(axis.text.x = element_text(angle = 45, hjust = 1),
         legend.position = "none",  
         panel.background = element_rect(fill = "white", colour = "white"))
-bar_sph
-ggsave(filename = "C:/Users/beeke/OneDrive/Wageningen/Master thesis/R Studio/msc_beeke/figures/SMD_bar_sph.jpg", 
-       plot = bar_sph, 
+bar_bcprop
+ggsave(filename = "C:/Users/beeke/OneDrive/Wageningen/Master thesis/R Studio/msc_beeke/figures/SMD_bar_biocharproperties.jpg", 
+       plot = bar_bcprop, 
        width = 15, height = 8, units = "cm")
 
 #_____
 climate <- out1.est[var %in% c('rain', 'irr', 'n_fer', 'p_fer', 'k_fer') & varname != 'intrcpt']
+climate
 bar_climate <- ggplot(climate, aes(x = var, y = mean, fill = var)) +
   geom_bar(stat = "identity") +
   geom_errorbar(aes(ymin = ci.lb, ymax = ci.ub), width = 0.2) +
@@ -616,9 +534,28 @@ ggsave(filename = "C:/Users/beeke/OneDrive/Wageningen/Master thesis/R Studio/msc
        plot = bar_climate, 
        width = 15, height = 8, units = "cm")
 
+#______
+
+soil <- out1.est[var %in% c('sbd', 'sph', 'soc', 'stn') & varname != 'intrcpt']
+bar_soil <- ggplot(soil, aes(x = var, y = mean, fill = var)) +
+  geom_bar(stat = "identity") +
+  geom_errorbar(aes(ymin = ci.lb, ymax = ci.ub), width = 0.2) +
+  scale_fill_manual(values = earthtone_colors) +
+  labs(x = "Variable", y = "Mean", title = "Soil Parameters") +
+  theme_minimal() +
+  theme(axis.text.x = element_text(angle = 45, hjust = 1),
+        legend.position = "none",  
+        panel.background = element_rect(fill = "white", colour = "white"))
+bar_soil
+ggsave(filename = "C:/Users/beeke/OneDrive/Wageningen/Master thesis/R Studio/msc_beeke/figures/SMD_bar_soil.jpg", 
+       plot = bar_soil, 
+       width = 15, height = 8, units = "cm")
+
+
 
 #_______________________________________________________________________________
 #Meta-regression for main factors with interactions
+
 
 # make a function to extract relevant model statistics
 estats <- function(model_new, model_base) {
@@ -631,23 +568,17 @@ estats <- function(model_new, model_base) {
   )
   return(out)
 }
+
+d5y <- copy(d4y)
 # run without a main factor selection to estimate overall mean
-ry_0 <- rma.mv(yi,vi, data = d4y,random= list(~ 1|studyid), method="REML",sparse = TRUE)
+ry_0 <- rma.mv(yi,vi, data = d5y,random= list(~ 1|studyid), method="REML",sparse = TRUE)
 
 # 1. make a simple meta-regression model without interaction but with more than one explanatory variable
 
-# from first check i see that some soil textures behave similarly, so i combine them
-d4y[,text2 :=texture]
-d4y[texture %in% c('clay loam', 'loam', 'sandy clay loam'), text2 := 'clay loam']
-
-# here just "rain"
 ry_1 <- rma.mv(yi,vi, 
-               mods = ~rain * btc + text2 + crop_type-1, 
-               data = d4y,
-               random = list(~ 1|studyid), method="REML",sparse = TRUE)
-
-# show stats and improvements
+               mods = ~texture * bph + water_management * sbd + crop_type -1, 
+               data = d5y,
+               random = list(~ 1|studyid), method="REML",sparse = TRUE) 
 out = estats(model_new = ry_1,model_base = ry_0)
 print(paste0('model improved the log likelyhood with ',round(out$ll_impr,1),'%'))
 summary(ry_1)
-
