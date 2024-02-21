@@ -3,7 +3,7 @@
 #date: "2023-08-22"
 
 #packages
-install.packages("metagear")
+#install.packages("metagear")
 
 # Load libraries 
 library(data.table)
@@ -15,34 +15,14 @@ library(readxl)
 d0 <- read_excel("data/meta_regression/meta_regression_copy2.xlsx", sheet = "yield")
 d0 <- as.data.table(d0)
 
-#______
+#_______________________________________________________________________________
+
 #add coefficients from lon and lat
 
 library(readr)
 dcoe <- read_csv("data/meta_regression/coefficients.csv")
 dcoe <- as.data.table(dcoe)
 
-# Divide all values in the column "clay ALL" by 10
-dcoe$`clay ALL` <- dcoe$`clay ALL` / 10
-dcoe$`sand ALL` <- dcoe$`sand ALL` / 10
-
-d0$lon <- as.numeric(as.character(d0$lon))
-d0$lat <- as.numeric(as.character(d0$lat))
-dcoe$lon <- as.numeric(as.character(dcoe$lon))
-dcoe$lat <- as.numeric(as.character(dcoe$lat))
-
-d1 = merge(d0,dcoe,by=c('lon', 'lat','studyid'))
-
-library(writexl)
-file_path <- "C:/Users/beeke/OneDrive/Wageningen/Master thesis/R Studio/msc_beeke/data/meta_regression/d1_merged_data.xlsx"
-write_xlsx(d1, file_path)
-
-
-
-
-
-# Install and load the dplyr package
-install.packages("dplyr")
 library(dplyr)
 
 # Convert 'lon' and 'lat' to character type in both data frames
@@ -51,8 +31,34 @@ d0$lat <- as.character(d0$lat)
 dcoe$lon <- as.character(dcoe$lon)
 dcoe$lat <- as.character(dcoe$lat)
 
-# Perform a full join
+# Perform a full join (so "unknown" is also included)
 d1 <- full_join(d0, dcoe, by = c('lon', 'lat', 'studyid'))
+
+# merging
+#d1 = merge(d0, dcoe, by = c('lon', 'lat', 'studyid'), all.x = TRUE)
+
+#remove rows with NA in the "YC_mean"
+d1 <- d1[!is.na(d1$YC_mean), ]
+
+
+
+# For rows where 'rainfall (mm)' is NA and 'pre_mean' is not NA, copy 'pre_mean' to 'rainfall (mm)'
+d1$`rainfall (mm)`[is.na(d1$`rainfall (mm)`) & !is.na(d1$pre_mean)] <- d1$pre_mean[is.na(d1$`rainfall (mm)`) & !is.na(d1$pre_mean)]
+
+d1$`Bulk_density (g/cm3)`[is.na(d1$`Bulk_density (g/cm3)`) & !is.na(d1$'BD / 100')] <- d1$'BD / 100'[is.na(d1$`Bulk_density (g/cm3)`) & !is.na(d1$'BD / 100')]
+
+d1$'phw ALL' <- rowMeans(d1[, c("phw_mean_0_5", "phw_mean_15_30", "phw_mean_5_15")], na.rm = TRUE)
+d1$`phw ALL`<- d1$`phw ALL` /10
+d1$`S_pH(water)`[is.na(d1$`S_pH(water)`) & !is.na(d1$`phw ALL`)] <- d1$`phw ALL`[is.na(d1$`S_pH(water)`) & !is.na(d1$`phw ALL`)]
+
+# Divide all values in the column "clay ALL" and "sand ALL" by 10
+d1$`clay ALL` <- d1$`clay ALL` / 10
+d1$`sand ALL` <- d1$`sand ALL` / 10
+
+
+library(writexl)
+file_path <- "C:/Users/beeke/OneDrive/Wageningen/Master thesis/R Studio/msc_beeke/data/meta_regression/d1_merged_data.xlsx"
+write_xlsx(d1, file_path)
 
 #_______________________________________________________________________________
 
