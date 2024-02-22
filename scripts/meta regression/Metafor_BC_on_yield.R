@@ -21,9 +21,15 @@ d0 <- as.data.table(d0)
 
 library(readr)
 dcoe <- read_csv("data/meta_regression/coefficients.csv")
+library(data.table)
 dcoe <- as.data.table(dcoe)
 
 library(dplyr)
+
+#d0$lon <- as.numeric(as.character(d0$lon))
+#d0$lat <- as.numeric(as.character(d0$lat))
+#dcoe$lon <- as.numeric(as.character(dcoe$lon))
+#dcoe$lat <- as.numeric(as.character(dcoe$lat))
 
 # Convert 'lon' and 'lat' to character type in both data frames
 d0$lon <- as.character(d0$lon)
@@ -37,9 +43,7 @@ d1 <- full_join(d0, dcoe, by = c('lon', 'lat', 'studyid'))
 # merging
 #d1 = merge(d0, dcoe, by = c('lon', 'lat', 'studyid'), all.x = TRUE)
 
-#remove rows with NA in the "YC_mean"
-d1 <- d1[!is.na(d1$YC_mean), ]
-
+d1 <- as.data.table(d1)
 
 
 # For rows where 'rainfall (mm)' is NA and 'pre_mean' is not NA, copy 'pre_mean' to 'rainfall (mm)'
@@ -55,28 +59,52 @@ d1$`S_pH(water)`[is.na(d1$`S_pH(water)`) & !is.na(d1$`phw ALL`)] <- d1$`phw ALL`
 d1$`clay ALL` <- d1$`clay ALL` / 10
 d1$`sand ALL` <- d1$`sand ALL` / 10
 
+#remove rows with NA in the "YC_mean"
+d1 <- d1[!is.na(d1$YC_mean), ]
 
 library(writexl)
-file_path <- "C:/Users/beeke/OneDrive/Wageningen/Master thesis/R Studio/msc_beeke/data/meta_regression/d1_merged_data.xlsx"
+file_path <- "C:/Users/beeke/OneDrive/Wageningen/Master thesis/R Studio/msc_beeke/data/meta_regression/yield/d1_merged_data_yield.xlsx"
 write_xlsx(d1, file_path)
 
 #_______________________________________________________________________________
 
+library(readxl)
+d2 <- read_excel("data/meta_regression/yield/d1_merged_data_yield.xlsx")
+d2 <- as.data.table(d2)
 ##organize original data
-d2 <- copy(d0)  
+d2 <- copy(d1)  
 
 # clean up column names
 d2 <- as.data.table(d2)
 setnames(d2,gsub('\\/','_',gsub(' |\\(|\\)','',colnames(d2))))
 setnames(d2,tolower(colnames(d2)))
 
+#delete columns I dont need anymore
+library(dplyr)
+d2 <- d2 %>%
+  select(
+    -id, -bdod_mean_0_5, -bdod_mean_15_30, -bdod_mean_5_15, -bd, -bd_100,
+    -cec_mean_0_5, -cec_mean_15_30, -cec_mean_5_15, -clay_mean_0_5, -clay_mean_15_30,
+    -clay_mean_5_15, -ntot_mean_0_5, -ntot_mean_15_30, -ntot_mean_5_15, -tot_n,
+    -tot_n_100, -phw_mean_0_5, -phw_mean_15_30, -phw_mean_5_15, -sand_mean_0_5,
+    -sand_mean_15_30, -sand_mean_5_15, -silt_mean_0_5, -silt_mean_15_30,
+    -silt_mean_5_15, -soc_mean_0_5, -soc_mean_15_30, -soc_mean_5_15, -soc,
+    -soc_100, -pre_mean, -pre_sd, -tmp_mean, -tmp_sd, -pet_mean, -pet_sd,
+    -genzname, -genz, -gens, -phwall, -sources, -country
+  )
+d2 <- d2 %>%
+  mutate(
+    lon = replace(lon, is.na(lon), "unknown"),
+    lat = replace(lat, is.na(lat), "unknown")
+  )
+
 # change column names
 setnames(d2,
          old = c("rainfallmm", "irrigation_amountmm", "n_fertilizerkg_ha", "p_fertilizerkg_ha",
                  "k_fertilizerkg_ha", "soil_texture", "bulk_densityg_cm3", "s_phwater", "s_socg_kg",
-                 "s_tng_kg", "b_phwater", "b_totalcg_kg", "b_totalng_kg", "biochar_ratet_ha"),
+                 "s_tng_kg", "b_phwater", "b_totalcg_kg", "b_totalng_kg", "biochar_ratet_ha", "clayall", "sandall"),
          new = c("rain", "irr", "n_fer", "p_fer", "k_fer", "texture", "sbd", "sph", "soc", "stn",
-                 "bph", "btc", "btn", "brate"),
+                 "bph", "btc", "btn", "brate", "clay", "sand"),
          skip_absent = TRUE)
 
 d2$rain <- as.numeric(d2$rain)
@@ -92,13 +120,15 @@ d2$bph <- as.numeric(d2$bph)
 d2$btc <- as.numeric(d2$btc)
 d2$btn <- as.numeric(d2$btn)
 d2$brate <- as.numeric(d2$brate)
+d2$clay <- as.numeric(d2$clay)
+d2$sand <- as.numeric(d2$sand)
 
 # modify the unit for site properties:
 # bc total carbon from % to g/kg
 d2[btc <= 100, btc := btc * 10]
 # bc total nitrogen from % to g/kg
 d2[btn <= 2, btc := btc * 10]
-
+# biochar rate
 
 # modify the unit for field studies and grain to kg/ha:
 
@@ -131,35 +161,29 @@ d2[is.na(bph), bph := median(d2$bph,na.rm=TRUE)]
 d2[is.na(btc), btc := median(d2$btc,na.rm=TRUE)]
 d2[is.na(btn), btn := median(d2$btn,na.rm=TRUE)]
 d2[is.na(brate), brate := median(d2$brate,na.rm=TRUE)]
+d2[is.na(clay), clay := median(d2$clay,na.rm=TRUE)]
+d2[is.na(sand), sand := median(d2$sand,na.rm=TRUE)]
 
 #_______________________________________________________________________________
 
 ##scaling of the variables to unit variance
 
-d3 <- copy(d2)
+d2[, rain_scaled := scale(rain)]
+d2[, irr_scaled := scale(irr)]
+d2[, n_fer_scaled := scale(n_fer)]
+d2[, p_fer_scaled := scale(p_fer)]
+d2[, k_fer_scaled := scale(k_fer)]
+d2[, sbd_scaled := scale(sbd)]
+d2[, sph_scaled := scale(sph)]
+d2[, soc_scaled := scale(soc)]
+d2[, stn_scaled := scale(stn)]
+d2[, bph_scaled := scale(bph)]
+d2[, btc_scaled := scale(btc)]
+d2[, btn_scaled := scale(btn)]
+d2[, brate_scaled := scale(brate)]
+d2[, clay_scaled := scale(clay)]
+d2[, sand_scaled := scale(sand)]
 
-#numeric values
-
-#check classes
-#str(d3) 
-
-# scale function
-d3[, rain_scaled := scale(rain)]
-d3[, irr_scaled := scale(irr)]
-d3[, n_fer_scaled := scale(n_fer)]
-d3[, p_fer_scaled := scale(p_fer)]
-d3[, k_fer_scaled := scale(k_fer)]
-d3[, sbd_scaled := scale(sbd)]
-d3[, sph_scaled := scale(sph)]
-d3[, soc_scaled := scale(soc)]
-d3[, stn_scaled := scale(stn)]
-d3[, bph_scaled := scale(bph)]
-d3[, btc_scaled := scale(btc)]
-d3[, btn_scaled := scale(btn)]
-d3[, brate_scaled := scale(brate)]
-
-
-fwrite(d3, file = "data/meta_regression/yield/d3.csv")
 
 #_______________________________________________________________________________
 
@@ -291,11 +315,10 @@ hist_others <- hist(d2$yr_mean[d2$crop_type == "others"])
 
 #_______________________________________________________________________________
 
-##ggplot for field studies and crop_type == "grain"
-
 es21y = as.data.table(es21y)
-es21y = es21y[abs(yi)<=10]
-#filter the data set and only select the data where yi is missing
+es21y = es21y[abs(yi)<=7.5]
+
+##ggplot for field studies and crop_type == "grain"
 es21y_grain = es21y[!is.na(yi) & crop_type == "grain"]
 setorder(es21y_grain,-yi)
 es21y_grain[,id:=.I]
@@ -318,8 +341,6 @@ ggsave(plot=pgrain,
 
 ##ggplot for field studies and crop_type == "fruit"
 
-es21y = as.data.table(es21y)
-#filter the data set and only select the data where yi is missing
 es21y_fruit = es21y[!is.na(yi) & crop_type == "fruit"]
 setorder(es21y_fruit,-yi)
 es21y_fruit[,id:=.I]
@@ -337,14 +358,12 @@ pfruit <-  ggplot(data = es21y_fruit, aes(x = id, y = yi)) +
 #show and save plot
 pfruit
 ggsave(plot=pfruit, 
-       filename = 'C:/Users/beeke/OneDrive/Wageningen/Master thesis/R Studio/msc_beeke/figures/pfruit.jpg',
+       filename = 'C:/Users/beeke/OneDrive/Wageningen/Master thesis/R Studio/msc_beeke/figures/yield/pfruit.jpg',
        width = 15, height = 7,unit='cm')
 
 
 # ggplot for field studies and crop_type == "veg"
 
-es21y = as.data.table(es21y)
-# filter the data set and only select the data where yi is missing
 es21y_veg = es21y[!is.na(yi) & crop_type == "vegetable"]
 setorder(es21y_veg, -yi)
 es21y_veg[, id := .I]
@@ -361,13 +380,11 @@ pveg <- ggplot(data = es21y_veg, aes(x = id, y = yi)) +
   ylab("log response ratio")
 pveg
 ggsave(plot=pveg, 
-       filename = 'C:/Users/beeke/OneDrive/Wageningen/Master thesis/R Studio/msc_beeke/figures/pveg.jpg',
+       filename = 'C:/Users/beeke/OneDrive/Wageningen/Master thesis/R Studio/msc_beeke/figures/yield/pveg.jpg',
        width = 15, height = 7,unit='cm')
 
 # ggplot for field studies and crop_type == "legumes"
 
-es21y = as.data.table(es21y)
-# filter the data set and only select the data where yi is missing
 es21y_leg = es21y[!is.na(yi) & crop_type == "legumes"]
 setorder(es21y_leg, -yi)
 es21y_leg[, id := .I]
@@ -384,13 +401,11 @@ pleg <- ggplot(data = es21y_leg, aes(x = id, y = yi)) +
   ylab("log response ratio")
 pleg
 ggsave(plot=pleg, 
-       filename = 'C:/Users/beeke/OneDrive/Wageningen/Master thesis/R Studio/msc_beeke/figures/pleg.jpg',
+       filename = 'C:/Users/beeke/OneDrive/Wageningen/Master thesis/R Studio/msc_beeke/figures/yield/pleg.jpg',
        width = 15, height = 7,unit='cm')
 
 # ggplot for field studies and crop_type == "tubers"
 
-es21y = as.data.table(es21y)
-# filter the data set and only select the data where yi is missing
 es21y_tubers = es21y[!is.na(yi) & crop_type == "tubers"]
 setorder(es21y_tubers, -yi)
 es21y_tubers[, id := .I]
@@ -407,13 +422,11 @@ ptub <- ggplot(data = es21y_tubers, aes(x = id, y = yi)) +
   ylab("log response ratio")
 ptub
 ggsave(plot=ptub, 
-       filename = 'C:/Users/beeke/OneDrive/Wageningen/Master thesis/R Studio/msc_beeke/figures/ptub.jpg',
+       filename = 'C:/Users/beeke/OneDrive/Wageningen/Master thesis/R Studio/msc_beeke/figures/yield/ptub.jpg',
        width = 15, height = 7,unit='cm')
 
 # ggplot for field studies and crop_type == "others"
 
-es21y = as.data.table(es21y)
-# filter the data set and only select the data where yi is missing
 es21y_others = es21y[!is.na(yi) & crop_type == "others"]
 setorder(es21y_others, -yi)
 es21y_others[, id := .I]
@@ -430,12 +443,11 @@ pother <- ggplot(data = es21y_others, aes(x = id, y = yi)) +
   ylab("log response ratio")
 pother
 ggsave(plot=pother, 
-       filename = 'C:/Users/beeke/OneDrive/Wageningen/Master thesis/R Studio/msc_beeke/figures/pother.jpg',
+       filename = 'C:/Users/beeke/OneDrive/Wageningen/Master thesis/R Studio/msc_beeke/figures/yield/pother.jpg',
        width = 15, height = 7,unit='cm')
 
 # ggplot for field studies and all crop_types
-es21y = as.data.table(es21y)
-# filter the data set and only select the data where yi is missing
+
 es21y_all = es21y[!is.na(yi)]
 setorder(es21y_all, -yi)
 es21y_all[, id := .I]
@@ -466,10 +478,10 @@ library(data.table)
 d4y <- as.data.table(d4y)
 
 # what are the factors to be evaluated
-var.site <- c("rain", "irr", "texture", "water_management", "sbd", "sph", "soc", "stn")
-var.crop <- c("crop", "crop_type", "n_fer", "p_fer", "k_fer")
-var.bc <- c("bph", "btc", "btn", "brate")
-
+var.site <- c("rain_scaled", "irr_scaled", "texture", "clay_scaled", "sand_scaled", 
+             "water_management", "sbd_scaled", "sph_scaled", "soc_scaled", "stn_scaled")
+var.crop <- c("crop", "crop_type", "n_fer_scaled", "p_fer_scaled", "k_fer_scaled")
+var.bc <- c("bph_scaled", "btc_scaled", "btn_scaled", "brate_scaled")
 # i select only one example
 
 # the columns to be assessed
@@ -555,14 +567,16 @@ bar_crop_type <- ggplot(crop_type_data, aes(x = varname, y = mean, fill = varnam
   geom_bar(stat = "identity") +
   geom_errorbar(aes(ymin = ci.lb, ymax = ci.ub), width = 0.2) +
   scale_fill_manual(values = earthtone_colors) +
-  labs(x = "Crop Type", y = "Mean", title = "Mean by Crop Type") +
+  labs(x = "Crop Type", y = "Relative change of yield (%)", 
+       title = "Standardized Mean Difference Response by Crop Type due to Biochar application") +
   theme_minimal() +
   theme(axis.text.x = element_text(angle = 45, hjust = 1),
+        legend.position = "none",
         panel.background = element_rect(fill = "white", colour = "white"))
 bar_crop_type
-ggsave(filename = "C:/Users/beeke/OneDrive/Wageningen/Master thesis/R Studio/msc_beeke/figures/SMD_bar_crop_type.jpg", 
+ggsave(filename = "C:/Users/beeke/OneDrive/Wageningen/Master thesis/R Studio/msc_beeke/figures/yield/SMD_bar_crop_type.jpg", 
        plot = bar_crop_type, 
-       width = 15, height = 8, units = "cm")
+       width = 20, height = 10, units = "cm")
 
 
 #crop______
@@ -571,15 +585,16 @@ bar_crop <- ggplot(crop_data, aes(x = varname, y = mean, fill = varname)) +
   geom_bar(stat = "identity") +
   geom_errorbar(aes(ymin = ci.lb, ymax = ci.ub), width = 0.2) +
   scale_fill_manual(values = earthtone_colors) +
-  labs(x = "Crops", y = "Mean", title = "Mean by Crops") +
+  labs(x = "Crops", y = "Relative change of yield (%)", 
+       title = "Standardized Mean Difference Response by Crops due to Biochar application") +
   theme_minimal() +
   theme(axis.text.x = element_text(angle = 45, hjust = 1),
         legend.position = "none",
         panel.background = element_rect(fill = "white", colour = "white"))
 bar_crop
-ggsave(filename = "C:/Users/beeke/OneDrive/Wageningen/Master thesis/R Studio/msc_beeke/figures/SMD_bar_crop.jpg", 
+ggsave(filename = "C:/Users/beeke/OneDrive/Wageningen/Master thesis/R Studio/msc_beeke/figures/yield/SMD_bar_crop.jpg", 
        plot = bar_crop, 
-       width = 15, height = 8, units = "cm")
+       width = 20, height = 10, units = "cm")
 
 #soil texture______
 
@@ -588,14 +603,16 @@ bar_texture <- ggplot(texture_data, aes(x = varname, y = mean, fill = varname)) 
   geom_bar(stat = "identity") +
   geom_errorbar(aes(ymin = ci.lb, ymax = ci.ub), width = 0.2) +
   scale_fill_manual(values = earthtone_colors) +
-  labs(x = "Soil Texture", y = "Mean", title = "Mean by Soil Texture") +
+  labs(x = "Soil Texture", y = "Relative change of yield (%)", 
+       title = "Standardized Mean Difference Response by Soil Texture due to Biochar application") +
   theme_minimal() +
   theme(axis.text.x = element_text(angle = 45, hjust = 1),
+        legend.position = "none",
         panel.background = element_rect(fill = "white", colour = "white"))
 bar_texture
-ggsave(filename = "C:/Users/beeke/OneDrive/Wageningen/Master thesis/R Studio/msc_beeke/figures/SMD_bar_texture.jpg", 
+ggsave(filename = "C:/Users/beeke/OneDrive/Wageningen/Master thesis/R Studio/msc_beeke/figures/yield/SMD_bar_texture.jpg", 
        plot = bar_texture, 
-       width = 15, height = 8, units = "cm")
+       width = 20, height = 10, units = "cm")
 
 #water_management______
 
@@ -604,90 +621,47 @@ bar_water_management <- ggplot(water_management_data, aes(x = varname, y = mean,
   geom_bar(stat = "identity") +
   geom_errorbar(aes(ymin = ci.lb, ymax = ci.ub), width = 0.2) +
   scale_fill_manual(values = earthtone_colors) +
-  labs(x = "Water Management", y = "Mean", title = "Mean by Water Management") +
+  labs(x = "Water Management", y = "Relative change of yield (%)", 
+       title = "Standardized Mean Difference Response by Water Management due to Biochar application") + 
   theme_minimal() +
-  theme(axis.text.x = element_text(angle = 45, hjust = 1),
+  theme(axis.text.x = element_text(angle = 45, hjust = 1), 
+        legend.position = "none",
         panel.background = element_rect(fill = "white", colour = "white"))
 bar_water_management
-ggsave(filename = "C:/Users/beeke/OneDrive/Wageningen/Master thesis/R Studio/msc_beeke/figures/SMD_bar_water_management.jpg", 
+ggsave(filename = "C:/Users/beeke/OneDrive/Wageningen/Master thesis/R Studio/msc_beeke/figures/yield/SMD_bar_water_management.jpg", 
        plot = bar_water_management, 
-       width = 15, height = 8, units = "cm")
+       width = 20, height = 10, units = "cm")
 
 
-#______________________________________________
+#_____
 
-#numeric coefficients (x=varname, y=value of the coefficients)
+#numeric coefficients (scaled)
 
-num <- out1.est[var %in% c('rain', 'irr', 'sbd', 'sph', 'soc', 'stn',
-                           'n_fer', 'p_fer', 'k_fer', 'bph','btc','btn', 
-                           'brate') & varname != 'intrcpt']
+num <- out1.est[var %in% c('clay_scaled', 'sand_scaled', 'sbd_scaled', 'sph_scaled', 'soc_scaled', 
+                           'stn_scaled', 'rain_scaled', 'irr_scaled', 'n_fer_scaled', 'p_fer_scaled', 
+                           'k_fer_scaled', 'bph_scaled', 'btc_scaled', 'btn_scaled', 'brate_scaled')
+                & varname != 'intrcpt']
+num$var <- factor(num$var, levels = c('clay_scaled', 'sand_scaled', 'sbd_scaled', 'sph_scaled', 'soc_scaled', 
+                                      'stn_scaled', 'rain_scaled', 'irr_scaled', 'n_fer_scaled', 'p_fer_scaled', 
+                                      'k_fer_scaled', 'bph_scaled', 'btc_scaled', 'btn_scaled', 'brate_scaled'))
 num
 bar_num <- ggplot(num, aes(x = var, y = mean, fill = var)) +
-  geom_bar(stat = "identity") +
+   geom_bar(stat = "identity") +
   geom_errorbar(aes(ymin = ci.lb, ymax = ci.ub), width = 0.2) +
   scale_fill_manual(values = earthtone_colors) +
-  labs(x = "Variable", y = "Mean", title = "Mean by Variable") +
+  labs(x = "Variable", y = "Relative change of yield (%)", 
+       title = "Standardized Mean Difference Response due to Biochar application") +
   theme_minimal() +
   theme(axis.text.x = element_text(angle = 45, hjust = 1),
         legend.position = "none",  
-        panel.background = element_rect(fill = "white", colour = "white"))
+        panel.background = element_rect(fill = "white", colour = "white"))+
+  annotate("rect", xmin = -Inf, xmax = 7.5, ymin = -Inf, ymax = Inf, fill = "yellow", alpha = 0.2) + 
+  annotate("rect", xmin = 7.5, xmax = 11.5, ymin = -Inf, ymax = Inf, fill = "grey", alpha = 0.2) + 
+  annotate("rect", xmin = 11.5, xmax = Inf, ymin = -Inf, ymax = Inf, fill = "green", alpha = 0.2) 
 bar_num
-ggsave(filename = "C:/Users/beeke/OneDrive/Wageningen/Master thesis/R Studio/msc_beeke/figures/SMD_bar_num.jpg", 
+ggsave(filename = "C:/Users/beeke/OneDrive/Wageningen/Master thesis/R Studio/msc_beeke/figures/yield/SMD_bar_num.jpg", 
        plot = bar_num, 
        width = 15, height = 8, units = "cm")
-#_____
-
-bcprop <- out1.est[var %in%  c('bph','btc','btn','brate') & varname != 'intrcpt']
-bcprop
-bar_bcprop <- ggplot(bcprop, aes(x = var, y = mean, fill = var)) +
-  geom_bar(stat = "identity") +
-  geom_errorbar(aes(ymin = ci.lb, ymax = ci.ub), width = 0.2) +
-  scale_fill_manual(values = earthtone_colors) +
-  labs(x = "Variable", y = "Mean", title = "Effect of biochar properties") +
-  theme_minimal() +
-  theme(axis.text.x = element_text(angle = 45, hjust = 1),
-        legend.position = "none",  
-        panel.background = element_rect(fill = "white", colour = "white"))
-bar_bcprop
-ggsave(filename = "C:/Users/beeke/OneDrive/Wageningen/Master thesis/R Studio/msc_beeke/figures/SMD_bar_biocharproperties.jpg", 
-       plot = bar_bcprop, 
-       width = 15, height = 8, units = "cm")
-
-#_____
-climate <- out1.est[var %in% c('rain', 'irr', 'n_fer', 'p_fer', 'k_fer') & varname != 'intrcpt']
-climate
-bar_climate <- ggplot(climate, aes(x = var, y = mean, fill = var)) +
-  geom_bar(stat = "identity") +
-  geom_errorbar(aes(ymin = ci.lb, ymax = ci.ub), width = 0.2) +
-  scale_fill_manual(values = earthtone_colors) +
-  labs(x = "Variable", y = "Mean", title = "Climate & fertilizer parameters") +
-  theme_minimal() +
-  theme(axis.text.x = element_text(angle = 45, hjust = 1),
-        legend.position = "none",  
-        panel.background = element_rect(fill = "white", colour = "white"))
-bar_climate
-ggsave(filename = "C:/Users/beeke/OneDrive/Wageningen/Master thesis/R Studio/msc_beeke/figures/SMD_bar_climate&fertilizer.jpg", 
-       plot = bar_climate, 
-       width = 15, height = 8, units = "cm")
-
-#______
-
-soil <- out1.est[var %in% c('sbd', 'sph', 'soc', 'stn') & varname != 'intrcpt']
-bar_soil <- ggplot(soil, aes(x = var, y = mean, fill = var)) +
-  geom_bar(stat = "identity") +
-  geom_errorbar(aes(ymin = ci.lb, ymax = ci.ub), width = 0.2) +
-  scale_fill_manual(values = earthtone_colors) +
-  labs(x = "Variable", y = "Mean", title = "Soil Parameters") +
-  theme_minimal() +
-  theme(axis.text.x = element_text(angle = 45, hjust = 1),
-        legend.position = "none",  
-        panel.background = element_rect(fill = "white", colour = "white"))
-bar_soil
-ggsave(filename = "C:/Users/beeke/OneDrive/Wageningen/Master thesis/R Studio/msc_beeke/figures/SMD_bar_soil.jpg", 
-       plot = bar_soil, 
-       width = 15, height = 8, units = "cm")
-
-
 
 #_______________________________________________________________________________
 #Meta-regression for main factors with interactions
@@ -712,72 +686,19 @@ ry_0 <- rma.mv(yi,vi, data = d5y,random= list(~ 1|studyid), method="REML",sparse
 # 1. make a simple meta-regression model without interaction but with more than one explanatory variable
 
 ry_1 <- rma.mv(yi,vi, 
-               mods = ~texture * bph + water_management * sbd + crop_type +brate -1, 
+               mods = ~texture * bph + water_management * sph + k_fer + brate -1, 
                data = d5y,
                random = list(~ 1|studyid), method="REML",sparse = TRUE) 
 out = estats(model_new = ry_1,model_base = ry_0)
 print(paste0('model improved the log likelyhood with ',round(out$ll_impr,1),'%'))
 summary(ry_1)
 
-#all coefficients (10.7% impr):
-
-    ry_1 <- rma.mv(yi,vi, 
-               mods = ~rain + irr + sbd + sph + soc + stn + n_fer + p_fer + 
-                 k_fer + bph + btc + btn + brate +  texture + 
-                 crop_type + water_management -1, 
-               data = d5y,
-               random = list(~ 1|studyid), method="REML",sparse = TRUE) 
-
-    # show stats and improvements
-    out = estats(model_new = ry_1,model_base = ry_0)
-    out
-    print(paste0('model improved the log likelyhood with ',round(out$ll_impr,1),'%'))
-    summary(ry_1)
     
 # from first check i see that some crop types behave similarly, so i combine them
 d5y[,crtype2 := crop_type]
 d5y[crop_type %in% c('grain', 'industrial', 'legumes'), crtype2 := 'grouped']
     
-#grouped crops
 
-    ry_1 <- rma.mv(yi, vi, 
-                           mods = ~rain + irr + sbd + sph + soc + stn + n_fer + p_fer + 
-                             k_fer + bph + btc + btn + brate + texture + 
-                             crtype2 + water_management - 1, 
-                           data = d5y,
-                           random = list(~ 1 | studyid), method = "REML", sparse = TRUE)
-    
-    
-    # show stats and improvements
-    out = estats(model_new = ry_1,model_base = ry_0)
-    print(paste0('model improved the log likelyhood with ',round(out$ll_impr,1),'%'))
-    summary(ry_1)
-
-
-    # Create the boxplot for crop types
-    file_path <- 'C:/Users/beeke/OneDrive/Wageningen/Master thesis/R Studio/msc_beeke/figures/boxplot_croptype.jpg'
-    jpeg(file_path, width = 20, height = 15, units = 'cm', res = 300)
-    box_croptype <- boxplot(d5y$yi ~ d5y$crtype2, 
-                            main = "Boxplot of yi by Crop Type Group", 
-                            xlab = "Crop Type Group", 
-                            ylab = "yi",
-                            col = earthtone_colors,
-                            las = 2)
-    dev.off()
-    
-    
-
-#most significant coefficients (7.2% impr):
-
-    ry_1 <- rma.mv(yi, vi, 
-                   mods = ~sbd + sph + soc + k_fer + btc + brate + 
-                     crtype2 + water_management - 1, 
-                   data = d5y,
-                   random = list(~ 1 | studyid), method = "REML", sparse = TRUE)
-    # show stats and improvements
-    out = estats(model_new = ry_1,model_base = ry_0)
-    print(paste0('model improved the log likelyhood with ',round(out$ll_impr,1),'%'))
-    summary(ry_1)
 
     
     
