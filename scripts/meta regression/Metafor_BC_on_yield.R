@@ -471,11 +471,11 @@ pall
 
 # Load the data.table package
 
-d4y <- copy(es21y)
+d3y <- copy(es21y)
 
 # Convert data frame to data.table
 library(data.table)
-d4y <- as.data.table(d4y)
+d3y <- as.data.table(d3y)
 
 # what are the factors to be evaluated
 var.site <- c("rain_scaled", "irr_scaled", "texture", "clay_scaled", "sand_scaled", 
@@ -488,7 +488,7 @@ var.bc <- c("bph_scaled", "btc_scaled", "btn_scaled", "brate_scaled")
 var.sel <- c(var.site,var.crop,var.bc)
 
 # run without a main factor selection to estimate overall mean
-ry_0 <- rma.mv(yi, vi, data = d4y, random = list(~ 1|studyid), method = "REML", sparse = TRUE)
+ry_0 <- rma.mv(yi, vi, data = d3y, random = list(~ 1|studyid), method = "REML", sparse = TRUE)
 
 
 # objects to store the effects per factor as well summary stats of the meta-analytical models
@@ -498,18 +498,18 @@ out1.est = out1.sum = list()
 for(i in var.sel){
   
   # check whether the column is a numeric or categorical variable
-  vartype = is.character(d4y[, get(i)])
+  vartype = is.character(d3y[, get(i)])
   
   # run with the main factor treatment
   if (vartype) {
     # run a meta-regression model for main categorical variable
     ry_1 <- rma.mv(yi, vi, mods = ~factor(varsel) - 1, 
-                   data = d4y[, .(yi, vi, studyid, varsel = get(i))], 
+                   data = d3y[, .(yi, vi, studyid, varsel = get(i))], 
                    random = list(~ 1 | studyid), method = "REML", sparse = TRUE)
   } else {
     # run a meta-regression model for main numerical variable
     ry_1 <- rma.mv(yi, vi, mods = ~varsel, 
-                   data = d4y[, .(yi, vi, studyid, varsel = get(i))], 
+                   data = d3y[, .(yi, vi, studyid, varsel = get(i))], 
                    random = list(~ 1 | studyid), method = "REML", sparse = TRUE)
   }
   
@@ -679,7 +679,7 @@ estats <- function(model_new, model_base) {
   return(out)
 }
 
-d5y <- copy(d4y)
+d5y <- copy(d3y)
 # run without a main factor selection to estimate overall mean
 ry_0 <- rma.mv(yi,vi, data = d5y,random= list(~ 1|studyid), method="REML",sparse = TRUE)
 
