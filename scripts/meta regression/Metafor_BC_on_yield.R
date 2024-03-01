@@ -476,10 +476,11 @@ ry_0 <- rma.mv(yi,vi, data = d4y,random= list(~ 1|studyid), method="REML",sparse
 # from first check i see that some crop types behave similarly, so i combine them
 d4y[,crop_type2 := crop_type]
 d4y[crop_type %in% c('fruit', 'industrial', 'vegetable'), crop_type2 := 'fruit_ind_veg']
+d4y[crop_type %in% c('tubers', 'others'), crop_type2 := 'tubers_and_others']
 
 # 1. make a simple meta-regression model without interaction but with more than one explanatory variable
 ry_1 <- rma.mv(yi,vi, 
-               mods = ~ crop_type2 + clay + soc + water_management * sph + brate -1, 
+               mods = ~ crop_type2 + clay + soc + water_management * sph + n_fer * btn + brate -1, 
                data = d4y,
                random = list(~ 1|studyid), method="REML",sparse = TRUE) 
 out = estats(model_new = ry_1,model_base = ry_0)
@@ -494,7 +495,7 @@ file_path <- "C:/Users/beeke/OneDrive/Wageningen/Master thesis/R Studio/msc_beek
 # Write the captured output to the file
 writeLines(summary_output_yield, file_path)
 
-
+d4y
     
 
 

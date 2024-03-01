@@ -381,7 +381,7 @@ rph_0 <- rma.mv(yi,vi, data = d4ph,random= list(~ 1|studyid), method="REML",spar
 # 1. make a simple meta-regression model without interaction but with more than one explanatory variable
 
 rph_1 <- rma.mv(yi,vi, 
-                 mods = ~ sph + soc + clay + sbd * rain + brate + btn -1, 
+                 mods = ~ sph + soc + clay + sbd * bph + rain + btc + btn + brate -1, 
                  data = d4ph,
                  random = list(~ 1|studyid), method="REML",sparse = TRUE) 
 out = estats_ph(model_new = rph_1,model_base = rph_0)
@@ -396,3 +396,5 @@ file_path <- "C:/Users/beeke/OneDrive/Wageningen/Master thesis/R Studio/msc_beek
 # Write the captured output to the file
 writeLines(summary_output_ph, file_path)
 
+
+rph_1

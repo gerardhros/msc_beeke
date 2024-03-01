@@ -523,9 +523,14 @@ d4nue <- copy(d3nue)
 rnue_0 <- rma.mv(yi,vi, data = d4nue,random= list(~ 1|studyid), method="REML",sparse = TRUE)
 
 # 1. make a simple meta-regression model without interaction but with more than one explanatory variable
+d4nue[,crop_type3 := crop_type]
+d4nue[crop_type %in% c('grain', 'industrial'), crop_type3 := 'grain_indus']
+
+d4nue[,water := water_management]
+d4nue[water_management %in% c('irrigation', 'irrigation and rain'), water := ' irr and rain']
 
 rnue_1 <- rma.mv(yi,vi, 
-               mods = ~ crop_type * sph + clay + soc + stn * water_management + brate -1, 
+               mods = ~ crop_type3 * clay + soc + sbd  + stn * water_management + btn + brate -1, 
                data = d4nue,
                random = list(~ 1|studyid), method="REML",sparse = TRUE) 
 out = estats_nue(model_new = rnue_1,model_base = rnue_0)
