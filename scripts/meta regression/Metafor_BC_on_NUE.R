@@ -380,12 +380,13 @@ print(out2.sum)
 print(out2.est)
 # save out.sum for supporting information
 #library(data.table)
-#data.table(out2.sum, caption = 'Summary Statistics - SMD')
+data.table(out2.sum, caption = 'Summary Statistics - SMD')
 #data.table(out2.est, caption = 'out.est - SMD')
 
-#library(openxlsx)
+out2.est_wi <- out2.est[varname != 'intrcpt']
+library(openxlsx)
 
-#write.xlsx(out2.est, file = "C:/Users/beeke/OneDrive/Wageningen/Master thesis/R Studio/msc_beeke/data/meta_regression/yield/out1_est.xlsx")
+write.xlsx(out2.est_wi, file "C:/Users/beeke/OneDrive/Wageningen/Master thesis/R Studio/msc_beeke/data/meta_regression/NUE/out2_est.xlsx")
 
 #_______________________________________________________________________________
 
@@ -405,10 +406,10 @@ library(ggplot2)
 crop_type_data <- out2.est[var == "crop_type"]
 bar_crop_type_nue <- ggplot(crop_type_data, aes(x = varname, y = mean, fill = varname)) +
   geom_bar(stat = "identity") +
-  geom_errorbar(aes(ymin = ci.lb, ymax = ci.ub), width = 0.2) +
+  geom_errorbar(aes(ymin = mean - se, ymax = mean + se), width = 0.2) + 
   scale_fill_manual(values = earthtone_colors) +
-  labs(x = "Crop Type", y = "Relative change in NUE (%)", 
-       title = "Standardized Mean Difference Response by Crop Type due to Biochar application") +
+  labs(x = "Crop Type", y = "Relative change in NUE", 
+       title = "SMD Response on NUE by Crop Type due to Biochar application") +
   theme_minimal() +
   theme(axis.text.x = element_text(angle = 45, hjust = 1),
         legend.position = "none",
@@ -423,10 +424,10 @@ ggsave(filename = "C:/Users/beeke/OneDrive/Wageningen/Master thesis/R Studio/msc
 crop_data <- out2.est[var == "crop"]
 bar_crop_nue <- ggplot(crop_data, aes(x = varname, y = mean, fill = varname)) +
   geom_bar(stat = "identity") +
-  geom_errorbar(aes(ymin = ci.lb, ymax = ci.ub), width = 0.2) +
+  geom_errorbar(aes(ymin = mean - se, ymax = mean + se), width = 0.2) + 
   scale_fill_manual(values = earthtone_colors) +
-  labs(x = "Crops", y = "Relative change in NUE (%)", 
-       title = "Standardized Mean Difference Response by Crops due to Biochar application") +
+  labs(x = "Crops", y = "Relative change in NUE", 
+       title = "SMD Response on NUE by Crops due to Biochar application") +
   theme_minimal() +
   theme(axis.text.x = element_text(angle = 45, hjust = 1),
         legend.position = "none",
@@ -441,10 +442,10 @@ ggsave(filename = "C:/Users/beeke/OneDrive/Wageningen/Master thesis/R Studio/msc
 texture_data <- out2.est[var == "texture"]
 bar_texture_nue <- ggplot(texture_data, aes(x = varname, y = mean, fill = varname)) +
   geom_bar(stat = "identity") +
-  geom_errorbar(aes(ymin = ci.lb, ymax = ci.ub), width = 0.2) +
+  geom_errorbar(aes(ymin = mean - se, ymax = mean + se), width = 0.2) + 
   scale_fill_manual(values = earthtone_colors) +
-  labs(x = "Soil Texture", y = "Relative change in NUE (%)", 
-       title = "Standardized Mean Difference Response by Soil Texture due to Biochar application") +
+  labs(x = "Soil Texture", y = "Relative change in NUE", 
+       title = "SMD Response on NUE by Soil Texture due to Biochar application") +
   theme_minimal() +
   theme(axis.text.x = element_text(angle = 45, hjust = 1),
         legend.position = "none",
@@ -459,10 +460,10 @@ ggsave(filename = "C:/Users/beeke/OneDrive/Wageningen/Master thesis/R Studio/msc
 water_management_data <- out2.est[var == "water_management"]
 bar_water_management_nue <- ggplot(water_management_data, aes(x = varname, y = mean, fill = varname)) +
   geom_bar(stat = "identity") +
-  geom_errorbar(aes(ymin = ci.lb, ymax = ci.ub), width = 0.2) +
+  geom_errorbar(aes(ymin = mean - se, ymax = mean + se), width = 0.2) + 
   scale_fill_manual(values = earthtone_colors) +
-  labs(x = "Water Management", y = "Relative change in NUE (%)", 
-       title = "Standardized Mean Difference Response by Water Management due to Biochar application") + 
+  labs(x = "Water Management", y = "Relative change in NUE", 
+       title = "SMD Response by Water Management due to Biochar application") + 
   theme_minimal() +
   theme(axis.text.x = element_text(angle = 45, hjust = 1), 
         legend.position = "none",
@@ -476,20 +477,19 @@ ggsave(filename = "C:/Users/beeke/OneDrive/Wageningen/Master thesis/R Studio/msc
 
 #numeric coefficients (scaled)
 
-num <- out2.est[var %in% c('clay_scaled', 'sand_scaled', 'sbd_scaled', 'sph_scaled', 'soc_scaled', 
+num_nue <- out2.est[var %in% c('clay_scaled', 'sand_scaled', 'sbd_scaled', 'sph_scaled', 'soc_scaled', 
                            'stn_scaled', 'rain_scaled', 'irr_scaled', 'n_fer_scaled', 'p_fer_scaled', 
                            'k_fer_scaled', 'bph_scaled', 'btc_scaled', 'btn_scaled', 'brate_scaled')
                 & varname != 'intrcpt']
-num$var <- factor(num$var, levels = c('clay_scaled', 'sand_scaled', 'sbd_scaled', 'sph_scaled', 'soc_scaled', 
+num_nue$var <- factor(num$var, levels = c('clay_scaled', 'sand_scaled', 'sbd_scaled', 'sph_scaled', 'soc_scaled', 
                                       'stn_scaled', 'rain_scaled', 'irr_scaled', 'n_fer_scaled', 'p_fer_scaled', 
                                       'k_fer_scaled', 'bph_scaled', 'btc_scaled', 'btn_scaled', 'brate_scaled'))
-num
-bar_num_nue <- ggplot(num, aes(x = var, y = mean, fill = var)) +
-  geom_bar(stat = "identity") +
-  geom_errorbar(aes(ymin = ci.lb, ymax = ci.ub), width = 0.2) +
-  scale_fill_manual(values = earthtone_colors) +
-  labs(x = "Variable", y = "Relative change in NUE (%)", 
-       title = "Standardized Mean Difference Response due to Biochar application") +
+num_nue
+bar_num_nue <- ggplot(num_nue, aes(x = var, y = mean, fill = var)) +
+  geom_bar(stat = "identity", fill = "dimgrey") +
+  geom_errorbar(aes(ymin = mean - se, ymax = mean + se), width = 0.2) + 
+  labs(x = "Variable", y = "Relative change in NUE", 
+       title = "SMD Response on NUE due to Biochar application") +
   theme_minimal() +
   theme(axis.text.x = element_text(angle = 45, hjust = 1),
         legend.position = "none",  
@@ -525,15 +525,18 @@ rnue_0 <- rma.mv(yi,vi, data = d4nue,random= list(~ 1|studyid), method="REML",sp
 # 1. make a simple meta-regression model without interaction but with more than one explanatory variable
 
 rnue_1 <- rma.mv(yi,vi, 
-               mods = ~texture * bph + water_management * sph + k_fer + brate -1, 
+               mods = ~ crop_type * sph + clay + soc + stn * water_management + brate -1, 
                data = d4nue,
                random = list(~ 1|studyid), method="REML",sparse = TRUE) 
 out = estats_nue(model_new = rnue_1,model_base = rnue_0)
 print(paste0('model improved the log likelyhood with ',round(out$ll_impr,1),'%'))
 summary(rnue_1)
 
+summary_output_nue <- capture.output(summary(rnue_1))
 
-# from first check i see that some crop types behave similarly, so i combine them
-d4nue[,crtype2 := crop_type]
-d4nue[crop_type %in% c('grain', 'industrial', 'legumes'), crtype2 := 'grouped']
+# Specify the file path where you want to save the summary
+file_path <- "C:/Users/beeke/OneDrive/Wageningen/Master thesis/R Studio/msc_beeke/data/meta_regression/nue/summary_nue.txt"
+
+# Write the captured output to the file
+writeLines(summary_output_nue, file_path)
 

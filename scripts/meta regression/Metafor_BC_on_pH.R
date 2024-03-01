@@ -18,6 +18,13 @@ d2ph <- as.data.table(d2ph)
 d2ph <- d2ph[!is.na(d2ph$phc_mean), ]
 d2ph <- d2ph[!is.na(d2ph$phr_mean), ]
 
+# Replace NA values in phr_n and phc_n with 2
+d2ph <- d2ph %>%
+  mutate(
+    phr_n = ifelse(is.na(phr_n), 2, phr_n),
+    phc_n = ifelse(is.na(phc_n), 2, phc_n)
+  )
+
 #remove other responses
 d2ph <- d2ph %>% 
   select(
@@ -74,7 +81,6 @@ fwrite(d2ph, file = "data/meta_regression/ph/d2ph.csv")
 # calculate effect size 
 
 library(metafor)
-
 es1ph <- escalc(measure = "SMD", data = d2ph, 
                  m1i = phr_mean, sd1i = phr_sd, n1i = phr_n,
                  m2i = phc_mean, sd2i = phc_sd, n2i = phc_n)
@@ -156,28 +162,6 @@ ggsave(plot=pphveg,
        filename = 'C:/Users/beeke/OneDrive/Wageningen/Master thesis/R Studio/msc_beeke/figures/ph/pphveg.jpg',
        width = 20, height = 10,unit='cm')
 
-# ggplot for field studies and all crop_types
-
-es1ph_all = es1ph[!is.na(yi)]
-setorder(es1ph_all, -yi)
-es1ph_all[, id := .I]
-es1ph_all[, yi_cor := (exp(yi) - 1) * 100]
-es1ph_all[, vi_cor := (exp(vi) - 1) * 100]
-library(ggplot2)
-pphall <- ggplot(data = es1ph_all, aes(x = id, y = yi)) + 
-  geom_line() + 
-  geom_errorbar(aes(x = id, ymin = yi - sqrt(vi), ymax = yi + sqrt(vi)),
-                width = 0.4, colour = "orange", alpha = 0.9, linewidth = 1.3) + 
-  theme_bw() + 
-  ggtitle('pH response to biochar addition on all crop types)') + 
-  xlab("study-id") + 
-  ylab("log response ratio")
-pphall
-ggsave(plot=pphall, 
-       filename = 'C:/Users/beeke/OneDrive/Wageningen/Master thesis/R Studio/msc_beeke/figures/ph/pphall.jpg',
-       width = 20, height = 10,unit='cm')
-
-
 #_______________________________________________________________________________
 
 #Meta-regression for main factors
@@ -255,7 +239,6 @@ print(out3.est)
 #data.table(out3.sum, caption = 'Summary Statistics - SMD')
 #data.table(out3.est, caption = 'out.est - SMD')
 
-
 out3.est_wi <- out3.est[varname != 'intrcpt']
 out3.est_wi
 library(openxlsx)
@@ -279,10 +262,10 @@ library(ggplot2)
 crop_type_data <- out3.est[var == "crop_type"]
 bar_crop_type_ph <- ggplot(crop_type_data, aes(x = varname, y = mean, fill = varname)) +
   geom_bar(stat = "identity") +
-  geom_errorbar(aes(ymin = ci.lb, ymax = ci.ub), width = 0.2) +
+  geom_errorbar(aes(ymin = mean - se, ymax = mean + se), width = 0.2) + 
   scale_fill_manual(values = earthtone_colors) +
-  labs(x = "Crop Type", y = "Relative change in NUE (%)", 
-       title = "Standardized Mean Difference Response by Crop Type due to Biochar application") +
+  labs(x = "Crop Type", y = "Relative change in pH", 
+       title = "SMD Response by Crop Type due to Biochar application") +
   theme_minimal() +
   theme(axis.text.x = element_text(angle = 45, hjust = 1),
         legend.position = "none",
@@ -297,9 +280,9 @@ ggsave(filename = "C:/Users/beeke/OneDrive/Wageningen/Master thesis/R Studio/msc
 crop_data <- out3.est[var == "crop"]
 bar_crop_ph <- ggplot(crop_data, aes(x = varname, y = mean, fill = varname)) +
   geom_bar(stat = "identity") +
-  geom_errorbar(aes(ymin = ci.lb, ymax = ci.ub), width = 0.2) +
+  geom_errorbar(aes(ymin = mean - se, ymax = mean + se), width = 0.2) + 
   scale_fill_manual(values = earthtone_colors) +
-  labs(x = "Crops", y = "Relative change in NUE (%)", 
+  labs(x = "Crops", y = "Relative change in pH", 
        title = "Standardized Mean Difference Response by Crops due to Biochar application") +
   theme_minimal() +
   theme(axis.text.x = element_text(angle = 45, hjust = 1),
@@ -315,10 +298,10 @@ ggsave(filename = "C:/Users/beeke/OneDrive/Wageningen/Master thesis/R Studio/msc
 texture_data <- out3.est[var == "texture"]
 bar_texture_ph <- ggplot(texture_data, aes(x = varname, y = mean, fill = varname)) +
   geom_bar(stat = "identity") +
-  geom_errorbar(aes(ymin = ci.lb, ymax = ci.ub), width = 0.2) +
+  geom_errorbar(aes(ymin = mean - se, ymax = mean + se), width = 0.2) + 
   scale_fill_manual(values = earthtone_colors) +
-  labs(x = "Soil Texture", y = "Relative change in NUE (%)", 
-       title = "Standardized Mean Difference Response by Soil Texture due to Biochar application") +
+  labs(x = "Soil Texture", y = "Relative change in pH", 
+       title = "SMD Response by Soil Texture due to Biochar application") +
   theme_minimal() +
   theme(axis.text.x = element_text(angle = 45, hjust = 1),
         legend.position = "none",
@@ -333,10 +316,10 @@ ggsave(filename = "C:/Users/beeke/OneDrive/Wageningen/Master thesis/R Studio/msc
 water_management_data <- out3.est[var == "water_management"]
 bar_water_management_ph <- ggplot(water_management_data, aes(x = varname, y = mean, fill = varname)) +
   geom_bar(stat = "identity") +
-  geom_errorbar(aes(ymin = ci.lb, ymax = ci.ub), width = 0.2) +
+  geom_errorbar(aes(ymin = mean - se, ymax = mean + se), width = 0.2) + 
   scale_fill_manual(values = earthtone_colors) +
-  labs(x = "Water Management", y = "Relative change in NUE (%)", 
-       title = "Standardized Mean Difference Response by Water Management due to Biochar application") + 
+  labs(x = "Water Management", y = "Relative change in pH", 
+       title = "SMD Response by Water Management due to Biochar application") + 
   theme_minimal() +
   theme(axis.text.x = element_text(angle = 45, hjust = 1), 
         legend.position = "none",
@@ -350,20 +333,19 @@ ggsave(filename = "C:/Users/beeke/OneDrive/Wageningen/Master thesis/R Studio/msc
 
 #numeric coefficients (scaled)
 
-num <- out3.est[var %in% c('clay_scaled', 'sand_scaled', 'sbd_scaled', 'sph_scaled', 'soc_scaled', 
+num_ph <- out3.est[var %in% c('clay_scaled', 'sand_scaled', 'sbd_scaled', 'sph_scaled', 'soc_scaled', 
                            'stn_scaled', 'rain_scaled', 'irr_scaled', 'n_fer_scaled', 'p_fer_scaled', 
                            'k_fer_scaled', 'bph_scaled', 'btc_scaled', 'btn_scaled', 'brate_scaled')
                 & varname != 'intrcpt']
-num$var <- factor(num$var, levels = c('clay_scaled', 'sand_scaled', 'sbd_scaled', 'sph_scaled', 'soc_scaled', 
+num_ph$var <- factor(num$var, levels = c('clay_scaled', 'sand_scaled', 'sbd_scaled', 'sph_scaled', 'soc_scaled', 
                                       'stn_scaled', 'rain_scaled', 'irr_scaled', 'n_fer_scaled', 'p_fer_scaled', 
                                       'k_fer_scaled', 'bph_scaled', 'btc_scaled', 'btn_scaled', 'brate_scaled'))
-num
-bar_num_ph <- ggplot(num, aes(x = var, y = mean, fill = var)) +
-  geom_bar(stat = "identity") +
-  geom_errorbar(aes(ymin = ci.lb, ymax = ci.ub), width = 0.2) +
-  scale_fill_manual(values = earthtone_colors) +
-  labs(x = "Variable", y = "Relative change in NUE (%)", 
-       title = "Standardized Mean Difference Response due to Biochar application") +
+num_ph
+bar_num_ph <- ggplot(num_ph, aes(x = var, y = mean, fill = var)) +
+  geom_bar(stat = "identity", fill = "dimgrey") +
+  geom_errorbar(aes(ymin = mean - se, ymax = mean + se), width = 0.2) + 
+  labs(x = "Variable", y = "Relative change in pH", 
+       title = "SMD Response due to Biochar application") +
   theme_minimal() +
   theme(axis.text.x = element_text(angle = 45, hjust = 1),
         legend.position = "none",  
@@ -399,14 +381,18 @@ rph_0 <- rma.mv(yi,vi, data = d4ph,random= list(~ 1|studyid), method="REML",spar
 # 1. make a simple meta-regression model without interaction but with more than one explanatory variable
 
 rph_1 <- rma.mv(yi,vi, 
-                 mods = ~texture * bph + water_management * sph + k_fer + brate -1, 
+                 mods = ~ sph + soc + clay + sbd * rain + brate + btn -1, 
                  data = d4ph,
                  random = list(~ 1|studyid), method="REML",sparse = TRUE) 
 out = estats_ph(model_new = rph_1,model_base = rph_0)
 print(paste0('model improved the log likelyhood with ',round(out$ll_impr,1),'%'))
 summary(rph_1)
 
+summary_output_ph <- capture.output(summary(rph_1))
 
-# from first check i see that some crop types behave similarly, so i combine them
-d4ph[,crtype2 := crop_type]
-d4ph[crop_type %in% c('grain', 'industrial', 'legumes'), crtype2 := 'grouped']
+# Specify the file path where you want to save the summary
+file_path <- "C:/Users/beeke/OneDrive/Wageningen/Master thesis/R Studio/msc_beeke/data/meta_regression/ph/summary_ph.txt"
+
+# Write the captured output to the file
+writeLines(summary_output_ph, file_path)
+

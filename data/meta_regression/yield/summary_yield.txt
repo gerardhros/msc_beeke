@@ -1,0 +1,39 @@
+
+Multivariate Meta-Analysis Model (k = 609; method: REML)
+
+    logLik    Deviance         AIC         BIC        AICc   
+-1110.8484   2221.6969   2253.6969   2323.8869   2254.6397   
+
+Variance Components:
+
+            estim    sqrt  nlvls  fixed   factor 
+sigma^2    0.2742  0.5237    609     no  studyid 
+
+Test for Residual Heterogeneity:
+QE(df = 594) = 1089.1508, p-val < .0001
+
+Test of Moderators (coefficients 1:15):
+QM(df = 15) = 868.9517, p-val < .0001
+
+Model Results:
+
+                                         estimate      se     zval    pval    ci.lb    ci.ub      
+crop_type2fruit_ind_veg                   -2.4164  0.8865  -2.7258  0.0064  -4.1539  -0.6789   ** 
+crop_type2grain                           -2.5915  0.8657  -2.9935  0.0028  -4.2883  -0.8947   ** 
+crop_type2legumes                         -1.9436  0.9086  -2.1391  0.0324  -3.7244  -0.1627    * 
+crop_type2others                          -1.2261  0.9828  -1.2476  0.2122  -3.1524   0.7002      
+crop_type2tubers                          -1.5352  0.8976  -1.7104  0.0872  -3.2944   0.2240    . 
+clay                                       0.0318  0.0098   3.2343  0.0012   0.0125   0.0511   ** 
+soc                                        0.0039  0.0143   0.2730  0.7848  -0.0240   0.0318      
+water_managementirrigation                -0.8787  1.1290  -0.7783  0.4364  -3.0916   1.3342      
+water_managementirrigation and rain        8.5513  1.2602   6.7858  <.0001   6.0814  11.0212  *** 
+water_managementrainfed                    1.3956  0.8710   1.6023  0.1091  -0.3115   3.1027      
+sph                                        0.3644  0.1274   2.8609  0.0042   0.1148   0.6141   ** 
+brate                                      0.0003  0.0036   0.0887  0.9293  -0.0068   0.0074      
+water_managementirrigation:sph             0.3719  0.1860   2.0000  0.0455   0.0074   0.7364    * 
+water_managementirrigation and rain:sph   -1.0222  0.1783  -5.7314  <.0001  -1.3718  -0.6726  *** 
+water_managementrainfed:sph               -0.1641  0.1372  -1.1961  0.2316  -0.4329   0.1048      
+
+---
+Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
+
