@@ -380,13 +380,13 @@ print(out2.sum)
 print(out2.est)
 # save out.sum for supporting information
 #library(data.table)
-data.table(out2.sum, caption = 'Summary Statistics - SMD')
+#data.table(out2.sum, caption = 'Summary Statistics - SMD')
 #data.table(out2.est, caption = 'out.est - SMD')
 
-out2.est_wi <- out2.est[varname != 'intrcpt']
-library(openxlsx)
+#out2.est_wi <- out2.est[varname != 'intrcpt']
+#library(openxlsx)
 
-write.xlsx(out2.est_wi, file "C:/Users/beeke/OneDrive/Wageningen/Master thesis/R Studio/msc_beeke/data/meta_regression/NUE/out2_est.xlsx")
+#write.xlsx(out2.est_wi, file "C:/Users/beeke/OneDrive/Wageningen/Master thesis/R Studio/msc_beeke/data/meta_regression/NUE/out2_est.xlsx")
 
 #_______________________________________________________________________________
 
@@ -545,3 +545,24 @@ file_path <- "C:/Users/beeke/OneDrive/Wageningen/Master thesis/R Studio/msc_beek
 # Write the captured output to the file
 writeLines(summary_output_nue, file_path)
 
+
+# visualize
+estimates <- coef(rnue_1)
+se <- sqrt(diag(vcov(rnue_1)))
+variables <- names(estimates)
+
+# Create a data frame for ggplot
+df <- data.frame(Variable = variables, Estimate = estimates, SE = se)
+
+# Create the plot
+sum_nue <- ggplot(df, aes(x = Variable, y = Estimate)) +
+  geom_point() +
+  geom_errorbar(aes(ymin = Estimate - 1.96 * SE, ymax = Estimate + 1.96 * SE), width = 0.2) +
+  theme(axis.text.x = element_text(angle = 90, hjust = 1)) +
+  coord_flip() + 
+  xlab('Variables') +
+  ylab('Estimates')
+sum_nue
+ggsave(filename = "C:/Users/beeke/OneDrive/Wageningen/Master thesis/R Studio/msc_beeke/figures/NUE/summary_nue.jpg", 
+       plot = sum_nue, 
+       width = 20, height = 15, units = "cm")

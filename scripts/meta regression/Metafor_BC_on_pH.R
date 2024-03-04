@@ -19,6 +19,7 @@ d2ph <- d2ph[!is.na(d2ph$phc_mean), ]
 d2ph <- d2ph[!is.na(d2ph$phr_mean), ]
 
 # Replace NA values in phr_n and phc_n with 2
+library(dplyr)
 d2ph <- d2ph %>%
   mutate(
     phr_n = ifelse(is.na(phr_n), 2, phr_n),
@@ -345,7 +346,7 @@ bar_num_ph <- ggplot(num_ph, aes(x = var, y = mean, fill = var)) +
   geom_bar(stat = "identity", fill = "dimgrey") +
   geom_errorbar(aes(ymin = mean - se, ymax = mean + se), width = 0.2) + 
   labs(x = "Variable", y = "Relative change in pH", 
-       title = "SMD Response due to Biochar application") +
+       title = "SMD Response on ph due to Biochar application") +
   theme_minimal() +
   theme(axis.text.x = element_text(angle = 45, hjust = 1),
         legend.position = "none",  
@@ -381,7 +382,7 @@ rph_0 <- rma.mv(yi,vi, data = d4ph,random= list(~ 1|studyid), method="REML",spar
 # 1. make a simple meta-regression model without interaction but with more than one explanatory variable
 
 rph_1 <- rma.mv(yi,vi, 
-                 mods = ~ sph + soc + clay + sbd * bph + rain + btc + btn + brate -1, 
+                 mods = ~ sph + soc + clay + sbd * bph + rain + btc + brate -1, 
                  data = d4ph,
                  random = list(~ 1|studyid), method="REML",sparse = TRUE) 
 out = estats_ph(model_new = rph_1,model_base = rph_0)
@@ -396,5 +397,23 @@ file_path <- "C:/Users/beeke/OneDrive/Wageningen/Master thesis/R Studio/msc_beek
 # Write the captured output to the file
 writeLines(summary_output_ph, file_path)
 
+# visualize
+estimates <- coef(rph_1)
+se <- sqrt(diag(vcov(rph_1)))
+variables <- names(estimates)
 
-rph_1
+# Create a data frame for ggplot
+df <- data.frame(Variable = variables, Estimate = estimates, SE = se)
+
+# Create the plot
+sum_ph <- ggplot(df, aes(x = Variable, y = Estimate)) +
+  geom_point() +
+  geom_errorbar(aes(ymin = Estimate - 1.96 * SE, ymax = Estimate + 1.96 * SE), width = 0.2) +
+  theme(axis.text.x = element_text(angle = 90, hjust = 1)) +
+  coord_flip() + 
+  xlab('Variables') +
+  ylab('Estimates')
+sum_ph
+ggsave(filename = "C:/Users/beeke/OneDrive/Wageningen/Master thesis/R Studio/msc_beeke/figures/ph/summary_ph.jpg", 
+       plot = sum_ph, 
+       width = 20, height = 15, units = "cm")

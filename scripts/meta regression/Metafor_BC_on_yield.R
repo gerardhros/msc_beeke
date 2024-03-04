@@ -495,10 +495,29 @@ file_path <- "C:/Users/beeke/OneDrive/Wageningen/Master thesis/R Studio/msc_beek
 # Write the captured output to the file
 writeLines(summary_output_yield, file_path)
 
-d4y
-    
+library(metafor)
+library(ggplot2)
 
+# Assuming ry_1 is your model object
+estimates <- coef(ry_1)
+se <- sqrt(diag(vcov(ry_1)))
+variables <- names(estimates)
 
+# Create a data frame for ggplot
+df <- data.frame(Variable = variables, Estimate = estimates, SE = se)
+
+# Create the plot
+sum_y <- ggplot(df, aes(x = Variable, y = Estimate)) +
+  geom_point() +
+  geom_errorbar(aes(ymin = Estimate - 1.96 * SE, ymax = Estimate + 1.96 * SE), width = 0.2) +
+  theme(axis.text.x = element_text(angle = 90, hjust = 1)) +
+  coord_flip() + 
+  xlab('Variables') +
+  ylab('Estimates')
+sum_y
+ggsave(filename = "C:/Users/beeke/OneDrive/Wageningen/Master thesis/R Studio/msc_beeke/figures/yield/summary_y.jpg", 
+       plot = sum_y, 
+       width = 20, height = 15, units = "cm")
     
     
     
