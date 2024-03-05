@@ -18,7 +18,7 @@ require(data.table)
 
 # Main
 library(readxl)
-m1.main <- read_excel("C:/Users/beeke/OneDrive/Wageningen/Master thesis/R Studio/msc_beeke/data/meta_model/meta_model_R_copy1.xlsx", sheet = 4)
+m1.main <- read_excel("data/meta_model/meta_model_R_copy1.xlsx", sheet = 4)
 library(data.table)
 m1.main <- as.data.table(m1.main)
 m1.main <- m1.main[,.(ind_code, ES, SE, n)]
@@ -40,7 +40,7 @@ setnames(m1.main.sd, old = ".", new = "wm_sd")
 #merge m1.main.mean and m1.main.sd
 m1.main.merged = merge(m1.main.mean, m1.main.sd, by = c("ind_code"), all.x = TRUE)
 
-fwrite(m1.main.merged, file = "data/meta_model/m1.main.merged.csv")
+#fwrite(m1.main.merged, file = "data/meta_model/m1.main.merged.csv")
 
 #vilualize 
 
@@ -68,34 +68,31 @@ ggsave(filename = "C:/Users/beeke/OneDrive/Wageningen/Master thesis/R Studio/msc
 #______________________________________________________________________________
 # Covariates
 
-library(readxl)
-m1.covar <- read_excel("C:/Users/beeke/OneDrive/Wageningen/Master thesis/R Studio/msc_beeke/data/meta_model/meta_model_R_copy1.xlsx", sheet = 5)
-library(data.table)
+m1.covar <- read_excel("data/meta_model/meta_model_R_copy1.xlsx", sheet = 5)
 m1.covar <- as.data.table(m1.covar)
-
-m1.covar <- m1.covar[,.(ind_code, `moderator 1`, `group 1`, `moderator 2`, `group 2`, ES, SE, n)]
+m1.covar <- m1.covar[,.(ind_code, mod1 = `moderator 1`, group1 = `group 1`, mod2=`moderator 2`, group2=`group 2`, ES, SE, n)]
 
 #only by ind_code and moderator 1 to get the average estimates of certain combinations of groups
-m1.covar[, wm.sd := 1/sqrt(sum(1 / SE^2)), by = c('ind_code','moderator 1')]
-m1.covar[, wm.mean := sum((ES / SE^2)) / sum(1 / SE^2) , by = c('ind_code','moderator 1')]
+#m1.covar[, wm.sd := 1/sqrt(sum(1 / SE^2)), by = c('ind_code','mod1')]
+#m1.covar[, wm.mean := sum((ES / SE^2)) / sum(1 / SE^2) , by = c('ind_code','mod1')]
 
-m1.covar <- m1.covar %>%
-  select(-c(`group 1`, `group 2`, ES, SE, n))
+#m1.covar[,c('group1','group2','ES','SE','n') := NULL]
+
 
 m1.cov.mean <- dcast(data = m1.covar, 
-                     formula = ind_code ~ `moderator 1`, 
+                     formula = ind_code ~ mod1, 
                      value.var = 'wm.mean', 
                      fun.aggregate = mean)
 setnames(m1.cov.mean, colnames(m1.cov.mean)[-c(0:1)], paste0('wm_mean_', colnames(m1.cov.mean)[-c(0:1)]))
 m1.cov.sd <- dcast(data = m1.covar, 
-                   formula = ind_code ~ `moderator 1`, 
+                   formula = ind_code ~ mod1, 
                    value.var = 'wm.sd', 
                    fun.aggregate = mean)
 setnames(m1.cov.sd, colnames(m1.cov.sd)[-c(0:1)], paste0('wm_sd_', colnames(m1.cov.sd)[-c(0:1)]))
 
 #merge m1.main.mean and m1.main.sd
 m1.cov.merged <- merge(m1.cov.mean, m1.cov.sd, 
-                       by = c("moderator 1"), 
+                       by = c("ind_code"), 
                        all.x = TRUE)
 
 # remove "NaN" and replace by NA
@@ -103,9 +100,206 @@ m1.cov.merged[, (names(m1.cov.merged)) := lapply(.SD, function(x) ifelse(is.nume
 # merge "soil ph" and "soil pH" and "bc ph" and "bc pH"
 
 
+m1.cov2 <- m1.covar[,list(pmin = min(ES),
+                          pmax = max(ES),
+                          pmean = sum((ES / SE^2)) / sum(1 / SE^2),
+                          psd = 1/sqrt(sum(1 / SE^2))),by=c('ind_code','mod1')]
+
+
+ggplot(data=m1.cov2[ind_code=='Y']) + ggchicklet:::geom_rrect(aes(xmin = pmin,
+                                                                  xmax = pmax,
+                                                                  ymin = mod1,
+                                                                  ymax = mod1,fill='blue',alpha=0.8),r = unit(0.5,'npc'))
+
+
+
 fwrite(m1.cov.merged, file = "data/meta_model/m1.cov.merged.csv")
 
+# --- example from itnernet -------
 
+library(tidyverse);require(dplyr)
+dat <- read_csv2('data/ratios.csv')
+
+avgs <- dat %>% 
+  pivot_longer(
+    cols = -1,
+    names_to = 'type',
+    values_to = 'ratio'
+  ) %>% 
+  group_by(type) %>% 
+  summarise(ratio = mean(ratio)) %>% 
+  mutate(location = 'REGION AVERAGE')
+
+dat_longer <- dat %>% 
+  pivot_longer(
+    cols = -1,
+    names_to = 'type',
+    values_to = 'ratio'
+  ) 
+dat_longer_with_avgs <- dat_longer %>% 
+  bind_rows(avgs)
+
+dat_with_avgs <- dat_longer_with_avgs %>% 
+  pivot_wider(
+    names_from = 'type',
+    values_from = 'ratio'
+  ) 
+
+dat_with_avgs %>% 
+  ggplot() +
+  geom_rect(
+    aes(
+      xmin = store_lower, 
+      xmax = store_upper, 
+      ymin = location, 
+      ymax = location
+    )
+  )
+
+color_palette <- c("#C3D938", "#772877", "#7C821E", "#D8B98B", "#7A4012")
+bar_height <- 0.4 
+no_highlight_col <- 'grey70'
+average_highlight_col <- 'grey40'
+below_highlight <- color_palette[2]
+
+sorted_dat <- dat_with_avgs %>% 
+  mutate(num = row_number(inventory_turnover)) %>% 
+  # Sort so that everything is in order of rank
+  # Important for text labels later on
+  arrange(desc(num)) %>% 
+  mutate(
+    rect_color = case_when(
+      inventory_turnover < store_lower ~ below_highlight,
+      location == 'REGION AVERAGE' ~ average_highlight_col,
+      T ~ no_highlight_col
+    ),
+    rect_alpha = if_else(
+      inventory_turnover < store_lower,
+      0.5,
+      1
+    ),
+    point_color = if_else(
+      inventory_turnover < store_lower,
+      below_highlight,
+      'black'
+    ),
+    point_fill = if_else(
+      inventory_turnover < store_lower,
+      below_highlight,
+      'white'
+    ),
+    point_size = if_else(
+      inventory_turnover < store_lower,
+      3,
+      2
+    )
+  )
+
+sorted_dat[1:2,] %>% 
+  ggplot() +
+  geom_rect(
+    aes(
+      xmin = store_lower, 
+      xmax = store_upper, 
+      ymin = num - bar_height, 
+      ymax = num + bar_height
+    ),
+  )
+
+# --- test ----
+
+m1.cov2[,mod1n := as.integer(as.factor(mod1))]
+m1.cov2[pmin==pmax,c('pmin','pmax') := list(pmin * 0.99, pmax * 1.01)]
+
+
+for(i in unique(m1.cov2$ind_code)){
+  
+  i = 'Y'
+  
+  # subet only the moderaters that are present (so skipping NA)
+  m1.cov2.plot <-  m1.cov2[ind_code==i]
+  m1.cov2.plot[,mod2 := factor(mod1,
+                                levels = c('bc dose','bc ph','bc c content', 'bc C:N','ash content',
+                                           'soil ph','SOC','soil N','soil C:N',
+                                           'soil texture','bulk density',
+                                           'N rate','climate','crop type','water management','time frame'))
+                                ]
+  m1.cov2.plot[,mod1n := 18-as.numeric(mod2)]
+
+  # collect individual estimates
+  m1.cov2.ind <- m1.covar[ind_code == i & mod1 %in% m1.cov2.plot$mod1]
+  m1.cov2.ind[,mod2 := factor(mod1,
+                               levels = c('bc dose','bc ph','bc c content', 'bc C:N','ash content',
+                                          'soil ph','SOC','soil N','soil C:N',
+                                          'soil texture','bulk density',
+                                          'N rate','climate','crop type','water management','time frame'))
+  ]
+  m1.cov2.ind[,mod1n := 18-as.numeric(mod2)]
+  m1.cov2.ind <- unique(m1.cov2.ind[,.(ind_code,mod2,ES,mod1n)])
+  
+  # make the plot
+  p1 <- m1.cov2.plot %>% ggplot()+
+    geom_rect(aes(xmin = pmin,xmax = pmax,
+                  ymin=mod1n - 0.2,
+                  ymax=mod1n+0.2),fill = 'blue',alpha=0.2) + 
+    xlim(0,80) + theme_bw()+
+    scale_y_continuous(name ='mods', 
+                       breaks = m1.cov2.plot$mod1n, 
+                       labels = m1.cov2.plot$mod2, 
+                       limits = c(1.5,17.5))+
+    geom_point(aes(x=pmean,y=mod1n),col='black',size=3,alpha=0.8) +
+    geom_errorbar(aes(y=mod1n,xmin = pmean - psd, xmax = pmean + psd),linewidth=0.8,width=0.4)+
+    theme(panel.grid.minor = element_blank())+
+    ylab('covariate controlling yield response')+
+    xlab('change in yield (%)') +
+    ggtitle('change in yield due to x (%)') +
+    geom_point(data = m1.cov2.ind,aes(x=ES,y=mod1n),col='red',size=2)
+  
+ ggsave(plot = p1, filename = paste0('products/image_',tolower(gsub(' ','_',i)),'.jpg'),
+        width = 12,height = 10,units='cm') 
+  
+}
+
+# make the plot
+p1 <- m1.cov2.plot %>% ggplot()+
+  geom_rect(aes(xmin = pmin,xmax = pmax,
+                ymin=mod1n - 0.2,
+                ymax=mod1n+0.2),fill = 'blue',alpha=0.2) + 
+  xlim(0,80) + theme_bw()+
+  scale_y_continuous(name ='mods', 
+                     breaks = m1.cov2.plot$mod1n, 
+                     labels = m1.cov2.plot$mod2, 
+                     limits = c(1.5,17.5))+
+  geom_point(aes(x=pmean,y=mod1n),col='black',size=3,alpha=0.8) +
+  geom_errorbar(aes(y=mod1n,xmin = pmean - psd, xmax = pmean + psd),linewidth=0.8,width=0.4)+
+  theme(panel.grid.minor = element_blank())+
+  ylab('covariate controlling yield response')+
+  xlab('change in yield (%)') +
+  ggtitle('change in yield due to x (%)') +
+  geom_point(data = m1.cov2.ind,aes(x=ES,y=mod1n),col='red',size=2)
+
+# make the plot
+p2 <- m1.cov2.plot %>% ggplot()+
+  geom_rect(aes(xmin = pmin,xmax = pmax,
+                ymin=mod1n - 0.2,
+                ymax=mod1n+0.2),fill = 'blue',alpha=0.2) + 
+  xlim(0,80) + theme_bw()+
+  scale_y_continuous(name ='mods', 
+                     breaks = m1.cov2.plot$mod1n, 
+                     labels = m1.cov2.plot$mod2, 
+                     limits = c(1.5,17.5))+
+  geom_point(aes(x=pmean,y=mod1n),col='black',size=3,alpha=0.8) +
+  geom_errorbar(aes(y=mod1n,xmin = pmean - psd, xmax = pmean + psd),linewidth=0.8,width=0.4)+
+  theme(panel.grid.minor = element_blank())+
+  ylab('covariate controlling yield response')+
+  xlab('change in yield (%)') +
+  ggtitle('change in yield due to x (%)') +
+  geom_point(data = m1.cov2.ind,aes(x=ES,y=mod1n),col='red',size=2)
+
+
+require(patchwork)
+p3 <- p1 + p2
+ 
 
 #visualize
 
