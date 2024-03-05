@@ -194,7 +194,7 @@ fwrite(d2nue, file = "data/meta_regression/NUE/d2nue.csv")
 
 #_______________________________________________________________________________
 
-## Estimate meta-analytical response measure (MD Method)
+## Estimate meta-analytical response measure (SMD Method)
 # calculate effect size 
 
 library(metafor)
@@ -317,10 +317,13 @@ d3nue <- copy(es1nue)
 library(data.table)
 d3nue <- as.data.table(d3nue)
 
+d3nue[,crop2 := crop]
+d3nue[crop %in% c('oats', 'barley'), crop2 := 'wheat']
+
 # what are the factors to be evaluated
 var.site <- c("rain_scaled", "irr_scaled", "texture", "clay_scaled", "sand_scaled", 
               "water_management", "sbd_scaled", "sph_scaled", "soc_scaled", "stn_scaled")
-var.crop <- c("crop", "crop_type", "n_fer_scaled", "p_fer_scaled", "k_fer_scaled")
+var.crop <- c("crop2", "crop_type", "n_fer_scaled", "p_fer_scaled", "k_fer_scaled")
 var.bc <- c("bph_scaled", "btc_scaled", "btn_scaled", "brate_scaled")
 # i select only one example
 
@@ -421,11 +424,11 @@ ggsave(filename = "C:/Users/beeke/OneDrive/Wageningen/Master thesis/R Studio/msc
 
 
 #crop______
-crop_data <- out2.est[var == "crop"]
+
+crop_data <- out2.est[var == "crop2"]
 bar_crop_nue <- ggplot(crop_data, aes(x = varname, y = mean, fill = varname)) +
-  geom_bar(stat = "identity") +
+  geom_bar(stat = "identity" , fill = "olivedrab") +
   geom_errorbar(aes(ymin = mean - se, ymax = mean + se), width = 0.2) + 
-  scale_fill_manual(values = earthtone_colors) +
   labs(x = "Crops", y = "Relative change in NUE", 
        title = "SMD Response on NUE by Crops due to Biochar application") +
   theme_minimal() +
@@ -435,7 +438,8 @@ bar_crop_nue <- ggplot(crop_data, aes(x = varname, y = mean, fill = varname)) +
 bar_crop_nue
 ggsave(filename = "C:/Users/beeke/OneDrive/Wageningen/Master thesis/R Studio/msc_beeke/figures/NUE/SMD_bar_crop_nue.jpg", 
        plot = bar_crop_nue, 
-       width = 20, height = 10, units = "cm")
+       width = 20, height = 7, units = "cm")
+
 
 #soil texture______
 
@@ -477,13 +481,15 @@ ggsave(filename = "C:/Users/beeke/OneDrive/Wageningen/Master thesis/R Studio/msc
 
 #numeric coefficients (scaled)
 
-num_nue <- out2.est[var %in% c('clay_scaled', 'sand_scaled', 'sbd_scaled', 'sph_scaled', 'soc_scaled', 
-                           'stn_scaled', 'rain_scaled', 'irr_scaled', 'n_fer_scaled', 'p_fer_scaled', 
-                           'k_fer_scaled', 'bph_scaled', 'btc_scaled', 'btn_scaled', 'brate_scaled')
-                & varname != 'intrcpt']
-num_nue$var <- factor(num$var, levels = c('clay_scaled', 'sand_scaled', 'sbd_scaled', 'sph_scaled', 'soc_scaled', 
-                                      'stn_scaled', 'rain_scaled', 'irr_scaled', 'n_fer_scaled', 'p_fer_scaled', 
-                                      'k_fer_scaled', 'bph_scaled', 'btc_scaled', 'btn_scaled', 'brate_scaled'))
+num_nue$var <- gsub("_scaled", "", num_nue$var)
+
+# Define the order of levels for the var factor
+var_order <- c('clay', 'sand', 'sbd', 'sph', 'soc', 
+               'stn', 'rain', 'irr', 'n_fer', 'p_fer', 
+               'k_fer', 'bph', 'btc', 'btn', 'brate')
+
+# Reorder the levels of the var factor
+num_nue$var <- factor(num_nue$var, levels = var_order)
 num_nue
 bar_num_nue <- ggplot(num_nue, aes(x = var, y = mean, fill = var)) +
   geom_bar(stat = "identity", fill = "dimgrey") +
@@ -500,7 +506,7 @@ bar_num_nue <- ggplot(num_nue, aes(x = var, y = mean, fill = var)) +
 bar_num_nue
 ggsave(filename = "C:/Users/beeke/OneDrive/Wageningen/Master thesis/R Studio/msc_beeke/figures/NUE/SMD_bar_num_nue.jpg", 
        plot = bar_num_nue, 
-       width = 20, height = 10, units = "cm")
+       width = 20, height = 7, units = "cm")
 
 #_______________________________________________________________________________
 #Meta-regression for main factors with interactions
@@ -546,23 +552,38 @@ file_path <- "C:/Users/beeke/OneDrive/Wageningen/Master thesis/R Studio/msc_beek
 writeLines(summary_output_nue, file_path)
 
 
-# visualize
-estimates <- coef(rnue_1)
-se <- sqrt(diag(vcov(rnue_1)))
-variables <- names(estimates)
+#visualize
 
-# Create a data frame for ggplot
-df <- data.frame(Variable = variables, Estimate = estimates, SE = se)
+# Extract coefficient names from the model object
+coeff_names_nue <- names(coef(rnue_1))
 
-# Create the plot
-sum_nue <- ggplot(df, aes(x = Variable, y = Estimate)) +
-  geom_point() +
-  geom_errorbar(aes(ymin = Estimate - 1.96 * SE, ymax = Estimate + 1.96 * SE), width = 0.2) +
-  theme(axis.text.x = element_text(angle = 90, hjust = 1)) +
-  coord_flip() + 
-  xlab('Variables') +
-  ylab('Estimates')
+# Renaming coefficients
+coeff_names_nue <- gsub("crop_type3grain_indus", "gr&ind", coeff_names_nue)
+coeff_names_nue <- gsub("crop_type3vegetable", "veg", coeff_names_nue)
+coeff_names_nue <- gsub("water_managementirrigation", "w_irr", coeff_names_nue)
+coeff_names_nue <- gsub("water_managementirrigation and rain", "w_irr&rain", coeff_names_nue)
+coeff_names_nue <- gsub("water_managementrainfed", "w_rfed", coeff_names_nue)
+
+# Create the data frame
+summary_nue <- data.frame(
+  Coefficients = coeff_names_nue,
+  Estimate = summary(rnue_1)$b,
+  PValue = summary(rnue_1)$pval
+)
+summary_nue$Significance <- ifelse(summary_nue$PValue < .001, '***',
+                                     ifelse(summary_nue$PValue < .01, '**',
+                                            ifelse(summary_nue$PValue < .05, '*',
+                                                   ifelse(summary_nue$PValue < .1, '.', ' '))))
+
+sum_nue <- ggplot(summary_nue, aes(x=reorder(Coefficients, Estimate), y=Estimate, fill=Significance)) +
+  geom_bar(stat="identity") +
+  geom_text(aes(label=Significance), vjust=1.5, color="black") +
+  scale_fill_manual(values=c('***'='olivedrab', '**'='orange', '*'='darksalmon', '.'='red', ' ' = 'grey')) +
+  labs(title="Parameter Estimates with Significance Levels",
+       x="Coefficients", y="Parameter estimate") +
+  theme_minimal()+
+  theme(axis.text.x = element_text(angle = 45, hjust = 1, size = 8))
 sum_nue
-ggsave(filename = "C:/Users/beeke/OneDrive/Wageningen/Master thesis/R Studio/msc_beeke/figures/NUE/summary_nue.jpg", 
+ggsave(filename = "C:/Users/beeke/OneDrive/Wageningen/Master thesis/R Studio/msc_beeke/figures/NUE/sum_nue.jpg", 
        plot = sum_nue, 
-       width = 20, height = 15, units = "cm")
+       width = 20, height = 7, units = "cm")

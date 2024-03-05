@@ -42,27 +42,25 @@ m1.main.merged = merge(m1.main.mean, m1.main.sd, by = c("ind_code"), all.x = TRU
 
 fwrite(m1.main.merged, file = "data/meta_model/m1.main.merged.csv")
 
-
-earthtone_colors <- c(
-  "darkred", "darkorange", "rosybrown", "olivedrab", "chocolate",
-  "saddlebrown", "darkgoldenrod", "maroon", "peru", "sienna", 
-  "brown", "darkolivegreen", "lightsalmon", "tan", "goldenrod", 
-  "coral", "tomato", "sandybrown", "firebrick", "indianred", 
-  "darksalmon"
-)
+#vilualize 
 
 library(ggplot2)
-bar_m1_merged <- ggplot(m1.main.merged, aes(x = ind_code, y = wm_mean, fill = ind_code)) +
+
+bar_m1_merged <- ggplot(m1.main.merged, 
+                        aes(x = ind_code, y = wm_mean, 
+                            fill = ifelse(ind_code == "bulk density", "olivedrab", "darkgrey"))) +
   geom_bar(stat = "identity") +
   geom_errorbar(aes(ymin = wm_mean - wm_sd, ymax = wm_mean + wm_sd), width = 0.2) +
-  scale_fill_manual(values = earthtone_colors) +
+  scale_fill_identity() +
   labs(x = "Indicator Code", y = "Weighted Mean", 
        title = "Weighted Mean and Standard Deviation by Indicator") +
-  theme_minimal() +
+  theme_bw() +
   theme(axis.text.x = element_text(angle = 45, hjust = 1),
         legend.position = "none",
         panel.background = element_rect(fill = "white", colour = "white"))
+
 bar_m1_merged
+
 ggsave(filename = "C:/Users/beeke/OneDrive/Wageningen/Master thesis/R Studio/msc_beeke/figures/model/bar_m1_merged.jpg", 
        plot = bar_m1_merged, 
        width = 20, height = 10, units = "cm")

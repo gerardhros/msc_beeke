@@ -81,7 +81,7 @@ fwrite(d2, file = "data/meta_regression/yield/d2.csv")
 
 #_______________________________________________________________________________
 
-## Estimate meta-analytical response measure (MD Method)
+## Estimate meta-analytical response measure (SMD Method)
 # calculate effect size 
 
 library(metafor)
@@ -267,10 +267,14 @@ d3y <- copy(es21y)
 library(data.table)
 d3y <- as.data.table(d3y)
 
+#group crop "lettuce" and "cabbage" together to "salad" because of to little studies. 
+d3y[,crop1 := crop]
+d3y[crop %in% c('oats', 'barley'), crop1 := 'wheat']
+
 # what are the factors to be evaluated
 var.site <- c("rain_scaled", "irr_scaled", "texture", "clay_scaled", "sand_scaled", 
              "water_management", "sbd_scaled", "sph_scaled", "soc_scaled", "stn_scaled")
-var.crop <- c("crop", "crop_type", "n_fer_scaled", "p_fer_scaled", "k_fer_scaled")
+var.crop <- c("crop1", "crop_type", "n_fer_scaled", "p_fer_scaled", "k_fer_scaled")
 var.bc <- c("bph_scaled", "btc_scaled", "btn_scaled", "brate_scaled")
 # i select only one example
 
@@ -355,9 +359,8 @@ library(ggplot2)
 #crop type______
 crop_type_data <- out1.est[var == "crop_type"]
 bar_crop_type <- ggplot(crop_type_data, aes(x = varname, y = mean, fill = varname)) +
-  geom_bar(stat = "identity") +
+  geom_bar(stat = "identity", fill = "maroon") +
   geom_errorbar(aes(ymin = mean - se, ymax = mean + se), width = 0.2) + 
-  scale_fill_manual(values = earthtone_colors) +
   labs(x = "Crop Type", y = "Relative change of yield", 
        title = "SMD Response on Yield by Crop Type due to Biochar application") +
   theme_minimal() +
@@ -367,15 +370,14 @@ bar_crop_type <- ggplot(crop_type_data, aes(x = varname, y = mean, fill = varnam
 bar_crop_type
 ggsave(filename = "C:/Users/beeke/OneDrive/Wageningen/Master thesis/R Studio/msc_beeke/figures/yield/SMD_bar_crop_type.jpg", 
        plot = bar_crop_type, 
-       width = 20, height = 10, units = "cm")
+       width = 20, height = 7, units = "cm")
 
 
 #crop______
-crop_data <- out1.est[var == "crop"]
+crop_data <- out1.est[var == "crop1"]
 bar_crop <- ggplot(crop_data, aes(x = varname, y = mean, fill = varname)) +
-  geom_bar(stat = "identity") +
+  geom_bar(stat = "identity", fill = "maroon") +
   geom_errorbar(aes(ymin = mean - se, ymax = mean + se), width = 0.2) + 
-  scale_fill_manual(values = earthtone_colors) +
   labs(x = "Crops", y = "Relative change of yield", 
        title = "SMD Response on Yield by Crops due to Biochar application") +
   theme_minimal() +
@@ -385,7 +387,7 @@ bar_crop <- ggplot(crop_data, aes(x = varname, y = mean, fill = varname)) +
 bar_crop
 ggsave(filename = "C:/Users/beeke/OneDrive/Wageningen/Master thesis/R Studio/msc_beeke/figures/yield/SMD_bar_crop.jpg", 
        plot = bar_crop, 
-       width = 20, height = 10, units = "cm")
+       width = 20, height = 7, units = "cm")
 
 #soil texture______
 
@@ -428,13 +430,15 @@ ggsave(filename = "C:/Users/beeke/OneDrive/Wageningen/Master thesis/R Studio/msc
 
 #numeric coefficients (scaled)
 
-num_y <- out1.est[var %in% c('clay_scaled', 'sand_scaled', 'sbd_scaled', 'sph_scaled', 'soc_scaled', 
-                           'stn_scaled', 'rain_scaled', 'irr_scaled', 'n_fer_scaled', 'p_fer_scaled', 
-                           'k_fer_scaled', 'bph_scaled', 'btc_scaled', 'btn_scaled', 'brate_scaled')
-                & varname != 'intrcpt']
-num_y$var <- factor(num$var, levels = c('clay_scaled', 'sand_scaled', 'sbd_scaled', 'sph_scaled', 'soc_scaled', 
-                                      'stn_scaled', 'rain_scaled', 'irr_scaled', 'n_fer_scaled', 'p_fer_scaled', 
-                                      'k_fer_scaled', 'bph_scaled', 'btc_scaled', 'btn_scaled', 'brate_scaled'))
+num_y$var <- gsub("_scaled", "", num_y$var)
+
+# Define the order of levels for the var factor
+var_order <- c('clay', 'sand', 'sbd', 'sph', 'soc', 
+               'stn', 'rain', 'irr', 'n_fer', 'p_fer', 
+               'k_fer', 'bph', 'btc', 'btn', 'brate')
+
+# Reorder the levels of the var factor
+num_y$var <- factor(num_y$var, levels = var_order)
 num_y
 bar_num <- ggplot(num_y, aes(x = var, y = mean, fill = var)) +
    geom_bar(stat = "identity", fill = "dimgrey") +
@@ -451,7 +455,7 @@ bar_num <- ggplot(num_y, aes(x = var, y = mean, fill = var)) +
 bar_num
 ggsave(filename = "C:/Users/beeke/OneDrive/Wageningen/Master thesis/R Studio/msc_beeke/figures/yield/SMD_bar_num.jpg", 
        plot = bar_num, 
-       width = 20, height = 10, units = "cm")
+       width = 20, height = 7, units = "cm")
 
 #_______________________________________________________________________________
 #Meta-regression for main factors with interactions
@@ -495,30 +499,46 @@ file_path <- "C:/Users/beeke/OneDrive/Wageningen/Master thesis/R Studio/msc_beek
 # Write the captured output to the file
 writeLines(summary_output_yield, file_path)
 
-library(metafor)
-library(ggplot2)
+#_________________
+#visualize
 
-# Assuming ry_1 is your model object
-estimates <- coef(ry_1)
-se <- sqrt(diag(vcov(ry_1)))
-variables <- names(estimates)
+# Extract coefficient names from the model object
+coeff_names_y <- names(coef(ry_1))
 
-# Create a data frame for ggplot
-df <- data.frame(Variable = variables, Estimate = estimates, SE = se)
+# Renaming coefficients
+coeff_names_y <- gsub("crop_type2fruit_ind_veg", "fiv", coeff_names_y)
+coeff_names_y <- gsub("crop_type2grain", "grain", coeff_names_y)
+coeff_names_y <- gsub("crop_type2legumes", "leg", coeff_names_y)
+coeff_names_y <- gsub("crop_type2tubers_and_others", "tub&oth", coeff_names_y)
+coeff_names_y <- gsub("water_managementirrigation", "w_irr", coeff_names_y)
+coeff_names_y <- gsub("water_managementirrigation and rain", "w_irr&rain", coeff_names_y)
+coeff_names_y <- gsub("water_managementrainfed", "r_fed", coeff_names_y)
 
-# Create the plot
-sum_y <- ggplot(df, aes(x = Variable, y = Estimate)) +
-  geom_point() +
-  geom_errorbar(aes(ymin = Estimate - 1.96 * SE, ymax = Estimate + 1.96 * SE), width = 0.2) +
-  theme(axis.text.x = element_text(angle = 90, hjust = 1)) +
-  coord_flip() + 
-  xlab('Variables') +
-  ylab('Estimates')
+# Create the data frame
+summary_yield <- data.frame(
+  Coefficients = coeff_names_y,
+  Estimate = summary(ry_1)$b,
+  PValue = summary(ry_1)$pval
+)
+summary_yield$Significance <- ifelse(summary_yield$PValue < .001, '***',
+                                     ifelse(summary_yield$PValue < .01, '**',
+                                            ifelse(summary_yield$PValue < .05, '*',
+                                                   ifelse(summary_yield$PValue < .1, '.', ' '))))
+
+sum_y <- ggplot(summary_yield, aes(x=reorder(Coefficients, Estimate), y=Estimate, fill=Significance)) +
+  geom_bar(stat="identity") +
+  geom_text(aes(label=Significance), vjust=1.5, color="black") +
+  scale_fill_manual(values=c('***'='olivedrab', '**'='orange', '*'='darksalmon', '.'='red', ' ' = 'grey')) +
+  labs(title="Parameter Estimates with Significance Levels",
+       x="Coefficients", y="Parameter estimate") +
+  theme_minimal() +
+  theme(axis.text.x = element_text(angle = 45, hjust = 1, size = 8))
 sum_y
-ggsave(filename = "C:/Users/beeke/OneDrive/Wageningen/Master thesis/R Studio/msc_beeke/figures/yield/summary_y.jpg", 
+ggsave(filename = "C:/Users/beeke/OneDrive/Wageningen/Master thesis/R Studio/msc_beeke/figures/yield/sum_y.jpg", 
        plot = sum_y, 
-       width = 20, height = 15, units = "cm")
-    
+       width = 20, height = 7, units = "cm")
+
+
     
     
     

@@ -78,13 +78,15 @@ fwrite(d2ph, file = "data/meta_regression/ph/d2ph.csv")
 
 #_______________________________________________________________________________
 
-## Estimate meta-analytical response measure (MD Method)
+## Estimate meta-analytical response measure (SMD Method)
 # calculate effect size 
 
 library(metafor)
 es1ph <- escalc(measure = "SMD", data = d2ph, 
                  m1i = phr_mean, sd1i = phr_sd, n1i = phr_n,
                  m2i = phc_mean, sd2i = phc_sd, n2i = phc_n)
+es1ph=as.data.table(es1ph)
+es1ph=es1ph[yi<=10]
 fwrite(es1ph, file = "data/meta_regression/ph/es1ph.csv")
 
 #_______________________________________________________________________________  
@@ -174,10 +176,20 @@ d3ph <- copy(es1ph)
 library(data.table)
 d3ph <- as.data.table(d3ph)
 
+#group crop "lettuce" and "cabbage" together to "salad" because of to little studies.
+#group oats and barley to wheat
+d3ph[,crop3 := crop]
+d3ph[crop %in% c('lettuce', 'cabbage'), crop3 := 'salad']
+d3ph[crop %in% c('oats', 'barley'), crop3 := 'wheat']
+
+#rename unknown crops
+d3ph[crop == "unknown", crop3 := paste("unknown", crop_type)]
+
+
 # what are the factors to be evaluated
 var.site <- c("rain_scaled", "irr_scaled", "texture", "clay_scaled", "sand_scaled", 
               "water_management", "sbd_scaled", "sph_scaled", "soc_scaled", "stn_scaled")
-var.crop <- c("crop", "crop_type", "n_fer_scaled", "p_fer_scaled", "k_fer_scaled")
+var.crop <- c("crop3", "crop_type", "n_fer_scaled", "p_fer_scaled", "k_fer_scaled")
 var.bc <- c("bph_scaled", "btc_scaled", "btn_scaled", "brate_scaled")
 # i select only one example
 
@@ -278,12 +290,11 @@ ggsave(filename = "C:/Users/beeke/OneDrive/Wageningen/Master thesis/R Studio/msc
 
 
 #crop______
-crop_data <- out3.est[var == "crop"]
+crop_data <- out3.est[var == "crop3" & varname != "unknown unknown"]
 bar_crop_ph <- ggplot(crop_data, aes(x = varname, y = mean, fill = varname)) +
-  geom_bar(stat = "identity") +
+  geom_bar(stat = "identity", fill = "darkorange") +
   geom_errorbar(aes(ymin = mean - se, ymax = mean + se), width = 0.2) + 
-  scale_fill_manual(values = earthtone_colors) +
-  labs(x = "Crops", y = "Relative change in pH", 
+  labs(x = "Crops", y = "Relative change in soil pH", 
        title = "Standardized Mean Difference Response by Crops due to Biochar application") +
   theme_minimal() +
   theme(axis.text.x = element_text(angle = 45, hjust = 1),
@@ -292,7 +303,7 @@ bar_crop_ph <- ggplot(crop_data, aes(x = varname, y = mean, fill = varname)) +
 bar_crop_ph
 ggsave(filename = "C:/Users/beeke/OneDrive/Wageningen/Master thesis/R Studio/msc_beeke/figures/ph/SMD_bar_crop_ph.jpg", 
        plot = bar_crop_ph, 
-       width = 20, height = 10, units = "cm")
+       width = 20, height = 7, units = "cm")
 
 #soil texture______
 
@@ -333,19 +344,21 @@ ggsave(filename = "C:/Users/beeke/OneDrive/Wageningen/Master thesis/R Studio/msc
 #_____
 
 #numeric coefficients (scaled)
+##remove the "_scaled"
+num_ph$var <- gsub("_scaled", "", num_ph$var)
 
-num_ph <- out3.est[var %in% c('clay_scaled', 'sand_scaled', 'sbd_scaled', 'sph_scaled', 'soc_scaled', 
-                           'stn_scaled', 'rain_scaled', 'irr_scaled', 'n_fer_scaled', 'p_fer_scaled', 
-                           'k_fer_scaled', 'bph_scaled', 'btc_scaled', 'btn_scaled', 'brate_scaled')
-                & varname != 'intrcpt']
-num_ph$var <- factor(num$var, levels = c('clay_scaled', 'sand_scaled', 'sbd_scaled', 'sph_scaled', 'soc_scaled', 
-                                      'stn_scaled', 'rain_scaled', 'irr_scaled', 'n_fer_scaled', 'p_fer_scaled', 
-                                      'k_fer_scaled', 'bph_scaled', 'btc_scaled', 'btn_scaled', 'brate_scaled'))
+# Define the order of levels for the var factor
+var_order <- c('clay', 'sand', 'sbd', 'sph', 'soc', 
+               'stn', 'rain', 'irr', 'n_fer', 'p_fer', 
+               'k_fer', 'bph', 'btc', 'btn', 'brate')
+
+# Reorder the levels of the var factor
+num_ph$var <- factor(num_ph$var, levels = var_order)
 num_ph
 bar_num_ph <- ggplot(num_ph, aes(x = var, y = mean, fill = var)) +
   geom_bar(stat = "identity", fill = "dimgrey") +
   geom_errorbar(aes(ymin = mean - se, ymax = mean + se), width = 0.2) + 
-  labs(x = "Variable", y = "Relative change in pH", 
+  labs(x = "Variable", y = "Relative change in soil pH", 
        title = "SMD Response on ph due to Biochar application") +
   theme_minimal() +
   theme(axis.text.x = element_text(angle = 45, hjust = 1),
@@ -357,7 +370,7 @@ bar_num_ph <- ggplot(num_ph, aes(x = var, y = mean, fill = var)) +
 bar_num_ph
 ggsave(filename = "C:/Users/beeke/OneDrive/Wageningen/Master thesis/R Studio/msc_beeke/figures/ph/SMD_bar_num_ph.jpg", 
        plot = bar_num_ph, 
-       width = 20, height = 10, units = "cm")
+       width = 20, height = 6, units = "cm")
 
 #_______________________________________________________________________________
 #Meta-regression for main factors with interactions
@@ -382,7 +395,7 @@ rph_0 <- rma.mv(yi,vi, data = d4ph,random= list(~ 1|studyid), method="REML",spar
 # 1. make a simple meta-regression model without interaction but with more than one explanatory variable
 
 rph_1 <- rma.mv(yi,vi, 
-                 mods = ~ sph + soc + clay + sbd * bph + rain + btc + brate -1, 
+                 mods = ~ sph_scaled + soc_scaled + clay_scaled + sbd_scaled * bph_scaled + rain_scaled + btc_scaled + brate_scaled -1, 
                  data = d4ph,
                  random = list(~ 1|studyid), method="REML",sparse = TRUE) 
 out = estats_ph(model_new = rph_1,model_base = rph_0)
@@ -398,22 +411,33 @@ file_path <- "C:/Users/beeke/OneDrive/Wageningen/Master thesis/R Studio/msc_beek
 writeLines(summary_output_ph, file_path)
 
 # visualize
-estimates <- coef(rph_1)
-se <- sqrt(diag(vcov(rph_1)))
-variables <- names(estimates)
+# Extract coefficient names from the model object
+coeff_names_ph <- names(coef(rph_1))
 
-# Create a data frame for ggplot
-df <- data.frame(Variable = variables, Estimate = estimates, SE = se)
+# Create the data frame
+summary_ph <- data.frame(
+  Coefficients = coeff_names_ph,
+  Estimate = summary(rph_1)$b,
+  PValue = summary(rph_1)$pval
+)
+summary_ph$Significance <- ifelse(summary_ph$PValue < .001, '***',
+                                     ifelse(summary_ph$PValue < .01, '**',
+                                            ifelse(summary_ph$PValue < .05, '*',
+                                                   ifelse(summary_ph$PValue < .1, '.', ' '))))
+# Define the order of levels for the var factor
+#sum_ph_order  <- c('clay', 'sbd', 'sph', 'soc', 'rain', 'bph', 'btc', 'brate', 'sbd:bph')
+# Reorder the levels of the var factor
+#summary_ph$Coefficients <- factor(summary_ph$Coefficients, levels = sum_ph_order)
 
-# Create the plot
-sum_ph <- ggplot(df, aes(x = Variable, y = Estimate)) +
-  geom_point() +
-  geom_errorbar(aes(ymin = Estimate - 1.96 * SE, ymax = Estimate + 1.96 * SE), width = 0.2) +
-  theme(axis.text.x = element_text(angle = 90, hjust = 1)) +
-  coord_flip() + 
-  xlab('Variables') +
-  ylab('Estimates')
+
+sum_ph <- ggplot(summary_ph, aes(x=reorder(Coefficients, Estimate), y=Estimate, fill=Significance)) +
+  geom_bar(stat="identity") +
+  geom_text(aes(label=Significance), vjust=1.5, color="black") +
+  scale_fill_manual(values=c('***'='olivedrab', '**'='orange', '*'='darksalmon', '.'='red', ' ' = 'grey')) +
+  labs(title="Parameter Estimates with Significance Levels",
+       x="Coefficients", y="Parameter estimate") +
+  theme_minimal()
 sum_ph
-ggsave(filename = "C:/Users/beeke/OneDrive/Wageningen/Master thesis/R Studio/msc_beeke/figures/ph/summary_ph.jpg", 
+ggsave(filename = "C:/Users/beeke/OneDrive/Wageningen/Master thesis/R Studio/msc_beeke/figures/ph/sum_ph.jpg", 
        plot = sum_ph, 
-       width = 20, height = 15, units = "cm")
+       width = 20, height = 7, units = "cm")
