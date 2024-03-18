@@ -147,6 +147,9 @@ d2nue <- d2nue[nuer_mean <= 100]
 d2nue[nuec_mean < 1, nuec_mean := nuec_mean * 100]
 d2nue[nuer_mean < 1, nuer_mean := nuer_mean * 100]
 
+#combine "millet" and "sorghum" to sorghum
+d2nue$crop <- ifelse(d2nue$crop %in% c('millet', 'sorghum'), 'sorghum', d2nue$crop)
+
 d2nue <- d2nue %>% 
   select(
     -yc_mean, -yc_sd, -yc_n, -yr_mean, -yr_sd, -yr_n,
@@ -199,7 +202,6 @@ fwrite(d2nue, file = "data/meta_regression/NUE/d2nue.csv")
 
 library(metafor)
 
-#Y
 es1nue <- escalc(measure = "SMD", data = d2nue, 
                 m1i = nuer_mean, sd1i = nuer_sd, n1i = nuer_n,
                 m2i = nuec_mean, sd2i = nuec_sd, n2i = nuec_n)
@@ -382,20 +384,16 @@ out2.est <- rbindlist(out2.est)
 print(out2.sum)
 print(out2.est)
 # save out.sum for supporting information
-#library(data.table)
-#data.table(out2.sum, caption = 'Summary Statistics - SMD')
-#data.table(out2.est, caption = 'out.est - SMD')
 
-#out2.est_wi <- out2.est[varname != 'intrcpt']
-#library(openxlsx)
-
-#write.xlsx(out2.est_wi, file "C:/Users/beeke/OneDrive/Wageningen/Master thesis/R Studio/msc_beeke/data/meta_regression/NUE/out2_est.xlsx")
+out2.est_wi <- out2.est[varname != 'intrcpt']
+library(openxlsx)
+write.xlsx(out2.est_wi, file = "C:/Users/beeke/OneDrive/Wageningen/Master thesis/R Studio/msc_beeke/data/meta_regression/NUE/out2_est_wi.xlsx")
 
 #_______________________________________________________________________________
 
 ##visualize out.est - make plots for each coefficient 
 
-earthtone_colors <- c(
+#earthtone_colors <- c(
   "darkred", "darkorange", "rosybrown", "olivedrab", "chocolate",
   "saddlebrown", "darkgoldenrod", "maroon", "peru", "sienna", 
   "brown", "darkolivegreen", "lightsalmon", "tan", "goldenrod", 
@@ -408,9 +406,8 @@ library(ggplot2)
 #crop type______
 crop_type_data <- out2.est[var == "crop_type"]
 bar_crop_type_nue <- ggplot(crop_type_data, aes(x = varname, y = mean, fill = varname)) +
-  geom_bar(stat = "identity") +
+  geom_bar(stat = "identity", fill = "grey") +
   geom_errorbar(aes(ymin = mean - se, ymax = mean + se), width = 0.2) + 
-  scale_fill_manual(values = earthtone_colors) +
   labs(x = "Crop Type", y = "Relative change in NUE", 
        title = "SMD Response on NUE by Crop Type due to Biochar application") +
   theme_minimal() +
@@ -425,14 +422,14 @@ ggsave(filename = "C:/Users/beeke/OneDrive/Wageningen/Master thesis/R Studio/msc
 
 #crop______
 
-crop_data <- out2.est[var == "crop2"]
+crop_data <- out2.est[var == "crop2" & varname != "knol khol"]
 bar_crop_nue <- ggplot(crop_data, aes(x = varname, y = mean, fill = varname)) +
-  geom_bar(stat = "identity" , fill = "olivedrab") +
+  geom_bar(stat = "identity" , fill = "grey") +
   geom_errorbar(aes(ymin = mean - se, ymax = mean + se), width = 0.2) + 
-  labs(x = "Crops", y = "Relative change in NUE", 
+  labs(x = "", y = "Relative change in NUE", 
        title = "SMD Response on NUE by Crops due to Biochar application") +
-  theme_minimal() +
-  theme(axis.text.x = element_text(angle = 45, hjust = 1),
+  theme_bw() +
+  theme(axis.text.x = element_text(angle = 25, hjust = 0.5, size = 10),
         legend.position = "none",
         panel.background = element_rect(fill = "white", colour = "white"))
 bar_crop_nue
@@ -445,9 +442,8 @@ ggsave(filename = "C:/Users/beeke/OneDrive/Wageningen/Master thesis/R Studio/msc
 
 texture_data <- out2.est[var == "texture"]
 bar_texture_nue <- ggplot(texture_data, aes(x = varname, y = mean, fill = varname)) +
-  geom_bar(stat = "identity") +
-  geom_errorbar(aes(ymin = mean - se, ymax = mean + se), width = 0.2) + 
-  scale_fill_manual(values = earthtone_colors) +
+  geom_bar(stat = "identity", fill = "grey") +
+  geom_errorbar(aes(ymin = mean - se, ymax = mean + se), width = 0.2) +
   labs(x = "Soil Texture", y = "Relative change in NUE", 
        title = "SMD Response on NUE by Soil Texture due to Biochar application") +
   theme_minimal() +
@@ -463,9 +459,8 @@ ggsave(filename = "C:/Users/beeke/OneDrive/Wageningen/Master thesis/R Studio/msc
 
 water_management_data <- out2.est[var == "water_management"]
 bar_water_management_nue <- ggplot(water_management_data, aes(x = varname, y = mean, fill = varname)) +
-  geom_bar(stat = "identity") +
+  geom_bar(stat = "identity", fill ="grey") +
   geom_errorbar(aes(ymin = mean - se, ymax = mean + se), width = 0.2) + 
-  scale_fill_manual(values = earthtone_colors) +
   labs(x = "Water Management", y = "Relative change in NUE", 
        title = "SMD Response by Water Management due to Biochar application") + 
   theme_minimal() +
@@ -480,6 +475,7 @@ ggsave(filename = "C:/Users/beeke/OneDrive/Wageningen/Master thesis/R Studio/msc
 #_____
 
 #numeric coefficients (scaled)
+num_nue <- out2.est[varname == "varsel"]
 
 num_nue$var <- gsub("_scaled", "", num_nue$var)
 
@@ -494,10 +490,10 @@ num_nue
 bar_num_nue <- ggplot(num_nue, aes(x = var, y = mean, fill = var)) +
   geom_bar(stat = "identity", fill = "dimgrey") +
   geom_errorbar(aes(ymin = mean - se, ymax = mean + se), width = 0.2) + 
-  labs(x = "Variable", y = "Relative change in NUE", 
+  labs(x = "", y = "Relative change in NUE", 
        title = "SMD Response on NUE due to Biochar application") +
-  theme_minimal() +
-  theme(axis.text.x = element_text(angle = 45, hjust = 1),
+  theme_bw() +
+  theme(axis.text.x = element_text(hjust = 0.5),
         legend.position = "none",  
         panel.background = element_rect(fill = "white", colour = "white"))+
   annotate("rect", xmin = -Inf, xmax = 7.5, ymin = -Inf, ymax = Inf, fill = "yellow", alpha = 0.2) + 
@@ -506,7 +502,7 @@ bar_num_nue <- ggplot(num_nue, aes(x = var, y = mean, fill = var)) +
 bar_num_nue
 ggsave(filename = "C:/Users/beeke/OneDrive/Wageningen/Master thesis/R Studio/msc_beeke/figures/NUE/SMD_bar_num_nue.jpg", 
        plot = bar_num_nue, 
-       width = 20, height = 7, units = "cm")
+       width = 20, height = 6, units = "cm")
 
 #_______________________________________________________________________________
 #Meta-regression for main factors with interactions
@@ -532,11 +528,13 @@ rnue_0 <- rma.mv(yi,vi, data = d4nue,random= list(~ 1|studyid), method="REML",sp
 d4nue[,crop_type3 := crop_type]
 d4nue[crop_type %in% c('grain', 'industrial'), crop_type3 := 'grain_indus']
 
-d4nue[,water := water_management]
-d4nue[water_management %in% c('irrigation', 'irrigation and rain'), water := ' irr and rain']
+d4nue[,water3 := water_management]
+d4nue[water_management %in% c('irrigation', 'irrigation and rain'), water3 := 'irr']
+d4nue$water3 <- factor(d4nue$water3)
+d4nue$water3 <- relevel(d4nue$water3, ref = "flooded")
 
 rnue_1 <- rma.mv(yi,vi, 
-               mods = ~ crop_type3 * clay + soc + sbd  + stn * water_management + btn + brate -1, 
+               mods = ~ crop_type3 * clay_scaled + soc_scaled : btn_scaled + stn_scaled * n_fer_scaled + brate_scaled + sph_scaled  -1, 
                data = d4nue,
                random = list(~ 1|studyid), method="REML",sparse = TRUE) 
 out = estats_nue(model_new = rnue_1,model_base = rnue_0)
@@ -556,13 +554,15 @@ writeLines(summary_output_nue, file_path)
 
 # Extract coefficient names from the model object
 coeff_names_nue <- names(coef(rnue_1))
+##remove "_scaled"
+coeff_names_nue <- gsub("_scaled", "", coeff_names_nue)
 
 # Renaming coefficients
-coeff_names_nue <- gsub("crop_type3grain_indus", "gr&ind", coeff_names_nue)
-coeff_names_nue <- gsub("crop_type3vegetable", "veg", coeff_names_nue)
-coeff_names_nue <- gsub("water_managementirrigation", "w_irr", coeff_names_nue)
-coeff_names_nue <- gsub("water_managementirrigation and rain", "w_irr&rain", coeff_names_nue)
-coeff_names_nue <- gsub("water_managementrainfed", "w_rfed", coeff_names_nue)
+coeff_names_nue <- gsub("crop_type3grain_indus", "grain&industrial", coeff_names_nue)
+coeff_names_nue <- gsub("crop_type3vegetable", "vegetable", coeff_names_nue)
+#coeff_names_nue <- gsub("water_managementirrigation", "w_irr", coeff_names_nue)
+#coeff_names_nue <- gsub("water_managementirrigation and rain", "irr", coeff_names_nue)
+#coeff_names_nue <- gsub("water_managementrainfed", "rain", coeff_names_nue)
 
 # Create the data frame
 summary_nue <- data.frame(
@@ -575,15 +575,21 @@ summary_nue$Significance <- ifelse(summary_nue$PValue < .001, '***',
                                             ifelse(summary_nue$PValue < .05, '*',
                                                    ifelse(summary_nue$PValue < .1, '.', ' '))))
 
+summary_nue$Coefficients <- gsub("&", "\n&", summary_nue$Coefficients)
+summary_nue$Coefficients <- gsub(":", ":\n", summary_nue$Coefficients)
+
+
 sum_nue <- ggplot(summary_nue, aes(x=reorder(Coefficients, Estimate), y=Estimate, fill=Significance)) +
   geom_bar(stat="identity") +
   geom_text(aes(label=Significance), vjust=1.5, color="black") +
-  scale_fill_manual(values=c('***'='olivedrab', '**'='orange', '*'='darksalmon', '.'='red', ' ' = 'grey')) +
-  labs(title="Parameter Estimates with Significance Levels",
-       x="Coefficients", y="Parameter estimate") +
-  theme_minimal()+
-  theme(axis.text.x = element_text(angle = 45, hjust = 1, size = 8))
+  scale_fill_manual(values=c('***'='olivedrab', '**'='yellowgreen', '*'='gold', '.'='grey', ' ' = 'darksalmon')) +
+  labs(title="Parameter Estimates with Significance Levels for NUE",
+       x="", y="Parameter estimate") +
+  theme_bw()+
+  theme(axis.text.x = element_text(angle = 0, hjust = 0.5, size = 8),
+        legend.position = "none")
 sum_nue
 ggsave(filename = "C:/Users/beeke/OneDrive/Wageningen/Master thesis/R Studio/msc_beeke/figures/NUE/sum_nue.jpg", 
        plot = sum_nue, 
-       width = 20, height = 7, units = "cm")
+       width = 20, height = 6, units = "cm")
+

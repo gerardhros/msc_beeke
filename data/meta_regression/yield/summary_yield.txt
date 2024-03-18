@@ -2,39 +2,33 @@
 Multivariate Meta-Analysis Model (k = 609; method: REML)
 
     logLik    Deviance         AIC         BIC        AICc   
--1095.7742   2191.5483   2227.5483   2306.4515   2228.7421   
+-1164.9195   2329.8390   2353.8390   2406.5621   2354.3723   
 
 Variance Components:
 
             estim    sqrt  nlvls  fixed   factor 
-sigma^2    0.2431  0.4931    609     no  studyid 
+sigma^2    0.4642  0.6813    609     no  studyid 
 
 Test for Residual Heterogeneity:
-QE(df = 592) = 1059.5012, p-val < .0001
+QE(df = 598) = 1213.2331, p-val < .0001
 
-Test of Moderators (coefficients 1:17):
-QM(df = 17) = 909.3300, p-val < .0001
+Test of Moderators (coefficients 1:11):
+QM(df = 11) = 697.9828, p-val < .0001
 
 Model Results:
 
-                                         estimate      se     zval    pval    ci.lb    ci.ub      
-crop_type2fruit_ind_veg                   -4.2224  0.9898  -4.2661  <.0001  -6.1623  -2.2825  *** 
-crop_type2grain                           -4.4264  0.9742  -4.5437  <.0001  -6.3358  -2.5171  *** 
-crop_type2legumes                         -3.5992  0.9992  -3.6019  0.0003  -5.5577  -1.6407  *** 
-crop_type2tubers_and_others               -3.1953  1.0013  -3.1911  0.0014  -5.1578  -1.2327   ** 
-clay                                       0.0233  0.0099   2.3399  0.0193   0.0038   0.0427    * 
-soc                                        0.0099  0.0140   0.7076  0.4792  -0.0176   0.0374      
-water_managementirrigation                -1.8738  1.1356  -1.6500  0.0989  -4.0996   0.3520    . 
-water_managementirrigation and rain        9.4202  1.2665   7.4379  <.0001   6.9379  11.9025  *** 
-water_managementrainfed                    1.1724  0.8685   1.3499  0.1771  -0.5299   2.8746      
-sph                                        0.3043  0.1272   2.3922  0.0167   0.0550   0.5537    * 
-n_fer                                      0.0091  0.0018   5.0327  <.0001   0.0056   0.0126  *** 
-btn                                        0.2141  0.0500   4.2857  <.0001   0.1162   0.3120  *** 
-brate                                      0.0015  0.0036   0.4280  0.6687  -0.0055   0.0086      
-water_managementirrigation:sph             0.5340  0.1871   2.8539  0.0043   0.1673   0.9007   ** 
-water_managementirrigation and rain:sph   -1.1437  0.1794  -6.3758  <.0001  -1.4953  -0.7921  *** 
-water_managementrainfed:sph               -0.1321  0.1368  -0.9656  0.3342  -0.4002   0.1360      
-n_fer:btn                                 -0.0008  0.0002  -4.8270  <.0001  -0.0011  -0.0005  *** 
+                              estimate      se     zval    pval    ci.lb    ci.ub      
+crop_type2fruit_ind_veg         1.6993  0.1975   8.6040  <.0001   1.3122   2.0864  *** 
+crop_type2grain                 1.0796  0.0526  20.5311  <.0001   0.9766   1.1827  *** 
+crop_type2legumes               2.1020  0.2774   7.5786  <.0001   1.5584   2.6457  *** 
+crop_type2tubers_and_others     1.9221  0.3102   6.1969  <.0001   1.3142   2.5300  *** 
+bph_scaled                      0.3035  0.2035   1.4918  0.1358  -0.0953   0.7023      
+clay_scaled                     0.2839  0.0645   4.4040  <.0001   0.1575   0.4102  *** 
+sph_scaled                      0.2352  0.0593   3.9670  <.0001   0.1190   0.3514  *** 
+sbd_scaled                      0.1660  0.0663   2.5034  0.0123   0.0360   0.2960    * 
+crop_type2grain:bph_scaled     -0.2123  0.2130  -0.9969  0.3188  -0.6297   0.2051      
+crop_type2legumes:bph_scaled   -1.1773  0.4380  -2.6881  0.0072  -2.0357  -0.3189   ** 
+brate_scaled:soc_scaled        -0.2724  0.0659  -4.1342  <.0001  -0.4015  -0.1433  *** 
 
 ---
 Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1

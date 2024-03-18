@@ -20,6 +20,7 @@ d2 <- d2[!is.na(d2$yc_mean), ]
 d2 <- d2[!is.na(d2$yr_mean), ]
 
 #remove other responses than yield
+library(dplyr)
 d2 <- d2 %>% 
   select(
     -nuec_mean, -nuec_sd, -nuec_n, -nuer_mean, -nuer_sd, -nuer_n,
@@ -43,6 +44,9 @@ d2[crop_type == "vegetable" & yc_mean <= 300, yc_sd := yc_sd * 100]
 d2[crop_type == "vegetable" & yc_mean <= 300, yc_mean := yc_mean * 100]
 d2[crop_type == "vegetable" & yr_mean <= 300, yr_sd := yr_sd * 100]
 d2[crop_type == "vegetable" & yr_mean <= 300, yr_mean := yr_mean * 100]
+
+#combine "millet" and "sorghum" to sorghum
+d2$crop <- ifelse(d2$crop %in% c('millet', 'sorghum'), 'sorghum', d2$crop)
 
 ##scaling of the variables to unit variance
 
@@ -332,34 +336,21 @@ out1.sum <- rbindlist(out1.sum)
 out1.est <- rbindlist(out1.est)
 print(out1.sum)
 print(out1.est)
-# save out.sum for supporting information
-#library(data.table)
-#data.table(out1.sum, caption = 'Summary Statistics - SMD')
-data.table(out1.est, caption = 'out.est - SMD')
-
+# save out.sum without intercept for supporting information
 out1.est_wi <- out1.est[varname != 'intrcpt']
 library(openxlsx)
-
 write.xlsx(out1.est_wi, file = "C:/Users/beeke/OneDrive/Wageningen/Master thesis/R Studio/msc_beeke/data/meta_regression/yield/out1_est_wi.xlsx")
 
 #_______________________________________________________________________________
 
 ##visualize out.est - make plots for each coefficient 
 
-earthtone_colors <- c(
-  "darkred", "darkorange", "rosybrown", "olivedrab", "chocolate",
-  "saddlebrown", "darkgoldenrod", "maroon", "peru", "sienna", 
-  "brown", "darkolivegreen", "lightsalmon", "tan", "goldenrod", 
-  "coral", "tomato", "sandybrown", "firebrick", "indianred", 
-  "darksalmon"
-)
-
 library(ggplot2)
 
 #crop type______
 crop_type_data <- out1.est[var == "crop_type"]
 bar_crop_type <- ggplot(crop_type_data, aes(x = varname, y = mean, fill = varname)) +
-  geom_bar(stat = "identity", fill = "maroon") +
+  geom_bar(stat = "identity", fill = "grey") +
   geom_errorbar(aes(ymin = mean - se, ymax = mean + se), width = 0.2) + 
   labs(x = "Crop Type", y = "Relative change of yield", 
        title = "SMD Response on Yield by Crop Type due to Biochar application") +
@@ -376,12 +367,12 @@ ggsave(filename = "C:/Users/beeke/OneDrive/Wageningen/Master thesis/R Studio/msc
 #crop______
 crop_data <- out1.est[var == "crop1"]
 bar_crop <- ggplot(crop_data, aes(x = varname, y = mean, fill = varname)) +
-  geom_bar(stat = "identity", fill = "maroon") +
+  geom_bar(stat = "identity", fill = "grey") +
   geom_errorbar(aes(ymin = mean - se, ymax = mean + se), width = 0.2) + 
-  labs(x = "Crops", y = "Relative change of yield", 
+  labs(x = "", y = "Relative change of yield", 
        title = "SMD Response on Yield by Crops due to Biochar application") +
-  theme_minimal() +
-  theme(axis.text.x = element_text(angle = 45, hjust = 1),
+  theme_bw() +
+  theme(axis.text.x = element_text(angle = 25, hjust = 0.5, size = 10),
         legend.position = "none",
         panel.background = element_rect(fill = "white", colour = "white"))
 bar_crop
@@ -393,9 +384,8 @@ ggsave(filename = "C:/Users/beeke/OneDrive/Wageningen/Master thesis/R Studio/msc
 
 texture_data <- out1.est[var == "texture"]
 bar_texture <- ggplot(texture_data, aes(x = varname, y = mean, fill = varname)) +
-  geom_bar(stat = "identity") +
+  geom_bar(stat = "identity", fill = "grey") +
   geom_errorbar(aes(ymin = mean - se, ymax = mean + se), width = 0.2) + 
-  scale_fill_manual(values = earthtone_colors) +
   labs(x = "Soil Texture", y = "Relative change of yield", 
        title = "SMD Response on Yield by Soil Texture due to Biochar application") +
   theme_minimal() +
@@ -411,9 +401,8 @@ ggsave(filename = "C:/Users/beeke/OneDrive/Wageningen/Master thesis/R Studio/msc
 
 water_management_data <- out1.est[var == "water_management" & varname != "unknown"]
 bar_water_management <- ggplot(water_management_data, aes(x = varname, y = mean, fill = varname)) +
-  geom_bar(stat = "identity") +
+  geom_bar(stat = "identity", fill = "grey") +
   geom_errorbar(aes(ymin = mean - se, ymax = mean + se), width = 0.2) + 
-  scale_fill_manual(values = earthtone_colors) +
   labs(x = "Water Management", y = "Relative change of yield", 
        title = "SMD Response on Yield by Water Management due to Biochar application") + 
   theme_minimal() +
@@ -429,7 +418,8 @@ ggsave(filename = "C:/Users/beeke/OneDrive/Wageningen/Master thesis/R Studio/msc
 #_____
 
 #numeric coefficients (scaled)
-
+num_y <- out1.est[varname == "varsel"]
+##remove "_scaled"
 num_y$var <- gsub("_scaled", "", num_y$var)
 
 # Define the order of levels for the var factor
@@ -443,10 +433,10 @@ num_y
 bar_num <- ggplot(num_y, aes(x = var, y = mean, fill = var)) +
    geom_bar(stat = "identity", fill = "dimgrey") +
   geom_errorbar(aes(ymin = mean - se, ymax = mean + se), width = 0.2) + 
-  labs(x = "Variable", y = "Relative change of yield", 
+  labs(x = "", y = "Relative change of yield", 
        title = "SMD Response on Yield due to Biochar application") +
-  theme_minimal() +
-  theme(axis.text.x = element_text(angle = 45, hjust = 1),
+  theme_bw() +
+  theme(axis.text.x = element_text(hjust = 0.5),
         legend.position = "none",  
         panel.background = element_rect(fill = "white", colour = "white"))+
   annotate("rect", xmin = -Inf, xmax = 7.5, ymin = -Inf, ymax = Inf, fill = "yellow", alpha = 0.2) + 
@@ -455,7 +445,7 @@ bar_num <- ggplot(num_y, aes(x = var, y = mean, fill = var)) +
 bar_num
 ggsave(filename = "C:/Users/beeke/OneDrive/Wageningen/Master thesis/R Studio/msc_beeke/figures/yield/SMD_bar_num.jpg", 
        plot = bar_num, 
-       width = 20, height = 7, units = "cm")
+       width = 20, height = 6, units = "cm")
 
 #_______________________________________________________________________________
 #Meta-regression for main factors with interactions
@@ -482,9 +472,13 @@ d4y[,crop_type2 := crop_type]
 d4y[crop_type %in% c('fruit', 'industrial', 'vegetable'), crop_type2 := 'fruit_ind_veg']
 d4y[crop_type %in% c('tubers', 'others'), crop_type2 := 'tubers_and_others']
 
+d4y[,water2 := water_management]
+d4y[water_management %in% c('irrigation', 'irrigation and rain'), water2 := 'irr']
+
+
 # 1. make a simple meta-regression model without interaction but with more than one explanatory variable
 ry_1 <- rma.mv(yi,vi, 
-               mods = ~ crop_type2 + clay + soc + water_management * sph + n_fer * btn + brate -1, 
+               mods = ~ crop_type2 * bph_scaled + clay_scaled + sph_scaled + brate_scaled : soc_scaled + sbd_scaled  -1, 
                data = d4y,
                random = list(~ 1|studyid), method="REML",sparse = TRUE) 
 out = estats(model_new = ry_1,model_base = ry_0)
@@ -505,14 +499,16 @@ writeLines(summary_output_yield, file_path)
 # Extract coefficient names from the model object
 coeff_names_y <- names(coef(ry_1))
 
+##remove "_scaled"
+coeff_names_y <- gsub("_scaled", "", coeff_names_y)
+
 # Renaming coefficients
-coeff_names_y <- gsub("crop_type2fruit_ind_veg", "fiv", coeff_names_y)
+coeff_names_y <- gsub("crop_type2fruit_ind_veg", "fruit&industrial&vegetable", coeff_names_y)
 coeff_names_y <- gsub("crop_type2grain", "grain", coeff_names_y)
-coeff_names_y <- gsub("crop_type2legumes", "leg", coeff_names_y)
-coeff_names_y <- gsub("crop_type2tubers_and_others", "tub&oth", coeff_names_y)
-coeff_names_y <- gsub("water_managementirrigation", "w_irr", coeff_names_y)
-coeff_names_y <- gsub("water_managementirrigation and rain", "w_irr&rain", coeff_names_y)
-coeff_names_y <- gsub("water_managementrainfed", "r_fed", coeff_names_y)
+coeff_names_y <- gsub("crop_type2legumes", "legumes", coeff_names_y)
+coeff_names_y <- gsub("crop_type2tubers_and_others", "tubers&others", coeff_names_y)
+coeff_names_y <- gsub("water2irr", "irr", coeff_names_y)
+coeff_names_y <- gsub("water2rainfed", "rain", coeff_names_y)
 
 # Create the data frame
 summary_yield <- data.frame(
@@ -525,21 +521,31 @@ summary_yield$Significance <- ifelse(summary_yield$PValue < .001, '***',
                                             ifelse(summary_yield$PValue < .05, '*',
                                                    ifelse(summary_yield$PValue < .1, '.', ' '))))
 
+
+summary_yield$Coefficients <- gsub(" and ", " and\n", summary_yield$Coefficients)
+summary_yield$Coefficients <- gsub("&", "\n&", summary_yield$Coefficients)
+summary_yield$Coefficients <- gsub(":", ":\n", summary_yield$Coefficients)
+
+# Now create your ggplot
 sum_y <- ggplot(summary_yield, aes(x=reorder(Coefficients, Estimate), y=Estimate, fill=Significance)) +
   geom_bar(stat="identity") +
   geom_text(aes(label=Significance), vjust=1.5, color="black") +
-  scale_fill_manual(values=c('***'='olivedrab', '**'='orange', '*'='darksalmon', '.'='red', ' ' = 'grey')) +
-  labs(title="Parameter Estimates with Significance Levels",
-       x="Coefficients", y="Parameter estimate") +
-  theme_minimal() +
-  theme(axis.text.x = element_text(angle = 45, hjust = 1, size = 8))
+  scale_fill_manual(values=c('***'='olivedrab', '**'='yellowgreen', '*'='gold', '.'='grey', ' ' = 'darksalmon')) +
+  labs(title="Parameter Estimates with Significance Levels for Yield",
+       x="", y="Parameter estimate") +  # Removed the "Coefficients" label
+  theme_bw() +
+  theme(axis.text.x = element_text(angle = 0, hjust = 0.5, size = 8.5),  
+        legend.position = "none",
+        panel.background = element_rect(fill = "white", colour = "white"))
+
 sum_y
 ggsave(filename = "C:/Users/beeke/OneDrive/Wageningen/Master thesis/R Studio/msc_beeke/figures/yield/sum_y.jpg", 
        plot = sum_y, 
-       width = 20, height = 7, units = "cm")
+       width = 20, height = 6, units = "cm")
 
 
-    
+
+
     
     
     

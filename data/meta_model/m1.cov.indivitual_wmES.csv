@@ -1,0 +1,500 @@
+ind_code,mod1,group1,mod2,group2,ES,SE,n
+bulk density,ash content,very low,soil texture,coarse,18.9423076923076,3.66175178205253,8
+bulk density,ash content,very low,soil texture,fine,12.0192307692307,2.70969631871887,6
+bulk density,ash content,very high,soil texture,coarse,5.09615384615384,1.68440581974416,5
+bulk density,ash content,low,soil texture,coarse,3.94230769230769,0.366175178205253,7
+N pool,ash content,very low,,,24.9333333333333,2.58533906836276,39
+N pool,ash content,low,,,20.5333333333333,2.81413013635946,36
+N pool,ash content,high,,,20.5333333333333,2.81413013635946,36
+N pool,ash content,very high,,,14.5333333333333,4.23263475793903,17
+N pool,ash content,very high,crop type,grain,11.45,2.53226290516205,35
+N pool,ash content,high,crop type,grain,11.45,2.53226290516205,35
+N pool,ash content,low,crop type,grain,11.45,2.53226290516205,35
+N pool,ash content,low,crop type,grain,11.2623762376237,1.49017940509535,59
+N pool,ash content,very low,crop type,grain,11.2623762376237,1.49017940509535,59
+N pool,ash content,very low,crop type,grain,9.21,3.50140056022408,11
+porosity,ash content,low,soil texture,coarse,4.22222222222222,1.13378684807256,2
+porosity,ash content,very low,soil texture,coarse,15.4222222222222,3.12925170068025,3
+porosity,ash content,very high,soil texture,medium,6,2.04081632653061,1
+porosity,ash content,high,soil texture,medium,9.02222222222222,1.95011337868479,2
+porosity,ash content,low,soil texture,medium,7.77777777777777,2.99319727891155,1
+porosity,ash content,very low,soil texture,fine,2.26666666666666,2.81179138321995,1
+WHC,ash content,very low,,,24.0196078431372,3.84054720789416,39
+WHC,ash content,low,,,20.0980392156862,5.66270464229648,36
+WHC,ash content,high,,,20.0980392156862,5.66270464229648,36
+WHC,ash content,very high,,,14.8692810457516,9.08275398071315,17
+yield,ash content,very low,,,24.12,2.50510204081633,39
+yield,ash content,low,,,20.066889632107,2.63109728196212,36
+yield,ash content,high,,,20.066889632107,2.63109728196212,36
+yield,ash content,very high,,,14.8494983277591,3.95808547634299,17
+yield,ash content,very high,crop type,grain,11.74,2.30677377333913,35
+yield,ash content,high,crop type,grain,11.74,2.30677377333913,35
+yield,ash content,low,crop type,grain,7.79702970297029,1.08554059921841,93
+yield,ash content,very low,crop type,grain,7.79702970297029,1.08554059921841,93
+yield,ash content,very low,crop type,grain,9.34405940594059,2.89129563445671,13
+bulk density,bc c content,high,soil texture,coarse,14.6153846153846,1.3182306415389,20
+bulk density,bc c content,very low,soil texture,fine,12.8846153846153,5.93203788692508,2
+bulk density,bc c content,very high,soil texture,coarse,10.2884615384615,0.36617517820525,11
+bulk density,bc c content,very high,soil texture,fine,8.84615384615385,2.12381603359046,2
+bulk density,bc c content,high,soil texture,medium,8.55769230769231,0.439410213846304,7
+bulk density,bc c content,very low,soil texture,coarse,8.26923076923077,1.53793574846206,7
+bulk density,bc c content,very high,soil texture,medium,7.40384615384615,0.585880285128406,3
+bulk density,bc c content,very low,soil texture,medium,6.82692307692308,1.6111707841031,2
+bulk density,bc c content,high,soil texture,fine,6.82692307692308,1.61117078410311,9
+bulk density,bc c content,low,soil texture,coarse,6.53846153846154,0.439410213846304,9
+bulk density,bc c content,low,soil texture,medium,6.53846153846154,1.39146567717996,6
+bulk density,bc c content,low,soil texture,fine,5.67307692307692,0.366175178205255,4
+N pool,bc c content,very low,,,22,1.85320765077332,89
+N pool,bc c content,very low,,,13.7333333333333,2.05911961197033,77
+N pool,bc c content,low,,,13.7333333333333,2.05911961197033,77
+N pool,bc c content,high,,,6.4,1.92184497117231,96
+N pool,bc c content,very high,,,6.4,1.92184497117231,96
+porosity,bc c content,very high,soil texture,coarse,13.1111111111111,1.22448979591837,8
+porosity,bc c content,high,soil texture,coarse,19.6888888888888,1.17913832199549,10
+porosity,bc c content,low,soil texture,coarse,5.82222222222222,1.26984126984127,6
+porosity,bc c content,very low,soil texture,coarse,21.2888888888888,1.45124716553288,3
+porosity,bc c content,very high,soil texture,medium,2.35555555555555,0.22675736961451,2
+porosity,bc c content,high,soil texture,medium,9.73333333333333,2.26757369614512,3
+porosity,bc c content,low,soil texture,medium,5.11111111111111,0.952380952380952,4
+porosity,bc c content,high,soil texture,fine,2.44444444444444,3.08390022675737,3
+porosity,bc c content,low,soil texture,fine,6.53333333333333,1.08843537414966,3
+WHC,bc c content,very low,,,21.7320261437908,1.96232339089482,89
+WHC,bc c content,very low,,,14.3790849673202,2.13052253868579,77
+WHC,bc c content,low,,,14.3790849673202,2.13052253868579,77
+WHC,bc c content,high,,,13.5620915032679,2.07445615608879,96
+WHC,bc c content,very high,,,13.5620915032679,2.07445615608879,96
+yield,bc c content,very low <20%,,,21.19,1.37244897959184,89
+yield,bc c content,very low 20-60%,,,13.7792642140468,1.5557792623776,77
+yield,bc c content,low 20-60%,,,13.7792642140468,1.5557792623776,77
+yield,bc c content,high >60%,,,11.505016722408,1.41850462157956,96
+yield,bc c content,very high >60%,,,11.505016722408,1.41850462157956,96
+N pool,bc C:N,low,,,14.4,0.526219456392423,113
+N pool,bc C:N,med,,,14.2666666666666,0.617735883591097,81
+N pool,bc C:N,high,,,18.2666666666666,0.800768737988469,41
+WHC,bc C:N,low,,,13.8888888888888,1.48575913882038,113
+WHC,bc C:N,med,,,15.032679738562,1.76609105180533,81
+WHC,bc C:N,high,,,21.2418300653594,2.43888764296929,41
+yield,bc C:N,low,,,15.9197324414715,0.526219456392423,113
+yield,bc C:N,med,,,15.1170568561872,0.709252310789771,81
+yield,bc C:N,high,,,11.2374581939799,0.709252310789788,41
+bulk density,bc CEC,low,soil texture,coarse,17.2115384615384,1.61117078410311,6
+bulk density,bc CEC,very low,soil texture,fine,16.9230769230769,4.24763206718094,2
+bulk density,bc CEC,low,soil texture,fine,9.42307692307692,1.39146567717995,3
+bulk density,bc CEC,very high,soil texture,fine,8.55769230769231,3.51528171077043,1
+bulk density,bc CEC,very high,soil texture,coarse,7.69230769230769,2.70969631871887,3
+bulk density,bc CEC,high,soil texture,coarse,7.11538461538462,1.24499560589786,2
+bulk density,bc CEC,very low,soil texture,coarse,7.11538461538462,0.366175178205255,3
+bulk density,bc CEC,low,soil texture,medium,3.94230769230769,2.27028610487257,1
+porosity,bc CEC,high,soil texture,coarse,25.7333333333333,2.53968253968255,2
+porosity,bc CEC,low,soil texture,coarse,12.9333333333333,1.54195011337867,4
+porosity,bc CEC,very low,soil texture,coarse,23.9555555555555,0.861678004535154,2
+porosity,bc CEC,very high,soil texture,fine,3.24444444444444,1.26984126984127,1
+porosity,bc CEC,low,soil texture,fine,5.46666666666666,0.952380952380951,2
+bulk density,bc dose,very high,soil texture,coarse,15.5555555555555,1.06867071152786,18
+bulk density,bc dose,very high,soil texture,fine,12.7272727272727,2.34418091560948,8
+bulk density,bc dose,very high,soil texture,medium,10.9090909090909,0.465388858245995,7
+bulk density,bc dose,med,soil texture,coarse,10.6397306397306,0.999724214009921,30
+bulk density,bc dose,low,soil texture,coarse,10.6397306397306,0.999724214009921,30
+bulk density,bc dose,very low,soil texture,coarse,10.6397306397306,0.999724214009921,30
+bulk density,bc dose,high,soil texture,fine,9.69696969696969,1.15485383342524,10
+bulk density,bc dose,high,soil texture,coarse,9.36026936026936,0.93077771649199,8
+bulk density,bc dose,very high,soil texture,fine,8.95622895622895,1.75813568670711,4
+bulk density,bc dose,high,soil texture,fine,8.95622895622895,1.75813568670711,4
+bulk density,bc dose,very high,soil texture,coarse,6.86868686868686,0.68946497517926,6
+bulk density,bc dose,high,soil texture,coarse,6.86868686868686,0.68946497517926,6
+bulk density,bc dose,med,soil texture,fine,6.26262626262626,0.827357970215112,14
+bulk density,bc dose,low,soil texture,fine,6.26262626262626,0.827357970215112,14
+bulk density,bc dose,very low,soil texture,fine,6.26262626262626,0.827357970215112,14
+bulk density,bc dose,high,soil texture,medium,5.99326599326599,1.1203805846663,8
+bulk density,bc dose,very high,soil texture,medium,5.79124579124579,1.03419746276889,7
+bulk density,bc dose,high,soil texture,medium,5.79124579124579,1.03419746276889,7
+bulk density,bc dose,med,soil texture,medium,4.78114478114478,0.775648097076668,10
+bulk density,bc dose,low,soil texture,medium,4.78114478114478,0.775648097076668,10
+bulk density,bc dose,very low,soil texture,medium,4.78114478114478,0.775648097076668,10
+N pool,bc dose,very low,,,8.37563451776649,0.604189044038668,20
+N pool,bc dose,low,,,6.70050761421319,0.492302184031508,84
+N pool,bc dose,med,,,12.1827411167512,0.492302184031497,96
+N pool,bc dose,high,,,21.0152284263959,0.492302184031505,70
+N pool,bc dose,very high,,,26.0406091370558,0.760830648048699,60
+N pool,bc dose,very high,crop type,grain,29.2096219931271,3.78787878787878,15
+N pool,bc dose,high,crop type,grain,29.2096219931271,3.78787878787878,15
+N pool,bc dose,high,crop type,grain,13.7457044673539,1.72644815501957,66
+N pool,bc dose,med,crop type,grain,9.62199312714776,1.72644815501958,71
+N pool,bc dose,low,crop type,grain,9.45017182130584,1.44300144300144,102
+N pool,bc dose,very low,crop type,grain,9.45017182130584,1.44300144300144,102
+porosity,bc dose,very high,soil texture,coarse,15.1569506726457,0.823647844788138,8
+porosity,bc dose,very high,soil texture,coarse,5.65022421524663,1.28122998078155,4
+porosity,bc dose,high,soil texture,coarse,5.65022421524663,1.05243891278484,15
+porosity,bc dose,med,soil texture,coarse,21.0762331838565,3.02004209755651,17
+porosity,bc dose,low,soil texture,coarse,21.0762331838565,3.02004209755651,17
+porosity,bc dose,very low,soil texture,coarse,21.0762331838565,3.02004209755651,17
+porosity,bc dose,very high,soil texture,medium,12.8251121076233,1.32698819438089,6
+porosity,bc dose,very high,soil texture,medium,8.34080717488789,1.41850462157955,2
+porosity,bc dose,high,soil texture,medium,6.18834080717488,1.73881211677496,4
+porosity,bc dose,med,soil texture,medium,3.31838565022421,1.64729568957628,2
+porosity,bc dose,very high,soil texture,fine,8.69955156950672,1.60153747597693,3
+porosity,bc dose,very high,soil texture,fine,7.26457399103138,1.7845703303743,2
+porosity,bc dose,high,soil texture,fine,4.57399103139013,1.18971355358287,3
+porosity,bc dose,med,soil texture,fine,2.95964125560538,1.18971355358287,3
+porosity,bc dose,low,soil texture,fine,2.95964125560538,1.18971355358287,3
+porosity,bc dose,very low,soil texture,fine,2.95964125560538,1.18971355358287,3
+porosity,bc dose,long term,soil texture,coarse,1.1659192825112,1.41850462157957,3
+porosity,bc dose,medium term,soil texture,coarse,3.85650224215246,1.09819712638419,7
+porosity,bc dose,short term,soil texture,coarse,16.4125560538116,0.686373203990128,17
+porosity,bc dose,long term,soil texture,medium,13.9013452914798,4.1182392239407,1
+porosity,bc dose,medium term,soil texture,medium,3.49775784753363,1.5557792623776,4
+porosity,bc dose,short term,soil texture,medium,10.134529147982,1.55577926237758,2
+porosity,bc dose,medium term,soil texture,fine,7.4439461883408,0.732131417589459,2
+porosity,bc dose,short term,soil texture,fine,2.78026905829596,0.960922485586162,4
+porosity,bc dose,very low,,,5.84766584766584,0.661886376172089,126
+porosity,bc dose,low,,,5.84766584766584,0.661886376172089,126
+porosity,bc dose,med,,,6.37837837837837,1.00787243644386,71
+porosity,bc dose,high,,,7.73464373464373,1.14325828611543,49
+porosity,bc dose,high,,,9.38574938574938,1.17334403048688,46
+porosity,bc dose,high,,,7.91154791154791,1.26360126360124,54
+porosity,bc dose,very high,,,7.91154791154791,1.26360126360124,54
+SOC,bc dose,very low,,,15.7948717948717,1.92761492268176,95
+SOC,bc dose,low,,,15.7948717948717,1.92761492268176,95
+SOC,bc dose,med,,,34.6666666666666,3.09559596239314,47
+SOC,bc dose,high,,,44.5128205128205,4.15270128404898,32
+SOC,bc dose,high,,,60.5128205128205,4.68842030226344,30
+SOC,bc dose,high,,,73.2307692307692,6.2725909275538,23
+SOC,bc dose,very high,,,73.2307692307692,6.2725909275538,23
+soil pH,bc dose,very low,,,6.92682926829268,1.09507217521155,38
+soil pH,bc dose,low,,,6.92682926829268,1.09507217521155,38
+soil pH,bc dose,med,,,6.14634146341463,1.24440019910403,42
+soil pH,bc dose,high,,,12.0975609756097,1.36884021901443,48
+soil pH,bc dose,high,,,12.5853658536585,1.49328023892482,35
+soil pH,bc dose,very high,,,12.5853658536585,1.49328023892482,35
+SWC,bc dose,very low,,,10.3504043126684,1.16893118433355,88
+SWC,bc dose,low,,,10.3504043126684,1.16893118433355,88
+SWC,bc dose,med,,,9.13746630727762,2.1315803949612,28
+SWC,bc dose,high,,,6.44204851752021,1.82215743440233,32
+SWC,bc dose,high,,,16.2803234501347,2.71604598712798,19
+SWC,bc dose,high,,,11.832884097035,1.8909180923043,42
+SWC,bc dose,very high,,,11.832884097035,1.8909180923043,42
+WHC,bc dose,very low,,,11.7948717948717,2.33904450032162,20
+WHC,bc dose,low,,,10.2564102564102,2.16361616279748,84
+WHC,bc dose,med,,,13.6752136752136,1.9004736565113,96
+WHC,bc dose,high,,,21.025641025641,1.98818782527339,70
+WHC,bc dose,very high,,,25.2991452991452,4.23951815683293,60
+WHC,bc dose,very low,,,2.31124807395993,4.19518657540294,16
+WHC,bc dose,low,,,2.31124807395993,4.19518657540294,16
+WHC,bc dose,med,,,15.5007704160246,5.86695265432293,11
+WHC,bc dose,high,,,0.832049306625577,7.19174841497648,7
+WHC,bc dose,high,,,10.3235747303543,12.3647604327666,4
+WHC,bc dose,high,,,0.955315870570107,3.62741696369429,19
+WHC,bc dose,very high,,,0.955315870570107,3.62741696369429,19
+yield,bc dose,very low,,,11.9758064516129,0.655372646296071,20
+yield,bc dose,low,,,10.4032258064516,0.528526327658112,84
+yield,bc dose,med,,,13.7903225806451,0.634231593189771,96
+yield,bc dose,high,,,21.1693548387096,0.591949486977117,70
+yield,bc dose,very high,,,25.4032258064516,0.930206336678316,60
+yield,bc dose,very high,crop type,grain,12.78,1.44373694359634,108
+yield,bc dose,high,crop type,grain,12.78,1.44373694359634,108
+yield,bc dose,med,crop type,grain,6.60535117056856,1.5818335208099,94
+yield,bc dose,low,crop type,grain,9.19732441471572,1.45629117788847,109
+yield,bc dose,very low,crop type,grain,9.19732441471572,1.45629117788847,109
+yield,bc dose,very low,,,12.4373956594323,1.16265203911281,113
+yield,bc dose,low,,,12.4373956594323,1.16265203911281,113
+yield,bc dose,med,,,16.6444073455759,1.28189840209872,86
+yield,bc dose,high,,,22.3706176961602,2.29549248747913,32
+yield,bc dose,high,,,25.2921535893155,1.93775339852135,44
+yield,bc dose,high,,,17.3455759599332,1.46076794657763,59
+yield,bc dose,very high,,,17.3455759599332,1.46076794657763,59
+yield,bc dose,very low,,,12.7007299270073,3.0238924838228,22
+yield,bc dose,low,,,12.7007299270073,3.0238924838228,22
+yield,bc dose,med,,,56.0583941605839,22.8471876555499,39
+yield,bc dose,high,,,67.4452554744525,14.7834743653559,20
+yield,bc dose,high,,,70.0729927007299,26.9910403185663,22
+yield,bc dose,very high,,,70.0729927007299,26.9910403185663,22
+bulk density,bc hydrogen,very low,soil texture,coarse,29.9038461538461,6.13723750369714,3
+bulk density,bc hydrogen,very low,soil texture,fine,19.8076923076923,7.09849157054125,1
+bulk density,bc hydrogen,very high,soil texture,coarse,12.3076923076923,4.80627033422064,2
+bulk density,bc hydrogen,very high,soil texture,medium,12.0192307692307,5.76752440106476,2
+bulk density,bc hydrogen,very low,soil texture,medium,12.0192307692307,0.73942620526472,3
+bulk density,bc hydrogen,high,soil texture,coarse,9.42307692307692,1.03519668737059,9
+bulk density,bc hydrogen,low,soil texture,fine,9.13461538461538,1.99645075421472,5
+bulk density,bc hydrogen,low,soil texture,medium,7.98076923076923,1.18308192842352,6
+bulk density,bc hydrogen,low,soil texture,coarse,6.53846153846154,1.25702454895002,5
+bulk density,bc hydrogen,high,soil texture,fine,3.94230769230769,3.17953268263825,2
+porosity,bc hydrogen,high,soil texture,coarse,12.7555555555555,1.5032798833819,5
+porosity,bc hydrogen,low,soil texture,coarse,22.7111111111111,1.77660349854227,2
+porosity,bc hydrogen,very low,soil texture,coarse,29.2888888888888,1.32106413994171,1
+porosity,bc hydrogen,low,soil texture,medium,9.02222222222222,1.22995626822157,4
+porosity,bc hydrogen,very low,soil texture,medium,3.68888888888889,4.50983965014577,1
+porosity,bc hydrogen,low,soil texture,fine,3.24444444444444,1.27551020408163,2
+bulk density,bc n content,very high,soil texture,coarse,20.3846153846153,2.63646128307783,5
+bulk density,bc n content,high,soil texture,coarse,18.6538461538461,1.83087589102627,5
+bulk density,bc n content,low,soil texture,fine,9.42307692307692,1.9041109266673,7
+bulk density,bc n content,low,soil texture,medium,8.26923076923077,0.512645249487355,7
+bulk density,bc n content,very low,soil texture,medium,8.26923076923077,1.31823064153889,5
+bulk density,bc n content,very low,soil texture,fine,8.26923076923077,1.7576408553852,4
+bulk density,bc n content,high,soil texture,medium,7.11538461538462,1.17176057025681,5
+bulk density,bc n content,very low,soil texture,coarse,6.82692307692308,0.366175178205253,14
+bulk density,bc n content,low,soil texture,coarse,6.53846153846154,0.292940142564202,18
+bulk density,bc n content,high,soil texture,fine,6.25,0.366175178205253,4
+bulk density,bc n content,very high,soil texture,medium,3.36538461538462,2.70969631871887,2
+porosity,bc n content,very high,soil texture,coarse,4.22222222222222,0.907029478458051,3
+porosity,bc n content,high,soil texture,coarse,29.8222222222222,2.81179138321995,1
+porosity,bc n content,low,soil texture,coarse,10.9777777777777,0.816326530612224,9
+porosity,bc n content,very low,soil texture,coarse,13.6444444444444,1.08843537414964,7
+porosity,bc n content,very high,soil texture,medium,8.84444444444444,1.63265306122448,2
+porosity,bc n content,high,soil texture,medium,4.75555555555555,2.08616780045351,3
+porosity,bc n content,low,soil texture,medium,7.6,1.26984126984127,2
+porosity,bc n content,very low,soil texture,medium,6,1.99546485260771,1
+porosity,bc n content,high,soil texture,fine,9.02222222222222,1.81405895691608,1
+porosity,bc n content,low,soil texture,fine,4.04444444444444,1.26984126984127,3
+porosity,bc n content,very low,soil texture,fine,2.26666666666666,2.90249433106576,1
+N pool,bc ph,neutral,,,20.2666666666666,0.503340349592755,127
+N pool,bc ph,alkaline,,,18.1333333333333,0.388944815594413,154
+N pool,bc ph,very alkaline,,,18.1333333333333,0.388944815594413,154
+N pool,bc ph,very alkaline,crop type,grain,11.6129032258064,3.14611978559775,73
+N pool,bc ph,alkaline,crop type,grain,8.13895781637717,2.64673569264571,102
+N pool,bc ph,neutral,crop type,grain,23.95,3.80102040816327,59
+WHC,bc ph,neutral,,,18.6274509803921,1.73805786050684,127
+WHC,bc ph,alkaline,,,17.4836601307189,1.56985871271584,154
+WHC,bc ph,very alkaline,,,17.4836601307189,1.56985871271584,154
+yield,bc ph,neutral,,,18.7290969899665,0.503340349592755,127
+yield,bc ph,alkaline,,,17.6588628762541,0.43470302919375,154
+yield,bc ph,very alkaline,,,17.6588628762541,0.43470302919375,154
+yield,bc ph,very alkaline,crop type,grain,8.01980198019802,2.38039750973799,105
+yield,bc ph,alkaline,crop type,grain,7.22772277227722,2.1473515996937,128
+yield,bc ph,neutral,crop type,grain,23.09,3.01785714285714,74
+N pool,bulk density,very low,,,18.0487804878048,0.439110070257602,121
+N pool,bulk density,low,,,18.0487804878048,0.439110070257602,121
+N pool,bulk density,high,,,13.9024390243902,0.439110070257602,145
+N pool,bulk density,very high,,,13.9024390243902,0.439110070257602,145
+WHC,bulk density,very low,,,14.4649446494464,1.59517901453385,121
+WHC,bulk density,low,,,14.4649446494464,1.59517901453385,121
+WHC,bulk density,high,,,17.1217712177121,1.39261659998987,145
+WHC,bulk density,very high,,,17.1217712177121,1.39261659998987,145
+WHC,bulk density,very low,,,10.4468412942989,5.29918304261426,8
+WHC,bulk density,low,,,1.51001540832049,2.39724947165883,31
+WHC,bulk density,high,,,8.59784283513097,4.76295618711163,12
+WHC,bulk density,very high,,,25.6086286594761,8.95814276251459,6
+yield,bulk density,very low,,,15.940959409594,0.46499612503227,121
+yield,bulk density,low,,,15.940959409594,0.46499612503227,121
+yield,bulk density,high,,,19.4833948339483,0.523120640661327,145
+yield,bulk density,very high,,,19.4833948339483,0.523120640661327,145
+WHC,climate,water management,,,15.8974358974358,1.72504531898719,118
+WHC,climate,water management,,,18.8034188034188,1.63733115022515,151
+WHC,climate,water management,,,6.49572649572649,1.81275948774923,112
+WHC,climate,irrigation,,,14.3589743589743,2.22209227530554,70
+WHC,climate,irrigation,,,12.8205128205128,1.9004736565113,107
+WHC,climate,irrigation,,,12.4786324786324,2.33904450032159,64
+WHC,climate,irrigation,,,1.36752136752136,2.80685340038594,46
+yield,climate,water management,,,15.96,1.22618108016689,118
+yield,climate,water management,,,18.34,1.04591836734694,151
+yield,climate,water management,,,5.55,2.8469387755102,112
+yield,climate,irrigation,,,15.48,0.63423159318977,70
+yield,climate,irrigation,,,11.97,0.507385274551811,107
+yield,climate,irrigation,,,12.09,0.634231593189745,64
+yield,climate,irrigation,,,1.24,0.635204081632653,46
+N pool,crop type,industrial,,,22.994923857868,0.716075904045817,33
+N pool,crop type,grain,,,10.0507614213197,0.358037952022916,236
+N pool,crop type,vegetables,,,17.6649746192893,0.402792696025765,112
+N pool,crop type,grain,,,12.04,0.64030612244898,301
+WHC,crop type,industrial,,,26.6666666666666,3.12847201918015,33
+WHC,crop type,grain,,,11.6239316239316,1.14028419390677,236
+WHC,crop type,vegetables,,,15.8974358974358,1.8712356002573,112
+yield,crop type,industrial,,,16.69,0.993629495997296,33
+yield,crop type,grain,,,11.61,0.338256849701199,236
+yield,crop type,vegetables,,,18.99,0.486244221445484,112
+yield,crop type,grain,,,10.73,0.584183673469387,378
+yield,crop type,grain crop,,,9.28213689482471,0.715478177915566,175
+yield,crop type,others,,,40.8347245409015,1.99737658001431,59
+yield,crop type,vegetables,,,48.0801335559265,2.7128547579299,26
+yield,crop type,others,,,17.1118530884808,1.10302885761982,67
+yield,crop type,others,,,17.4624373956594,4.82947770093012,10
+N pool,N rate,very low,,,12.0304568527918,0.447547440028622,106
+N pool,N rate,low,,,14.7715736040609,0.380415324024337,142
+N pool,N rate,high,,,14.3147208121827,0.492302184031531,73
+N pool,N rate,very high,,,10.8121827411167,0.783208020050117,41
+N pool,N rate,very high,crop type,grain,12.6297577854671,1.29884270781482,69
+N pool,N rate,high,crop type,grain,12.6297577854671,1.29884270781482,69
+N pool,N rate,high,crop type,grain,11.3062283737024,1.01107516177201,133
+N pool,N rate,low,crop type,grain,11.3062283737024,1.01107516177201,133
+N pool,N rate,low,crop type,grain,8.99653979238754,1.51661274265802,52
+N pool,N rate,very low,crop type,grain,8.99653979238754,1.51661274265802,52
+WHC,N rate,very low,,,11.6239316239316,1.95894976901935,106
+WHC,N rate,low,,,16.2393162393162,1.57885503771709,142
+WHC,N rate,high,,,10.4273504273504,2.25133033155956,73
+WHC,N rate,very high,,,12.8205128205128,3.01151979416406,41
+WHC,N rate,coarse,,,10.1845018450184,1.46857750544386,157
+WHC,N rate,medium,,,14.4649446494464,2.50670987998175,56
+yield,N rate,very low,,,13.3064516129032,0.528526327658138,106
+yield,N rate,low,,,16.6935483870967,0.422821062126505,142
+yield,N rate,high,,,14.516129032258,0.63423159318977,73
+yield,N rate,very high,,,12.4596774193548,1.12047581463526,41
+yield,N rate,very high,crop type,grain,11.6955017301038,1.4807348601355,75
+yield,N rate,high,crop type,grain,11.6955017301038,1.4807348601355,75
+yield,N rate,high,crop type,grain,10.4238754325259,0.989754353880028,145
+yield,N rate,low,crop type,grain,10.4238754325259,0.989754353880028,145
+yield,N rate,low,crop type,grain,12.2923875432525,1.48073486013549,93
+yield,N rate,very low,crop type,grain,12.2923875432525,1.48073486013549,93
+bulk density,particle size,small,soil texture,coarse,12.2558922558922,1.25827357970213,11
+bulk density,particle size,big,soil texture,coarse,11.8518518518518,1.1031439602868,25
+bulk density,particle size,very big,soil texture,coarse,11.1784511784511,1.34445670159954,4
+bulk density,particle size,very big,soil texture,fine,10.7744107744107,5.3950634307777,1
+bulk density,particle size,big,soil texture,fine,9.96632996632996,1.37892995035852,10
+bulk density,particle size,very big,soil texture,medium,8.41750841750841,5.2226971869829,1
+bulk density,particle size,big,soil texture,medium,7.67676767676767,2.05115830115828,6
+bulk density,particle size,very small,soil texture,medium,7.47474747474747,0.775648097076669,5
+bulk density,particle size,very small,soil texture,coarse,6.5993265993266,0.879067843353559,12
+bulk density,particle size,small,soil texture,medium,6.12794612794612,1.08590733590734,3
+bulk density,particle size,very small,soil texture,fine,4.71380471380471,1.43063982349697,5
+bulk density,particle size,small,soil texture,fine,3.7037037037037,1.05143408714837,2
+porosity,particle size,very high,soil texture,coarse,8.69955156950672,1.05243891278484,6
+porosity,particle size,high,soil texture,coarse,18.9237668161434,0.869406058387474,12
+porosity,particle size,low,soil texture,coarse,29.6860986547085,2.51670174796375,5
+porosity,particle size,very low,soil texture,coarse,12.6457399103139,1.37274640798022,7
+porosity,particle size,high,soil texture,medium,10.134529147982,1.51002104877824,2
+porosity,particle size,high,soil texture,fine,2.24215246636771,3.06580031115585,3
+N pool,SOC,very low,,,20.9756097560975,0.585480093676837,84
+N pool,SOC,low,,,8.17073170731707,0.585480093676816,97
+N pool,SOC,med,,,16.4634146341463,0.690030110404821,60
+N pool,SOC,high,,,13.170731707317,0.522750083640025,77
+N pool,SOC,very high,,,13.170731707317,0.522750083640025,77
+soil pH,SOC,very low,,,17.960088691796,1.00117652382459,151
+soil pH,SOC,low,,,17.8270509977827,1.00117652382462,70
+soil pH,SOC,med,,,13.0376940133037,1.2217747409385,150
+soil pH,SOC,high,,,12.3059866962305,0.780578306710714,159
+soil pH,SOC,very high,,,10.9756097560975,0.780578306710699,163
+SWC,SOC,very low,,,10.6199460916442,1.47835414489244,28
+SWC,SOC,low,,,10.6199460916442,1.47835414489244,28
+SWC,SOC,med,,,12.1024258760107,2.88794763188294,123
+SWC,SOC,high,,,9.81132075471698,3.16299026349082,27
+SWC,SOC,very high,,,9.81132075471698,3.16299026349082,27
+WHC,SOC,very low,,,27.1586715867158,2.1522256545298,84
+WHC,SOC,low,,,10.3321033210332,2.10158505089379,97
+WHC,SOC,med,,,15.0553505535055,3.13971742543169,60
+WHC,SOC,high,,,4.87084870848708,2.25350686180179,77
+WHC,SOC,very high,,,4.87084870848708,2.25350686180179,77
+yield,SOC,very low,,,26.36,0.607142857142857,84
+yield,SOC,low,,,8.85608856088561,0.561870317747352,97
+yield,SOC,med,,,17.6014760147601,0.619994833376377,60
+yield,SOC,high,,,10.4059040590405,0.503745802118304,77
+yield,SOC,very high,,,10.4059040590405,0.503745802118304,77
+yield,SOC,very low,,,25.4090150250417,1.04340567612689,154
+yield,SOC,low,,,25.4090150250417,1.04340567612689,154
+yield,SOC,med,,,18.0467445742904,1.37133317433819,64
+yield,SOC,high,,,9.51585976627712,0.864536131647965,119
+yield,SOC,very high,,,9.51585976627712,0.864536131647965,119
+yield,SOC,very low,,,57.6496674057649,7.1835829675551,149
+yield,SOC,low,,,59.6452328159645,12.5005656364541,51
+yield,SOC,med,,,29.0465631929046,4.63821892393322,156
+yield,SOC,high,,,27.9379157427937,3.84632788813972,116
+yield,SOC,very high,,,19.0687361419068,3.39381872482916,125
+N pool,soil C:N,high,crop type,grain,7.39,1.58163265306122,49
+N pool,soil C:N,med,crop type,grain,11.49,1.30612244897959,67
+N pool,soil C:N,low,crop type,grain,12.01,1.66071428571429,40
+yield,soil C:N,high,crop type,grain,8.23,1.53061224489796,54
+yield,soil C:N,med,crop type,grain,9.26,1.06122448979592,108
+yield,soil C:N,low,crop type,grain,10.15,1.48724489795918,52
+N pool,soil N,low,,,27.1951219512195,0.62730010036801,76
+N pool,soil N,med,,,10.9756097560975,0.439110070257602,111
+N pool,soil N,high,,,11.3414634146341,0.669120107059209,53
+WHC,soil N,low,,,30.5535055350553,2.58267078543577,76
+WHC,soil N,med,,,6.34686346863468,1.82306173089582,111
+WHC,soil N,high,,,10.4797047970479,2.73459259634373,53
+yield,soil N,low,,,24.86,0.561224489795918,76
+yield,soil N,med,,,11.5129151291512,0.523120640661327,111
+yield,soil N,high,,,7.63837638376383,0.716869026091449,53
+N pool,soil ph,acidic,,,10.7317073170731,0.543660086985592,80
+N pool,soil ph,neutral,,,21.3414634146341,0.460020073603214,116
+N pool,soil ph,alkaline,,,7.92682926829268,0.522750083640013,120
+N pool,soil ph,alkaline,crop type,grain,32.18,3.04336734693878,15
+N pool,soil ph,neutral,crop type,grain,9.40959409594095,0.940723360927875,146
+N pool,soil ph,acidic,crop type,grain,11.070110701107,0.996060029217748,125
+soil pH,soil ph,acidic,,,14.8337028824833,0.780578306710715,162
+soil pH,soil ph,acidic,,,16.8292682926829,0.644825557717551,307
+soil pH,soil ph,acidic,,,13.2372505543237,0.61088737046926,155
+soil pH,soil ph,acidic,,,7.91574279379157,0.559980089596814,99
+soil pH,soil ph,acidic,,,6.11973392461197,0.526041902348523,98
+WHC,soil ph,acidic,,,12.1033210332103,2.98779561452372,80
+WHC,soil ph,neutral,,,16.6789667896678,2.50670987998176,116
+WHC,soil ph,alkaline,,,12.3985239852398,2.55735048361777,120
+yield,soil ph,acidic,,,5.86715867158671,0.678119349005426,80
+yield,soil ph,neutral,,,20.9225092250922,0.484370963575281,116
+yield,soil ph,alkaline,,,12.3985239852398,0.542495479204337,120
+yield,soil ph,alkaline,crop type,grain,31.6,2.9030612244898,17
+yield,soil ph,neutral,crop type,grain,7.93357933579335,0.828253379273788,199
+yield,soil ph,acidic,crop type,grain,10.5166051660516,0.966295609152742,136
+yield,soil ph,acidic,,,45.2328159645232,5.14729173265758,101
+yield,soil ph,acidic,,,45.2328159645232,3.50694601565681,218
+yield,soil ph,acidic,,,34.1463414634146,5.1472917326576,116
+yield,soil ph,acidic,,,26.8292682926829,2.20598217113898,91
+yield,soil ph,acidic,,,12.6385809312638,3.2241277885877,73
+bulk density,soil texture,coarse,,,10.4,0.501482644339775,49
+bulk density,soil texture,fine,,,8.8,0.779478458049877,23
+bulk density,soil texture,medium,,,7.3,0.577795220652365,18
+N pool,soil texture,coarse,,,6.21951219512195,0.41820006691201,157
+N pool,soil texture,medium,,,14.7560975609756,0.731850117096021,56
+N pool,soil texture,fine,,,21.2195121951219,0.439110070257602,126
+N pool,soil texture,fine,crop type,grain,16.91,3.86989795918367,11
+N pool,soil texture,medium,crop type,grain,14.8523985239852,1.65843875347117,44
+N pool,soil texture,coarse,crop type,grain,8.91143911439114,1.81271212588707,49
+porosity,soil texture,coarse,,,12.3,0.337595016661964,23
+porosity,soil texture,medium,,,7.2,1.11624158734999,6
+porosity,soil texture,fine,,,5.5,0.89843835079389,6
+soil pH,soil texture,coarse (sand),,,14.5011086474501,0.916331055703877,166
+soil pH,soil texture,medium (loam),,,12.0399113082039,0.475134621476071,176
+soil pH,soil texture,fine (clay),,,10.6430155210643,0.576949183220954,205
+WHC,soil texture,fine,,,20.3690036900369,1.74710082544186,126
+yield,soil texture,coarse,,,8.47,0.696428571428571,157
+yield,soil texture,medium,,,14.47,0.683673469387755,56
+yield,soil texture,fine,,,19.5940959409594,0.392857142857143,126
+yield,soil texture,fine,crop type,grain,18.15,3.56887755102041,13
+yield,soil texture,medium,crop type,grain,12.6568265682656,1.39146567717994,74
+yield,soil texture,coarse,crop type,grain,8.52398523985239,1.70068027210882,58
+yield,soil texture,coarse (sand),,,56.3192904656319,3.73320059731209,143
+yield,soil texture,medium (loam),,,48.3370288248337,3.11100049776008,105
+yield,soil texture,fine (clay),,,28.1596452328159,1.24440019910403,210
+bulk density,SSA,high,soil texture,coarse,26.4423076923076,3.14910653256518,7
+bulk density,SSA,very high,soil texture,coarse,15.7692307692307,4.90674738795039,2
+bulk density,SSA,low,soil texture,medium,13.1730769230769,0.878820427692602,2
+bulk density,SSA,low,soil texture,coarse,10.8653846153846,1.61117078410311,7
+bulk density,SSA,very high,soil texture,fine,9.71153846153846,2.63646128307781,1
+bulk density,SSA,very low,soil texture,medium,8.26923076923077,0.512645249487354,9
+bulk density,SSA,very high,soil texture,medium,7.98076923076923,1.83087589102626,1
+bulk density,SSA,very low,soil texture,coarse,7.69230769230769,0.292940142564202,10
+bulk density,SSA,high,soil texture,fine,4.80769230769231,1.90411092666732,2
+bulk density,SSA,very low,soil texture,fine,2.5,1.53793574846206,3
+bulk density,SSA,low,soil texture,fine,1.05769230769231,0.439410213846304,1
+porosity,SSA,high,soil texture,coarse,5.46666666666666,0.714285714285714,5
+porosity,SSA,low,soil texture,coarse,10.9777777777777,-0.113378684807258,5
+porosity,SSA,very low,soil texture,coarse,12.9333333333333,-1.30385487528343,7
+porosity,SSA,low,soil texture,medium,1.02222222222222,4.01360544217687,1
+porosity,SSA,high,soil texture,fine,2.26666666666666,1.67800453514739,1
+porosity,SSA,low,soil texture,fine,8.13333333333333,1.89342403628118,1
+bulk density,time frame,short term,soil texture,coarse,11.6498316498316,0.568808604522883,51
+bulk density,time frame,short term,soil texture,fine,10.8417508417508,1.17209045780474,13
+bulk density,time frame,medium term,soil texture,fine,8.28282828282828,1.43063982349696,7
+bulk density,time frame,short term,soil texture,medium,7.87878787878787,0.723938223938224,11
+bulk density,time frame,medium term,soil texture,coarse,7.47474747474747,1.18932708218423,9
+bulk density,time frame,medium term,soil texture,medium,6.53198653198653,0.999724214009929,7
+bulk density,time frame,long term,soil texture,medium,6.46464646464646,1.87879205736348,3
+bulk density,time frame,long term,soil texture,fine,5.99326599326599,0.948014340871482,5
+bulk density,time frame,long term,soil texture,coarse,3.63636363636363,1.10314396028682,5
+N pool,time frame,long term,crop type,grain,5.7741116751269,2.07323028221189,27
+N pool,time frame,med term,crop type,grain,9.96192893401015,1.24183336701015,58
+N pool,time frame,short term,crop type,grain,15.1649746192893,0.663012729844413,181
+soil pH,time frame,long term,,,8.11387900355871,0.491105533122339,340
+soil pH,time frame,long term,,,11.8505338078291,1.3096147549929,86
+soil pH,time frame,long term,,,13.932384341637,0.682091018225485,178
+yield,time frame,long term,crop type,grain,3.41836734693877,1.51202865252061,39
+yield,time frame,med term,crop type,grain,11.1224489795918,1.07278010541964,73
+yield,time frame,short term,crop type,grain,11.2244897959183,0.549060683876199,266
+yield,time frame,long term,,,23.4875444839857,2.72108843537413,265
+yield,time frame,long term,,,34.1637010676156,6.30385487528347,58
+yield,time frame,long term,,,39.5017793594306,4.03628117913832,167
+N pool,water management,irrigation+rain,,,12.1827411167512,1.18600071607589,118
+N pool,water management,irrigation,,,19.0355329949238,1.0517364840673,151
+N pool,water management,rain-fed,,,6.24365482233502,1.27551020408163,112
+N pool,water management,irrigation,,,14.7715736040609,0.559434300035816,70
+N pool,water management,irrigation,,,8.68020304568528,0.492302184031508,107
+N pool,water management,irrigation,,,12.6395939086294,0.514679556032916,64
+N pool,water management,irrigation,,,0.913705583756345,0.738453276047261,46
+N pool,water management,irrigation,crop type,grain,10.28,2.06887755102041,186
+yield,water management,irrigation,crop type,grain,8.23,1.61479591836735,237

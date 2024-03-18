@@ -86,6 +86,7 @@ es1ph <- escalc(measure = "SMD", data = d2ph,
                  m1i = phr_mean, sd1i = phr_sd, n1i = phr_n,
                  m2i = phc_mean, sd2i = phc_sd, n2i = phc_n)
 es1ph=as.data.table(es1ph)
+#remove extreme high values
 es1ph=es1ph[yi<=10]
 fwrite(es1ph, file = "data/meta_regression/ph/es1ph.csv")
 
@@ -291,13 +292,15 @@ ggsave(filename = "C:/Users/beeke/OneDrive/Wageningen/Master thesis/R Studio/msc
 
 #crop______
 crop_data <- out3.est[var == "crop3" & varname != "unknown unknown"]
+crop_data$varname <- gsub("unknown", "unknown\n", crop_data$varname)
+
 bar_crop_ph <- ggplot(crop_data, aes(x = varname, y = mean, fill = varname)) +
-  geom_bar(stat = "identity", fill = "darkorange") +
+  geom_bar(stat = "identity", fill = "grey") +
   geom_errorbar(aes(ymin = mean - se, ymax = mean + se), width = 0.2) + 
-  labs(x = "Crops", y = "Relative change in soil pH", 
-       title = "Standardized Mean Difference Response by Crops due to Biochar application") +
-  theme_minimal() +
-  theme(axis.text.x = element_text(angle = 45, hjust = 1),
+  labs(x = "", y = "Relative change in soil pH", 
+       title = "SMD Response on soil pH by Crops due to Biochar application") +
+  theme_bw() +
+  theme(axis.text.x = element_text(angle = 25, hjust = 0.5, size = 10),
         legend.position = "none",
         panel.background = element_rect(fill = "white", colour = "white"))
 bar_crop_ph
@@ -344,6 +347,8 @@ ggsave(filename = "C:/Users/beeke/OneDrive/Wageningen/Master thesis/R Studio/msc
 #_____
 
 #numeric coefficients (scaled)
+num_ph <- out3.est[varname == "varsel"]
+
 ##remove the "_scaled"
 num_ph$var <- gsub("_scaled", "", num_ph$var)
 
@@ -358,10 +363,10 @@ num_ph
 bar_num_ph <- ggplot(num_ph, aes(x = var, y = mean, fill = var)) +
   geom_bar(stat = "identity", fill = "dimgrey") +
   geom_errorbar(aes(ymin = mean - se, ymax = mean + se), width = 0.2) + 
-  labs(x = "Variable", y = "Relative change in soil pH", 
+  labs(x = "", y = "Relative change in soil pH", 
        title = "SMD Response on ph due to Biochar application") +
-  theme_minimal() +
-  theme(axis.text.x = element_text(angle = 45, hjust = 1),
+  theme_bw() +
+  theme(axis.text.x = element_text(hjust = 0.5),
         legend.position = "none",  
         panel.background = element_rect(fill = "white", colour = "white"))+
   annotate("rect", xmin = -Inf, xmax = 7.5, ymin = -Inf, ymax = Inf, fill = "yellow", alpha = 0.2) + 
@@ -395,7 +400,7 @@ rph_0 <- rma.mv(yi,vi, data = d4ph,random= list(~ 1|studyid), method="REML",spar
 # 1. make a simple meta-regression model without interaction but with more than one explanatory variable
 
 rph_1 <- rma.mv(yi,vi, 
-                 mods = ~ sph_scaled + soc_scaled + clay_scaled + sbd_scaled * bph_scaled + rain_scaled + btc_scaled + brate_scaled -1, 
+                 mods = ~ sph_scaled + crop_type + clay_scaled + soc_scaled * bph_scaled + rain_scaled + brate_scaled -1, 
                  data = d4ph,
                  random = list(~ 1|studyid), method="REML",sparse = TRUE) 
 out = estats_ph(model_new = rph_1,model_base = rph_0)
@@ -414,6 +419,16 @@ writeLines(summary_output_ph, file_path)
 # Extract coefficient names from the model object
 coeff_names_ph <- names(coef(rph_1))
 
+##remove "_scaled" 
+coeff_names_ph <- gsub("_scaled", "", coeff_names_ph)
+coeff_names_ph <- gsub("crop_typevegetable", "vegetable", coeff_names_ph)
+coeff_names_ph <- gsub("crop_typefruit", "fruit", coeff_names_ph)
+coeff_names_ph <- gsub("crop_typetubers", "tubers", coeff_names_ph)
+coeff_names_ph <- gsub("crop_typelegumes", "legegumes", coeff_names_ph)
+coeff_names_ph <- gsub("crop_typegrain", "grain", coeff_names_ph)
+
+
+
 # Create the data frame
 summary_ph <- data.frame(
   Coefficients = coeff_names_ph,
@@ -428,16 +443,20 @@ summary_ph$Significance <- ifelse(summary_ph$PValue < .001, '***',
 #sum_ph_order  <- c('clay', 'sbd', 'sph', 'soc', 'rain', 'bph', 'btc', 'brate', 'sbd:bph')
 # Reorder the levels of the var factor
 #summary_ph$Coefficients <- factor(summary_ph$Coefficients, levels = sum_ph_order)
-
+summary_ph$Coefficients <- gsub("&", "\n&", summary_ph$Coefficients)
+summary_ph$Coefficients <- gsub(":", ":\n", summary_ph$Coefficients)
+#remove unknown and other crops
+summary_ph <- summary_ph[!summary_ph$Coefficients %in% c("crop_typeothers", "crop_typeunknown"),]
 
 sum_ph <- ggplot(summary_ph, aes(x=reorder(Coefficients, Estimate), y=Estimate, fill=Significance)) +
   geom_bar(stat="identity") +
   geom_text(aes(label=Significance), vjust=1.5, color="black") +
-  scale_fill_manual(values=c('***'='olivedrab', '**'='orange', '*'='darksalmon', '.'='red', ' ' = 'grey')) +
-  labs(title="Parameter Estimates with Significance Levels",
-       x="Coefficients", y="Parameter estimate") +
-  theme_minimal()
+  scale_fill_manual(values=c('***'='olivedrab', '**'='yellowgreen', '*'='gold', '.'='grey', ' ' = 'darksalmon')) +
+  labs(title="Parameter Estimates with Significance Levels for soil pH",
+       x="", y="Parameter estimate") +
+  theme_bw() + 
+  theme(legend.position = "none")
 sum_ph
 ggsave(filename = "C:/Users/beeke/OneDrive/Wageningen/Master thesis/R Studio/msc_beeke/figures/ph/sum_ph.jpg", 
        plot = sum_ph, 
-       width = 20, height = 7, units = "cm")
+       width = 20, height = 6, units = "cm")
